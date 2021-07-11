@@ -9,9 +9,11 @@ Project targeting to solve the subjectiveness problem in emotional speech labeli
 Below are the installing and running procedues
 
 ### Installing
-1. Requirement: python3, pip3 node, and npm(**node v12.13.0**, **npm v6.12.0**, **Go v1.16.5**)
+Requirement: node, npm, and go (**node v12.13.0**, **npm v6.12.0**, **Go v1.16.5**)
   
-(1) Install curl.
+1. Install Node and Npm.
+
+Install curl.
   
 `apt-get install curl`
       
@@ -21,20 +23,20 @@ E: Could not get lock /var/lib/dpkg/lock-frontend - open (11: Resource temporari
       
 E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
   
-Run the following command: 
+If so, run the following command: 
 
-`sudo rm /var/lib/apt/lists/lock`
+`rm /var/lib/apt/lists/lock`
 
 Then install node and npm.
-`sudo apt-get update`
+`apt-get update`
 
-`sudo apt-get -y upgrade`
+`apt-get -y upgrade`
 
-`sudo apt -y install curl dirmngr apt-transport-https lsb-release ca-certificates`
+`apt-get -y install dirmngr apt-transport-https lsb-release ca-certificates`
  
 `curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -`
 
-`sudo apt-get install nodejs`
+`apt-get install nodejs`
 
 `npm install -g npm@6.12.0`
 
@@ -46,7 +48,7 @@ It would need to start a new shell window to see the version change.
 
 2. Install Git.
 
-`sudo apt-get install git`
+`apt-get install git`
 
 3. Clone the project.
 
@@ -75,5 +77,7 @@ Install Gin.
 `go get -u github.com/gin-gonic/gin`
 
 ### Running
+
 1. Go to the root directory and start the server with `go run example.go`
+
 2. If all is working correctly, check the address http://localhost:8080/ which you can open in your  browser and see the application running.
