@@ -9,7 +9,7 @@ Project targeting to solve the subjectiveness problem in emotional speech labeli
 Below are the installing and running procedues
 
 ### Installing
-1. Requirement: python3, pip3 node, and npm(**node v12.13.0**, **npm v6.12.0**, ***Go v1.16.5**)
+1. Requirement: python3, pip3 node, and npm(**node v12.13.0**, **npm v6.12.0**, **Go v1.16.5**)
   
 (1) Install curl.
   
