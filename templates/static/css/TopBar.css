@@ -1,0 +1,53 @@
+.topBarOuterContainer {
+	display: flex;
+	height: 120px;
+    width: 800px;
+	padding: 10px;
+	flex-direction: column;
+}
+
+.TitleLine {
+	display: flex;
+	flex-direction: row;
+
+}
+
+.NavigationLine {
+	display: flex;
+	flex-direction: row;
+}
+
+.topBarTitle {
+	display: flex;
+	height: 40px;
+	padding: 10px;
+	flex-direction: column;
+}
+
+.userID {
+	padding: 10px;
+	flex-grow: 2;
+	flex-shrink: 1;
+	flex-basis: 0%;
+}
+
+.timeUsage {
+	padding: 10px;
+	flex-grow: 2;
+	flex-shrink: 1;
+	flex-basis: 0%;
+}
+
+.instanceID {
+	padding: 10px;
+	flex-grow: 2;
+	flex-shrink: 1;
+	flex-basis: 0%;
+}
+
+.instanceList {
+	padding: 10px;
+	flex-grow: 2;
+	flex-shrink: 1;
+	flex-basis: 0%;
+}

@@ -1,0 +1,42 @@
+.topBarOuterContainer {
+	display: flex;
+	height: 200px;
+	padding: 10px;
+	flex-direction: column;
+}
+
+.topBarInformationContainer {
+	display: flex;
+	flex-direction: row;
+}
+
+.topBarTitle {
+	display: flex;
+	height: 200px;
+	padding: 10px;
+	flex-direction: column;
+}
+
+.userIDDisplay {
+	flex-grow: 2;
+	flex-shrink: 1;
+	flex-basis: 0%;
+}
+
+.timeDisplay {
+	flex-grow: 2;
+	flex-shrink: 1;
+	flex-basis: 0%;
+}
+
+.instanceIDDisplay {
+	flex-grow: 2;
+	flex-shrink: 1;
+	flex-basis: 0%;
+}
+
+.menuDisplay {
+	flex-grow: 2;
+	flex-shrink: 1;
+	flex-basis: 0%;
+}
