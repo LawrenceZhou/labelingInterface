@@ -1,5 +1,5 @@
 
-# Interactive Music Composition( Full-Stack App Built with Flask, NPM, Webpack, MusicVAE, P5.js and Reactjs)
+# Emotional Speech Labeling Interface ( Full-Stack App Built with Go(Gin), NPM, Webpack, and Reactjs)
 
 ## About
 Project targeting to augment human's engagement in AI-assisted music composition system
@@ -19,4 +19,4 @@ Below are the installing and running procedues
 
 ### Running
 1. Go to the root directory and start the server with `python3 run.py`
-2. If all is working correctly, check the address http://127.0.0.1:5000/ which you can open in your  browser and see the application running.
+2. If all is working correctly, check the address http://127.0.0.1:8080/ which you can open in your  browser and see the application running.
