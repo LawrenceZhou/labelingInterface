@@ -86,6 +86,29 @@ Use `mysql_secure_installation` for mysql configuration.
 
 Use `systemctl status mysql.service` or `mysqladmin -p -u root version` to check mysql connection and status.
 
+8. Install PhPAdmin for mysql visualization.
+
+`apt-get update`
+
+`apt-get install phpmyadmin php-mbstring php-gettext`
+
+For the server selection, choose apache2.
+
+Select yes when asked whether to use dbconfig-common to set up the database.
+
+Enable the PHP mcrypt and mbstring extensions:
+
+`phpenmod mcrypt`
+
+`phpenmod mbstring`
+
+Restart Apache for changes to be recognized:
+
+`systemctl restart apache2`
+
+Go to `http://localhost/phpmyadmin` for checking the mysql.
+
+
 ### Running
 
 1. Go to the root directory and start the server with `go run example.go`
