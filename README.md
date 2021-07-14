@@ -9,7 +9,7 @@ Project targeting to solve the subjectiveness problem in emotional speech labeli
 Below are the installing and running procedues
 
 ### Installing
-Requirement: node, npm, and go (**node v12.13.0**, **npm v6.12.0**, **Go v1.16.5**)
+Requirement: node, npm, go, and mysql (**node v12.13.0**, **npm v6.12.0**, **Go v1.16.5**, **MySQL v5.7.33-0ubuntu0.16.04.1**)
   
 1. Install Node and Npm.
 
@@ -75,6 +75,16 @@ Start a new shell to check the Go installed:
 
 Install Gin.
 `go get -u github.com/gin-gonic/gin`
+
+7. Install MySQL
+
+`apt-get update`
+
+`apt-get install mysql-server`
+
+Use `mysql_secure_installation` for mysql configuration.
+
+Use `systemctl status mysql.service` or `mysqladmin -p -u root version` to check mysql connection and status.
 
 ### Running
 
