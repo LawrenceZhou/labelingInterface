@@ -8,19 +8,19 @@ import {Select as SelectG, Button as GButton} from 'grommet';
 import { Magic, AddCircle, SubtractCircle, Play, Stop, Pause, Clone } from 'grommet-icons';
 import ReactAudioPlayer from 'react-audio-player';
 
-import p1 from '../../assets/11.png';
-import p2 from '../../assets/12.png';
-import p3 from '../../assets/13.png';
-import p4 from '../../assets/14.png';
-import p5 from '../../assets/15.png';
-import a1 from '../../assets/21.png';
-import a2 from '../../assets/22.png';
-import a3 from '../../assets/23.png';
-import a4 from '../../assets/24.png';
-import a5 from '../../assets/25.png';
-import d1 from '../../assets/31.png';
-import d2 from '../../assets/32.png';
-import d3 from '../../assets/33.png';
+import p1 from '../../assets/images/11.png';
+import p2 from '../../assets/images/12.png';
+import p3 from '../../assets/images/13.png';
+import p4 from '../../assets/images/14.png';
+import p5 from '../../assets/images/15.png';
+import a1 from '../../assets/images/21.png';
+import a2 from '../../assets/images/22.png';
+import a3 from '../../assets/images/23.png';
+import a4 from '../../assets/images/24.png';
+import a5 from '../../assets/images/25.png';
+import d1 from '../../assets/images/31.png';
+import d2 from '../../assets/images/32.png';
+import d3 from '../../assets/images/33.png';
 
 import u0 from '../../assets/FOY0303JOY0.wav';
 import u1 from '../../assets/FOY0303JOY1.wav';
@@ -28,8 +28,7 @@ import u2 from '../../assets/FOY0303JOY2.wav';
 import u3 from '../../assets/FOY0303JOY3.wav';
 
 import '../../css/LabelInstance.css';
-import '../../css/TopBar.css';
-import '../../css/Navigation.css';
+
 
 const groupStyles = {
   display: 'flex',
