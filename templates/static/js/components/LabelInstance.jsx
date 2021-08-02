@@ -3,7 +3,7 @@ import P5Wrapper from 'react-p5-wrapper';
 import Popup from "reactjs-popup";
 import Scrollbars from "react-custom-scrollbars";
 import { Dropdown } from 'react-bootstrap';
-import {DropButton, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video} from 'grommet'; 
+import {DropButton, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu} from 'grommet'; 
 import {Select as SelectG, Button as GButton} from 'grommet';
 import { Magic, AddCircle, SubtractCircle, Play, Stop, Pause, Clone } from 'grommet-icons';
 import ReactAudioPlayer from 'react-audio-player';
@@ -28,6 +28,8 @@ import u2 from '../../assets/FOY0303JOY2.wav';
 import u3 from '../../assets/FOY0303JOY3.wav';
 
 import '../../css/LabelInstance.css';
+import '../../css/TopBar.css';
+import '../../css/Navigation.css';
 
 const groupStyles = {
   display: 'flex',
@@ -72,6 +74,20 @@ export default class LabelInstance extends Component {
       selectedPleasure: 0,
       selectedArousal: 0,
       selectedDominance: 0,
+      clickCountPleasure: 0,
+      clickCountArousal: 0,
+      clickCountDominance: 0,
+      timeStamp: "",
+      timeUsage: 0.0,
+      title: "Emotional Japanese Speech Annotation",
+      userName: "admin",
+      instanceID: "loading...",
+      instanceFilePath: "",
+      instanceSynthesisPath: "",
+      instanceList: [{defaultValueP:0, defaultValueA:0, defaultValueD:0 }],
+      currentInstanceIndex: 0,
+      menuItems:[],
+      menuText: "Loading...",
     };
 
     this.updateSeed = this.updateSeed.bind(this);
@@ -89,11 +105,45 @@ export default class LabelInstance extends Component {
     this.onDropdownM = this.onDropdownM.bind(this);
     this.onDropdownS = this.onDropdownS.bind(this);
     this.sendResult = this.sendResult.bind(this);
+    this.getInstanceList = this.getInstanceList.bind(this);
     this.onInconsistanceChecked=this.onInconsistanceChecked.bind(this);
     this.onPleasureSelected=this.onPleasureSelected.bind(this);
     this.onArousalSelected=this.onArousalSelected.bind(this);
     this.onDominanceSelected=this.onDominanceSelected.bind(this);
+    this.gotoNext=this.gotoNext.bind(this);
+    this.gotoPrevious=this.gotoPrevious.bind(this);
+    this.updateCurrentInstance=this.updateCurrentInstance.bind(this);
+    this.generateMenuItems=this.generateMenuItems.bind(this);
+    this.onInstanceMenuSelected=this.onInstanceMenuSelected.bind(this);
   }
+
+    componentDidMount(){
+      var d = new Date();
+      var timeStamp = d.toString();
+      this.setState({timeStamp: timeStamp,  timeUsage: d.getTime() },function(){ console.log("timestamp: ", this.state.timeStamp, "time Usage: ", this.state.timeUsage)});
+      this.getInstanceList();
+  }
+
+  updateCurrentInstance(nextIndex) {
+    var that= this;
+    that.setState({currentInstanceIndex: nextIndex, instanceID: that.state.instanceList[nextIndex].ID, instanceFilePath: that.state.instanceList[nextIndex].FilePath, instanceSynthesisPath: that.state.instanceList[nextIndex].SynthesisPath, });
+
+  }
+
+  onInstanceMenuSelected(e) {
+    var that= this;
+    that.updateCurrentInstance(e.selected);
+  }
+
+  generateMenuItems () {
+    var that = this;
+    var mI=[];
+    for(var i = 0; i< that.state.instanceList.length; i++){
+      mI.push("Utterance " + String(that.state.instanceList[i].ID));
+    }
+    that.setState({menuText: "All Utterances", menuItems: mI});
+  }
+
 
   createSelectBars() {
     var that = this;
@@ -107,24 +157,56 @@ export default class LabelInstance extends Component {
      return items;
  }
 
+  gotoNext() {
+    var that= this;
+    if(that.state.currentInstanceIndex + 1 < that.state.instanceList.length){
+      that.updateCurrentInstance(that.state.currentInstanceIndex + 1);
+    }
+  }
+
+  gotoPrevious() {
+    var that= this;
+    if(that.state.currentInstanceIndex - 1 >= 0){
+      that.updateCurrentInstance(that.state.currentInstanceIndex - 1);
+    }
+  }
+
   onPleasureSelected(e) {
     var that = this;
     console.log("the select pleasure val", e.target.attributes['name'].nodeValue);
-    that.setState({selectedPleasure: parseInt(e.target.attributes['name'].nodeValue)},function(){ console.log("state pleasure: ", that.state.selectedPleasure) });
-    that.sendResult();
+
+
+    const newInstanceList = that.state.instanceList.slice() //copy the array
+    newInstanceList[that.state.currentInstanceIndex].defaultValueP = parseInt(e.target.attributes['name'].nodeValue) //execute the manipulations
+    that.setState({instanceList: newInstanceList}) //set the new state
+
+    that.setState({selectedPleasure: parseInt(e.target.attributes['name'].nodeValue), 
+      clickCountPleasure: that.state.clickCountPleasure + 1},function(){ console.log("state pleasure: ", that.state.selectedPleasure, ", click count: ", that.state.clickCountPleasure) });
   }
 
   onArousalSelected(e) {
     var that = this;
     console.log("the select arousal val", e.target.attributes['name'].nodeValue);
-    that.setState({selectedArousal: parseInt(e.target.attributes['name'].nodeValue)},function(){ console.log("state arousal: ", that.state.selectedArousal) });
+
+    const newInstanceList = that.state.instanceList.slice() //copy the array
+    newInstanceList[that.state.currentInstanceIndex].defaultValueA = parseInt(e.target.attributes['name'].nodeValue) //execute the manipulations
+    that.setState({instanceList: newInstanceList}) //set the new state
+
+    that.setState({selectedArousal: parseInt(e.target.attributes['name'].nodeValue),
+      clickCountArousal: that.state.clickCountArousal + 1},function(){ console.log("state arousal: ", that.state.selectedArousal, ", click count: ", that.state.clickCountArousal) });
 
   }
 
     onDominanceSelected(e) {
     var that = this;
     console.log("the select dominance val", e.target.attributes['name'].nodeValue);
-    that.setState({selectedDominance: parseInt(e.target.attributes['name'].nodeValue)},function(){ console.log("state dominance: ", that.state.selectedDominance) });
+
+    const newInstanceList = that.state.instanceList.slice() //copy the array
+    newInstanceList[that.state.currentInstanceIndex].defaultValueD = parseInt(e.target.attributes['name'].nodeValue) //execute the manipulations
+    that.setState({instanceList: newInstanceList}) //set the new state
+
+    that.setState({selectedDominance: parseInt(e.target.attributes['name'].nodeValue),
+      clickCountDominance: that.state.clickCountDominance + 1},function(){ console.log("state dominance: ", that.state.selectedDominance, ", click count: ", that.state.clickCountDominance) });
 
   }
 
@@ -343,23 +425,53 @@ export default class LabelInstance extends Component {
 
    sendResult(){
     var that = this;
-    this.setState({popupOn: false},function(){ console.log(this.state.popupOn, "force update") });
 
-    var that = this;
     var http = new XMLHttpRequest();
     var url = 'http://localhost:8080/api/save';
+    var data = new FormData();
+
+    data.append('selectedPleasure', String(that.state.selectedPleasure));
+    data.append('selectedArousal', String(that.state.selectedArousal));
+    data.append('selectedDominance', String(that.state.selectedDominance));
+    data.append('userName', String(that.state.userName));
+    console.log(data);
+
+    http.addEventListener("readystatechange", function() {
+      if(this.readyState === 4) {
+        console.log("Result saved!", this.responseText);
+      }
+    });
 
     http.open('POST', url, true);
-    //Send the proper header information along with the request
-    http.setRequestHeader('Content-type', 'application/json');
-    http.onreadystatechange = function() {//Call a function when the state changes.
-        if(http.readyState == 4 && http.status == 200) {
-            console.log("Result saved!");    
-        }
-    }
-    http.send(JSON.stringify({result:that.state.selectedPleasure}));
+    http.send(data);
 
-   }
+  }
+
+
+  getInstanceList(){
+    var that = this;
+
+    var http = new XMLHttpRequest();
+    var url = 'http://localhost:8080/api/get_list';    
+    var data = new FormData();
+
+
+    data.append("userName", "admin");
+    console.log(data.get("userName"));
+
+    http.addEventListener("readystatechange", function() {
+      if(this.readyState === 4) {
+        console.log("Instance list received!", this.responseText);
+        var obj = JSON.parse(http.responseText);
+        console.log(obj);
+        that.setState({ instanceList : obj.instance_list}, function(){ console.log( "instance list in state: ", that.state.instanceList); that.updateCurrentInstance(0); that.generateMenuItems();});
+      }
+    });
+
+    http.open('POST', url, true);
+    http.send(data);
+
+  }
 
 
    popUpStateChange(open){
@@ -370,8 +482,49 @@ export default class LabelInstance extends Component {
 
     render() {
 
-    return( 
+    return(
           <div className="instanceOuterContainer">
+
+
+            <div style={{height:50}}>
+          </div> 
+
+          <div className="topBarOuterContainer">
+                <div className="TitleLine">
+                    <div className="topBarTitle">
+                        <Box>
+                            <Heading level='2' size='medium'>{this.state.title}</Heading>
+                        </Box>
+                    </div>
+                </div>
+                <div className="NavigationLine">
+                    <div className="userID">
+                        <Box>
+                            <Text>User ID: {this.state.userName}</Text>
+                        </Box>
+                    </div>
+                    <div className="timeUsage">
+                        <Box>
+                            <Text>Time: </Text>
+                            <Clock type="digital" time="PT0H0M0S" run="forward" />
+                        </Box>
+                    </div>
+                    <div className="instanceID">
+                        <Box>
+                            <Text>Instance ID: {this.state.instanceID}</Text>
+                        </Box>
+                    </div>
+                    <div className="instanceList">
+                        <Box>
+                            <SelectG
+                                placeholder={this.state.menuText}
+                                options={this.state.menuItems}
+                                onChange={this.onInstanceMenuSelected}
+                            />
+                        </Box>
+                    </div>
+                </div>
+          </div>
             <div className="instanceContainer">
                 <div className="categoryColumn">
                     <div className="pleasureText">
@@ -387,37 +540,37 @@ export default class LabelInstance extends Component {
 
                 <div className="imageColumn">
                     <div className="pleasureImages">
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p1} /></Box><div className="radioButtonOfImage"><RadioButton name="1" checked={this.state.selectedPleasure == '1'} onChange={this.onPleasureSelected}/></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="2" checked={this.state.selectedPleasure == '2'} onChange={this.onPleasureSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={this.state.selectedPleasure == '3'} onChange={this.onPleasureSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="4" checked={this.state.selectedPleasure == '4'} onChange={this.onPleasureSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={this.state.selectedPleasure == '5'} onChange={this.onPleasureSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="6" checked={this.state.selectedPleasure == '6'} onChange={this.onPleasureSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p4} /></Box><div className="radioButtonOfImage"><RadioButton name="7" checked={this.state.selectedPleasure == '7'} onChange={this.onPleasureSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="8" checked={this.state.selectedPleasure == '8'} onChange={this.onPleasureSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p5} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={this.state.selectedPleasure == '9'} onChange={this.onPleasureSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p1} /></Box><div className="radioButtonOfImage"><RadioButton name="1" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueP) == '1'} onChange={this.onPleasureSelected}/></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="2" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueP) == '2'} onChange={this.onPleasureSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueP) == '3'} onChange={this.onPleasureSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="4" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueP) == '4'} onChange={this.onPleasureSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueP) == '5'} onChange={this.onPleasureSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="6" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueP) == '6'} onChange={this.onPleasureSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p4} /></Box><div className="radioButtonOfImage"><RadioButton name="7" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueP) == '7'} onChange={this.onPleasureSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="8" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueP) == '8'} onChange={this.onPleasureSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p5} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueP) == '9'} onChange={this.onPleasureSelected} /></div></div>
                     </div>
                     <div className="arousalImages">
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a1} /></Box><div className="radioButtonOfImage"><RadioButton name="1" checked={this.state.selectedArousal == '1'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="2" checked={this.state.selectedArousal == '2'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={this.state.selectedArousal == '3'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="4" checked={this.state.selectedArousal == '4'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={this.state.selectedArousal == '5'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="6" checked={this.state.selectedArousal == '6'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='90%' height='auto'><Image fit="contain" src={a4} /></Box><div className="radioButtonOfImage"><RadioButton name="7" checked={this.state.selectedArousal == '7'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="8" checked={this.state.selectedArousal == '8'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='100%' height='auto'><Image fit="contain" src={a5} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={this.state.selectedArousal == '9'} onChange={this.onArousalSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a1} /></Box><div className="radioButtonOfImage"><RadioButton name="1" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueA) == '1'} onChange={this.onArousalSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="2" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueA) == '2'} onChange={this.onArousalSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueA) == '3'} onChange={this.onArousalSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="4" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueA) == '4'} onChange={this.onArousalSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueA) == '5'} onChange={this.onArousalSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="6" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueA) == '6'} onChange={this.onArousalSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='90%' height='auto'><Image fit="contain" src={a4} /></Box><div className="radioButtonOfImage"><RadioButton name="7" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueA) == '7'} onChange={this.onArousalSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="8" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueA) == '8'} onChange={this.onArousalSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='100%' height='auto'><Image fit="contain" src={a5} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueA) == '9'} onChange={this.onArousalSelected} /></div></div>
                     </div>
                     <div className="dominanceImages">
-                        <div className="labelingBoxWithImage"><Box height='60px' width='50%' height='auto'><Image fit="contain" src={d1} /></Box><div className="radioButtonOfImage"><RadioButton  name="1" checked={this.state.selectedDominance == '1'} onChange={this.onDominanceSelected}/></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="2" checked={this.state.selectedDominance == '2'} onChange={this.onDominanceSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='60%' height='auto'><Image fit="contain" src={d2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={this.state.selectedDominance == '3'} onChange={this.onDominanceSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="4" checked={this.state.selectedDominance == '4'} onChange={this.onDominanceSelected} /></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='70%' height='auto'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={this.state.selectedDominance == '5'} onChange={this.onDominanceSelected}/></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="6" checked={this.state.selectedDominance == '6'} onChange={this.onDominanceSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton  name="7" checked={this.state.selectedDominance == '7'} onChange={this.onDominanceSelected}/></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="8" checked={this.state.selectedDominance == '8'} onChange={this.onDominanceSelected}/></div></div>
-                         <div className="labelingBoxWithImage"><Box height='60px' width='100%'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={this.state.selectedDominance == '9'} onChange={this.onDominanceSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='50%' height='auto'><Image fit="contain" src={d1} /></Box><div className="radioButtonOfImage"><RadioButton  name="1" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueD) == '1'} onChange={this.onDominanceSelected}/></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="2" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueD) == '2'} onChange={this.onDominanceSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='60%' height='auto'><Image fit="contain" src={d2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueD) == '3'} onChange={this.onDominanceSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="4" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueD) == '4'} onChange={this.onDominanceSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='70%' height='auto'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueD) == '5'} onChange={this.onDominanceSelected}/></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="6" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueD) == '6'} onChange={this.onDominanceSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton  name="7" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueD) == '7'} onChange={this.onDominanceSelected}/></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="8" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueD) == '8'} onChange={this.onDominanceSelected}/></div></div>
+                         <div className="labelingBoxWithImage"><Box height='60px' width='100%'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={String(this.state.instanceList[this.state.currentInstanceIndex].defaultValueD) == '9'} onChange={this.onDominanceSelected}/></div></div>
                     </div>
                 </div>
 
@@ -425,7 +578,7 @@ export default class LabelInstance extends Component {
                     <div className="instance">
                         <Text>Utterance: </Text>
                         <ReactAudioPlayer
-                            src={u1}
+                            src={this.state.instanceFilePath}
                             controls
                         />
                     </div>
@@ -438,7 +591,7 @@ export default class LabelInstance extends Component {
                     <div className="synthesizedInstance">
                         <Text>Synthesized Utterance: </Text>
                         <ReactAudioPlayer
-                            src={u3}
+                            src={this.state.instanceSynthesisPath}
                             controls
                         />
                     </div>
@@ -448,7 +601,24 @@ export default class LabelInstance extends Component {
                     label="Is there any inconsistance between your selection and your perception?"
                     onChange={this.onInconsistanceChecked}
           />
+
+
+          <div className="navigationContainer">
+            <div className="previousBox">
+                <Box align="center" pad="medium">
+                    <Button label="Previous" onClick={() => {this.gotoPrevious()}} />
+                </Box>
+            </div>
+
+            <div className="nextBox"> 
+                <Box align="center" pad="medium">
+                    <Button label="Next" onClick={() => {this.gotoNext()}} />
+                </Box>
+            </div>
         </div>
+
+        </div>
+
     )
     }
 }
