@@ -111,6 +111,6 @@ Go to `http://localhost/phpmyadmin` for checking the mysql.
 
 ### Running
 
-1. Go to the root directory and start the server with `go run example.go`
+1. Go to the `server/` directory and start the server with `go run example.go`
 
 2. If all is working correctly, check the address http://localhost:8080/ which you can open in your  browser and see the application running.
