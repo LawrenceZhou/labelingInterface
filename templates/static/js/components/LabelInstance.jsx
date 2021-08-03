@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import {DropButton, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu} from 'grommet'; 
-import {Select as SelectG, Button as GButton} from 'grommet';
+import {Grommet, DropButton, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Select as SelectG, Button as GButton} from 'grommet'; 
 import ReactAudioPlayer from 'react-audio-player';
 
 import p1 from '../../assets/images/11.png';
@@ -42,6 +41,9 @@ export default class LabelInstance extends Component {
       currentInstanceIndex: 0,
       menuItems:[],
       menuText: "Loading...",
+      checkColorPleasure: "#bcccd1",
+      checkColorArousal: "#bcccd1",
+      checkColorDominance: "#bcccd1",
     };
 
    
@@ -110,7 +112,7 @@ export default class LabelInstance extends Component {
     that.setState({instanceList: newInstanceList}) //set the new state
 
     that.setState({selectedPleasure: parseInt(e.target.attributes['name'].nodeValue), 
-      clickCountPleasure: that.state.clickCountPleasure + 1},function(){ console.log("state pleasure: ", that.state.selectedPleasure, ", click count: ", that.state.clickCountPleasure) });
+      clickCountPleasure: that.state.clickCountPleasure + 1, checkColorPleasure: "brand"},function(){ console.log("state pleasure: ", that.state.selectedPleasure, ", click count: ", that.state.clickCountPleasure) });
   }
 
   onArousalSelected(e) {
@@ -122,7 +124,7 @@ export default class LabelInstance extends Component {
     that.setState({instanceList: newInstanceList}) //set the new state
 
     that.setState({selectedArousal: parseInt(e.target.attributes['name'].nodeValue),
-      clickCountArousal: that.state.clickCountArousal + 1},function(){ console.log("state arousal: ", that.state.selectedArousal, ", click count: ", that.state.clickCountArousal) });
+      clickCountArousal: that.state.clickCountArousal + 1, checkColorArousal: "brand"},function(){ console.log("state arousal: ", that.state.selectedArousal, ", click count: ", that.state.clickCountArousal) });
 
   }
 
@@ -135,7 +137,7 @@ export default class LabelInstance extends Component {
     that.setState({instanceList: newInstanceList}) //set the new state
 
     that.setState({selectedDominance: parseInt(e.target.attributes['name'].nodeValue),
-      clickCountDominance: that.state.clickCountDominance + 1},function(){ console.log("state dominance: ", that.state.selectedDominance, ", click count: ", that.state.clickCountDominance) });
+      clickCountDominance: that.state.clickCountDominance + 1, checkColorDominance: "brand"},function(){ console.log("state dominance: ", that.state.selectedDominance, ", click count: ", that.state.clickCountDominance) });
 
   }
 
@@ -257,39 +259,74 @@ export default class LabelInstance extends Component {
                 </div>
 
                 <div className="imageColumn">
+                
+                    <Grommet
+                    theme={{
+                        radioButton: {
+                            check: {
+                                color: this.state.checkColorPleasure
+
+                            }
+                        }
+                    }}
+                    >
                     <div className="pleasureImages">
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p1} /></Box><div className="radioButtonOfImage"><RadioButton name="1" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == 1} onChange={this.onPleasureSelected}/></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="2" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == '2'} onChange={this.onPleasureSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == 3} onChange={this.onPleasureSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="4" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == '4'} onChange={this.onPleasureSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == 5} onChange={this.onPleasureSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="6" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == '6'} onChange={this.onPleasureSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p4} /></Box><div className="radioButtonOfImage"><RadioButton name="7" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == 7} onChange={this.onPleasureSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="8" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == '8'} onChange={this.onPleasureSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p5} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == 9} onChange={this.onPleasureSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p1} /></Box><div className="radioButtonOfImage"><RadioButton name="1" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == 1} onClick={this.onPleasureSelected}/></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="2" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == '2'} onClick={this.onPleasureSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == 3} onClick={this.onPleasureSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="4" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == '4'} onClick={this.onPleasureSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == 5} onClick={this.onPleasureSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="6" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == '6'} onClick={this.onPleasureSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p4} /></Box><div className="radioButtonOfImage"><RadioButton name="7" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == 7} onClick={this.onPleasureSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="8" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == '8'} onClick={this.onPleasureSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={p5} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueP) == 9} onClick={this.onPleasureSelected} /></div></div>
                     </div>
+                    </Grommet>
+
+                    <Grommet
+                    theme={{
+                        radioButton: {
+                            check: {
+                                color: this.state.checkColorArousal
+                            }
+                        }
+                    }}
+                    >
                     <div className="arousalImages">
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a1} /></Box><div className="radioButtonOfImage"><RadioButton name="1" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '1'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="2" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '2'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '3'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="4" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '4'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '5'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="6" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '6'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='90%' height='auto'><Image fit="contain" src={a4} /></Box><div className="radioButtonOfImage"><RadioButton name="7" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '7'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="8" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '8'} onChange={this.onArousalSelected} /></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='100%' height='auto'><Image fit="contain" src={a5} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '9'} onChange={this.onArousalSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a1} /></Box><div className="radioButtonOfImage"><RadioButton name="1" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '1'} onClick={this.onArousalSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="2" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '2'} onClick={this.onArousalSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '3'} onClick={this.onArousalSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="4" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '4'} onClick={this.onArousalSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%' height='auto'><Image fit="contain" src={a3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '5'} onClick={this.onArousalSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="6" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '6'} onClick={this.onArousalSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='90%' height='auto'><Image fit="contain" src={a4} /></Box><div className="radioButtonOfImage"><RadioButton name="7" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '7'} onClick={this.onArousalSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="8" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '8'} onClick={this.onArousalSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='100%' height='auto'><Image fit="contain" src={a5} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueA) == '9'} onClick={this.onArousalSelected} /></div></div>                   
                     </div>
+                    </Grommet>
+                    
+                    <Grommet
+                    theme={{
+                        radioButton: {
+                            check: {
+                                color: this.state.checkColorDominance
+                            }
+                        }
+                    }}
+                    >
                     <div className="dominanceImages">
-                        <div className="labelingBoxWithImage"><Box height='60px' width='50%' height='auto'><Image fit="contain" src={d1} /></Box><div className="radioButtonOfImage"><RadioButton  name="1" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '1'} onChange={this.onDominanceSelected}/></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="2" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '2'} onChange={this.onDominanceSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='60%' height='auto'><Image fit="contain" src={d2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '3'} onChange={this.onDominanceSelected} /></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="4" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '4'} onChange={this.onDominanceSelected} /></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='70%' height='auto'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '5'} onChange={this.onDominanceSelected}/></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="6" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '6'} onChange={this.onDominanceSelected}/></div></div>
-                        <div className="labelingBoxWithImage"><Box height='60px' width='80%'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton  name="7" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '7'} onChange={this.onDominanceSelected}/></div></div>
-                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="8" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '8'} onChange={this.onDominanceSelected}/></div></div>
-                         <div className="labelingBoxWithImage"><Box height='60px' width='100%'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '9'} onChange={this.onDominanceSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='50%' height='auto'><Image fit="contain" src={d1} /></Box><div className="radioButtonOfImage"><RadioButton  name="1" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '1'} onClick={this.onDominanceSelected}/></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="2" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '2'} onClick={this.onDominanceSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='60%' height='auto'><Image fit="contain" src={d2} /></Box><div className="radioButtonOfImage"><RadioButton name="3" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '3'} onClick={this.onDominanceSelected} /></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="4" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '4'} onClick={this.onDominanceSelected} /></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='70%' height='auto'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton name="5" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '5'} onClick={this.onDominanceSelected}/></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton  name="6" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '6'} onClick={this.onDominanceSelected}/></div></div>
+                        <div className="labelingBoxWithImage"><Box height='60px' width='80%'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton  name="7" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '7'} onClick={this.onDominanceSelected}/></div></div>
+                        <div className="radioButtonBoxNoImage"><div className="radioButtonNoImage"><RadioButton name="8" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '8'} onClick={this.onDominanceSelected}/></div></div>
+                         <div className="labelingBoxWithImage"><Box height='60px' width='100%'><Image fit="contain" src={d3} /></Box><div className="radioButtonOfImage"><RadioButton name="9" checked={String(this.state.instanceList[this.state.currentInstanceIndex].DefaultValueD) == '9'} onClick={this.onDominanceSelected}/></div></div>
                     </div>
+                    </Grommet>
+                  
                 </div>
 
                 <div className="instanceColumn">
