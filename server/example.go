@@ -31,7 +31,7 @@ func init() {
 func main() {
   r := gin.Default()
 
-  r.Use(static.Serve("/",static.LocalFile("./templates", true)))
+  r.Use(static.Serve("/",static.LocalFile("../templates", true)))
 
 
   api := r.Group("/api")
