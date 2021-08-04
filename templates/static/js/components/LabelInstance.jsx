@@ -83,6 +83,10 @@ export default class LabelInstance extends Component {
       newInstanceList[that.state.currentInstanceIndex].isLabeled = true;
       checked = true;
       that.setState({instanceList: newInstanceList});
+      var mI = that.state.menuItems;
+      mI[that.state.currentInstanceIndex] = <div className="optionContainer"><Text>No.{that.state.instanceList[that.state.currentInstanceIndex].ID}</Text> <Text size="xsmall" color="brand" >Finished</Text></div>;
+      that.setState({menuItems: mI});
+
     }
     
     return checked;
@@ -111,7 +115,8 @@ export default class LabelInstance extends Component {
     var that = this;
     var mI=[];
     for(var i = 0; i< that.state.instanceList.length; i++){
-      mI.push("Utterance " + String(that.state.instanceList[i].ID));
+      //mI.push("Utterance " + String(that.state.instanceList[i].ID));
+      mI.push(<div className="optionContainer"><Text>No.{that.state.instanceList[i].ID}</Text> <Text size="xsmall" color={defaultBackgroundColor} >Unfinished</Text></div>);
     }
     that.setState({menuText: "All Utterances", menuItems: mI});
   }
