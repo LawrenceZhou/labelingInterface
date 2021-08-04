@@ -25,6 +25,7 @@ export default class LabelInstance extends Component {
     super();
     this.state = {
       timeStamp: "",
+      timeUsage: 0,
       title: "Emotional Japanese Speech Annotation",
       userName: "admin",
       instanceID: "loading...",
@@ -57,7 +58,8 @@ export default class LabelInstance extends Component {
     componentDidMount(){
       var d = new Date();
       var timeStamp = d.toString();
-      this.setState({timeStamp: timeStamp },function(){ console.log("timestamp: ", this.state.timeStamp)});
+      var timeUsage = Date.now();
+      this.setState({timeStamp: timeStamp, timeUsage: timeUsage },function(){ console.log("timestamp: ", this.state.timeStamp, "time usage: ", this.state.timeUsage)});
       this.getInstanceList();
   }
 
@@ -72,10 +74,15 @@ export default class LabelInstance extends Component {
         newInstanceList[that.state.currentInstanceIndex].isLabeled = false;
     }
     else{
+      var timeUsage = Date.now();
+      newInstanceList[that.state.currentInstanceIndex].timeStamp = that.state.timeStamp;
+      newInstanceList[that.state.currentInstanceIndex].timeUsage = timeUsage - that.state.timeUsage;
+      that.sendResult(newInstanceList[that.state.currentInstanceIndex]);
+
       newInstanceList[that.state.currentInstanceIndex].islabeled = true;
       checked = true;
+      that.setState({instanceList: newInstanceList});
     }
-    that.setState({instanceList: newInstanceList});
     
     return checked;
   }
@@ -83,6 +90,13 @@ export default class LabelInstance extends Component {
   updateCurrentInstance(nextIndex) {
     var that= this;
     that.isLabeledCheck();
+
+    var d = new Date();
+    var timeStamp = d.toString();
+    var timeUsage = Date.now();
+    this.setState({timeStamp: timeStamp, timeUsage: timeUsage },function(){ console.log("timestamp: ", this.state.timeStamp, "time usage: ", this.state.timeUsage)});
+
+
     that.setState({currentInstanceIndex: nextIndex, instanceID: that.state.instanceList[nextIndex].ID, instanceFilePath: that.state.instanceList[nextIndex].FilePath, instanceSynthesisPath: that.state.instanceList[nextIndex].SynthesisPath, });
 
   }
@@ -169,26 +183,28 @@ export default class LabelInstance extends Component {
    onInconsistanceChecked(e) {
     var that = this;
     console.log("the check val", e.target.checked);
-    that.setState({isInconsistent: e.target.checked},function(){ console.log("state inconsist: ", that.state.isInconsistent) });
+
+    const newInstanceList = that.state.instanceList.slice() //copy the array
+        newInstanceList[that.state.currentInstanceIndex].isInconsistent = e.target.checked; //execute the manipulations
+
+    that.setState({instanceList: newInstanceList},function(){ console.log("state inconsist: ", that.state.instanceList[that.state.currentInstanceIndex].isInconsistent) });
   }  
 
 
 
-   sendResult(){
+   sendResult(instance){
     var that = this;
 
     var http = new XMLHttpRequest();
     var url = 'http://localhost:8080/api/save';
     var data = new FormData();
 
-    //need to update
-    /*
-    data.append('selectedPleasure', String(that.state.selectedPleasure));
-    data.append('selectedArousal', String(that.state.selectedArousal));
-    data.append('selectedDominance', String(that.state.selectedDominance));
-    data.append('userName', String(that.state.userName));
-    console.log(data);
-    */
+    Object.keys(instance).forEach(key => data.append(key, instance[key]));
+    data.append("userName", that.state.userName);
+    for (var pair of data.entries()) {
+    console.log(pair[0]+ ', ' + pair[1]); 
+    }
+    
     http.addEventListener("readystatechange", function() {
       if(this.readyState === 4) {
         console.log("Result saved!", this.responseText);
@@ -209,7 +225,7 @@ export default class LabelInstance extends Component {
     var data = new FormData();
 
 
-    data.append("userName", "admin");
+    data.append("userName", that.state.userName);
     console.log(data.get("userName"));
 
     http.addEventListener("readystatechange", function() {
@@ -217,7 +233,7 @@ export default class LabelInstance extends Component {
         console.log("Instance list received!", this.responseText);
         var obj = JSON.parse(http.responseText);
         console.log(obj);
-        //add front-end key-value: selectedP, selectedA, selectedD, clickCountP, clickCountA, clickCountD, timeUsage, isLabeled, isInconsistent
+        //add front-end key-value: selectedP, selectedA, selectedD, clickCountP, clickCountA, clickCountD, timeUsage, timeStamp, isLabeled, isInconsistent
         var instance_list_ = obj.instance_list;
         if (obj.instance_list != null){
           for(var i = 0; i < instance_list_.length; i++){
@@ -227,7 +243,8 @@ export default class LabelInstance extends Component {
             instance_list_[i].clickCountPleasure = 0;
             instance_list_[i].clickCountArousal = 0;
             instance_list_[i].clickCountDominance = 0;
-            instance_list_[i].timeUsage = 0.0;
+            instance_list_[i].timeUsage = 0;
+            instance_list_[i].timeStamp = "";
             instance_list_[i].isLabeled = false;
             instance_list_[i].isInconsistent = false;
           }
@@ -397,6 +414,7 @@ export default class LabelInstance extends Component {
           </div>
           <CheckBox
                     label="Is there any inconsistance between your selection and your perception?"
+                    checked={this.state.instanceList[this.state.currentInstanceIndex].isInconsistent}
                     onChange={this.onInconsistanceChecked}
           />
 

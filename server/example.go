@@ -95,8 +95,29 @@ type (
 
 
 func saveHandler(c *gin.Context) {
-    message := c.PostForm("selectedPleasure")
-    fmt.Printf("result: %s", message)
+    userName := c.PostForm("userName")
+    fmt.Printf("userName: %s \n", userName)
+    instanceID := c.PostForm("ID")
+    fmt.Printf("instanceID: %s \n", instanceID)
+    selectedPleasure := c.PostForm("selectedPleasure")
+    fmt.Printf("selectedPleasure: %s \n", selectedPleasure)
+    selectedArousal := c.PostForm("selectedArousal")
+    fmt.Printf("selectedArousal: %s \n", selectedArousal)
+    selectedDominance := c.PostForm("selectedDominance")
+    fmt.Printf("selectedDominance: %s \n", selectedDominance)
+    clickCountPleasure := c.PostForm("clickCountPleasure")
+    fmt.Printf("clickCountPleasure: %s \n", clickCountPleasure)
+    clickCountArousal := c.PostForm("clickCountArousal")
+    fmt.Printf("clickCountArousal: %s \n", clickCountArousal)
+    clickCountDominance := c.PostForm("clickCountDominance")
+    fmt.Printf("clickCountDominance: %s \n", clickCountDominance)
+    timeUsage := c.PostForm("timeUsage")
+    fmt.Printf("timeUsage: %s \n", timeUsage)
+    timeStamp := c.PostForm("timeStamp")
+    fmt.Printf("timeStamp: %s \n", timeStamp)
+    isInconsistent := c.PostForm("isInconsistent")
+    fmt.Printf("isInconsistent: %s \n", isInconsistent)
+
       c.JSON(http.StatusOK, gin.H {
         "message": "pong",
       })
