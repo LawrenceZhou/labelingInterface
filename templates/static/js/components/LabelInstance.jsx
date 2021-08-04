@@ -124,7 +124,7 @@ export default class LabelInstance extends Component {
     const newInstanceList = that.state.instanceList.slice() //copy the array
     var selectValueP = parseInt(e.target.attributes['name'].nodeValue);
     
-    if (newInstanceList[that.state.currentInstanceIndex].selectedPleasure != selectValueP) {
+    if (newInstanceList[that.state.currentInstanceIndex].selectedPleasure != selectValueP || newInstanceList[that.state.currentInstanceIndex].clickCountPleasure == 0) {
         newInstanceList[that.state.currentInstanceIndex].clickCountPleasure = newInstanceList[that.state.currentInstanceIndex].clickCountPleasure + 1; //execute the manipulations
     }
     
@@ -140,7 +140,7 @@ export default class LabelInstance extends Component {
     const newInstanceList = that.state.instanceList.slice() //copy the array
     var selectValueA = parseInt(e.target.attributes['name'].nodeValue);
 
-    if (newInstanceList[that.state.currentInstanceIndex].selectedArousal != selectValueA) {
+    if (newInstanceList[that.state.currentInstanceIndex].selectedArousal != selectValueA || newInstanceList[that.state.currentInstanceIndex].clickCountArousal == 0) {
         newInstanceList[that.state.currentInstanceIndex].clickCountArousal = newInstanceList[that.state.currentInstanceIndex].clickCountArousal + 1; //execute the manipulations
     }
 
@@ -157,7 +157,7 @@ export default class LabelInstance extends Component {
     const newInstanceList = that.state.instanceList.slice() //copy the array
     var selectValueD = parseInt(e.target.attributes['name'].nodeValue);
 
-    if (newInstanceList[that.state.currentInstanceIndex].selectedDominance != selectValueD) {
+    if (newInstanceList[that.state.currentInstanceIndex].selectedDominance != selectValueD || newInstanceList[that.state.currentInstanceIndex].clickCountDominance == 0) {
         newInstanceList[that.state.currentInstanceIndex].clickCountDominance = newInstanceList[that.state.currentInstanceIndex].clickCountDominance + 1; //execute the manipulations
     }
 
