@@ -2,7 +2,7 @@ package main
 
 import (
   "fmt"
-  //"strconv"
+  "strconv"
   "net/http"
   //"encoding/json"
   "github.com/gin-gonic/gin"
@@ -89,6 +89,21 @@ type (
         UserID int    //`json:"user_id"`
         InstanceID int    //`json:"instance_id"`
     }
+
+    Labels struct {
+        ID     int `gorm:"AUTO_INCREMENT"`//`json:"id"`
+        InstanceID int    //`json:"user_name"`
+        UserID int    //`json:"password"`
+        IsConflicted int
+        Timestamp string    //`json:"last_login_timestamp"`
+        TimeUsage int    //`json:"last_login_timestamp"`
+        ChangeTimesP int    //`json:"is_finished"`
+        ChangeTimesA int    //`json:"is_finished"`
+        ChangeTimesD int    //`json:"is_finished"`
+        ValueP int    //`json:"is_finished"`
+        ValueA int    //`json:"is_finished"`
+        ValueD int    //`json:"is_finished"`
+    }
 )
 
 
@@ -97,26 +112,61 @@ type (
 func saveHandler(c *gin.Context) {
     userName := c.PostForm("userName")
     fmt.Printf("userName: %s \n", userName)
-    instanceID := c.PostForm("ID")
-    fmt.Printf("instanceID: %s \n", instanceID)
-    selectedPleasure := c.PostForm("selectedPleasure")
-    fmt.Printf("selectedPleasure: %s \n", selectedPleasure)
-    selectedArousal := c.PostForm("selectedArousal")
-    fmt.Printf("selectedArousal: %s \n", selectedArousal)
-    selectedDominance := c.PostForm("selectedDominance")
-    fmt.Printf("selectedDominance: %s \n", selectedDominance)
-    clickCountPleasure := c.PostForm("clickCountPleasure")
-    fmt.Printf("clickCountPleasure: %s \n", clickCountPleasure)
-    clickCountArousal := c.PostForm("clickCountArousal")
-    fmt.Printf("clickCountArousal: %s \n", clickCountArousal)
-    clickCountDominance := c.PostForm("clickCountDominance")
-    fmt.Printf("clickCountDominance: %s \n", clickCountDominance)
-    timeUsage := c.PostForm("timeUsage")
-    fmt.Printf("timeUsage: %s \n", timeUsage)
+    instanceID, _ := strconv.Atoi(c.PostForm("ID"))
+    fmt.Printf("instanceID: %d \n", instanceID)
+    selectedPleasure, _ := strconv.Atoi(c.PostForm("selectedPleasure"))
+    fmt.Printf("selectedPleasure: %d \n", selectedPleasure)
+    selectedArousal, _ := strconv.Atoi(c.PostForm("selectedArousal"))
+    fmt.Printf("selectedArousal: %d \n", selectedArousal)
+    selectedDominance, _ := strconv.Atoi(c.PostForm("selectedDominance"))
+    fmt.Printf("selectedDominance: %d \n", selectedDominance)
+    clickCountPleasure, _ := strconv.Atoi(c.PostForm("clickCountPleasure"))
+    fmt.Printf("clickCountPleasure: %d \n", clickCountPleasure)
+    clickCountArousal, _ := strconv.Atoi(c.PostForm("clickCountArousal"))
+    fmt.Printf("clickCountArousal: %d \n", clickCountArousal)
+    clickCountDominance, _ := strconv.Atoi(c.PostForm("clickCountDominance"))
+    fmt.Printf("clickCountDominance: %d \n", clickCountDominance)
+    timeUsage, _ := strconv.Atoi(c.PostForm("timeUsage"))
+    fmt.Printf("timeUsage: %d \n", timeUsage)
     timeStamp := c.PostForm("timeStamp")
     fmt.Printf("timeStamp: %s \n", timeStamp)
-    isInconsistent := c.PostForm("isInconsistent")
-    fmt.Printf("isInconsistent: %s \n", isInconsistent)
+    var isInconsistent int
+    if c.PostForm("isInconsistent") == "true" {
+      isInconsistent = 1
+    }else {
+      isInconsistent = 0
+    }
+    fmt.Printf("isInconsistent: %d \n", isInconsistent)
+
+    var user Users
+    
+    db.AutoMigrate(&Users{})
+    err := db.Where("user_name = ?", userName).First(&user).Error
+
+    if err != nil {
+      //username not found
+      fmt.Println("error：", err)
+      c.JSON(http.StatusNotFound, gin.H {
+            "message": "User Unauthorized!",
+        })
+    }
+    
+    fmt.Printf("user: %#v\n", user)
+    fmt.Printf("userID: %d\n", user.ID)
+    
+    db.AutoMigrate(&Labels{})
+
+    label := Labels{UserID: user.ID, InstanceID: instanceID, IsConflicted: int(isInconsistent), Timestamp: timeStamp, TimeUsage: timeUsage, ChangeTimesP: clickCountPleasure, ChangeTimesA: clickCountArousal, ChangeTimesD: clickCountDominance, ValueP: selectedPleasure, ValueA: selectedArousal, ValueD: selectedDominance}
+
+    res := db.Create(&label) // pass pointer of data to Create
+
+    if res.Error != nil {
+      //username not found
+      fmt.Println("error：", res.Error)
+      c.JSON(http.StatusNotFound, gin.H {
+            "message": "Insertion Failed!",
+        })
+    }
 
       c.JSON(http.StatusOK, gin.H {
         "message": "pong",

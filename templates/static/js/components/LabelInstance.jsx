@@ -77,9 +77,12 @@ export default class LabelInstance extends Component {
       var timeUsage = Date.now();
       newInstanceList[that.state.currentInstanceIndex].timeStamp = that.state.timeStamp;
       newInstanceList[that.state.currentInstanceIndex].timeUsage = timeUsage - that.state.timeUsage;
-      that.sendResult(newInstanceList[that.state.currentInstanceIndex]);
+      
+      if(!newInstanceList[that.state.currentInstanceIndex].isLabeled){
+        that.sendResult(newInstanceList[that.state.currentInstanceIndex]);
+      }
 
-      newInstanceList[that.state.currentInstanceIndex].islabeled = true;
+      newInstanceList[that.state.currentInstanceIndex].isLabeled = true;
       checked = true;
       that.setState({instanceList: newInstanceList});
     }
