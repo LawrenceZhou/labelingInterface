@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Grommet, DropButton, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Select as SelectG, Button as GButton} from 'grommet'; 
+import {Grommet, DropButton, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Select as SelectG, Button as GButton} from 'grommet'; 
 import ReactAudioPlayer from 'react-audio-player';
 
 import p1 from '../../assets/images/11.png';
@@ -18,7 +18,7 @@ import d3 from '../../assets/images/33.png';
 
 import '../../css/LabelInstance.css';
 
-const defaultCheckColor = "#bcccd1";
+const defaultBackgroundColor = "#bcccd1";
 
 export default class LabelInstance extends Component {
   constructor() {
@@ -35,9 +35,7 @@ export default class LabelInstance extends Component {
       currentInstanceIndex: 0,
       menuItems:[],
       menuText: "Loading...",
-      checkColorPleasure: "#bcccd1",
-      checkColorArousal: "#bcccd1",
-      checkColorDominance: "#bcccd1",
+      instanceNumber: 0,
     };
 
    
@@ -239,6 +237,7 @@ export default class LabelInstance extends Component {
         //add front-end key-value: selectedP, selectedA, selectedD, clickCountP, clickCountA, clickCountD, timeUsage, timeStamp, isLabeled, isInconsistent
         var instance_list_ = obj.instance_list;
         if (obj.instance_list != null){
+            that.setState({instanceNumber: instance_list_.length});
           for(var i = 0; i < instance_list_.length; i++){
             instance_list_[i].selectedPleasure = instance_list_[i].DefaultValueP;
             instance_list_[i].selectedArousal = instance_list_[i].DefaultValueA;
@@ -327,7 +326,7 @@ export default class LabelInstance extends Component {
                     theme={{
                         radioButton: {
                             check: {
-                                color: this.state.instanceList[this.state.currentInstanceIndex].clickCountPleasure == 0? defaultCheckColor : "brand"
+                                color: this.state.instanceList[this.state.currentInstanceIndex].clickCountPleasure == 0? defaultBackgroundColor : "brand"
 
                             }
                         }
@@ -350,7 +349,7 @@ export default class LabelInstance extends Component {
                     theme={{
                         radioButton: {
                             check: {
-                                color: this.state.instanceList[this.state.currentInstanceIndex].clickCountArousal == 0? defaultCheckColor : "brand"
+                                color: this.state.instanceList[this.state.currentInstanceIndex].clickCountArousal == 0? defaultBackgroundColor : "brand"
                             }
                         }
                     }}
@@ -372,7 +371,7 @@ export default class LabelInstance extends Component {
                     theme={{
                         radioButton: {
                             check: {
-                                color: this.state.instanceList[this.state.currentInstanceIndex].clickCountDominance == 0? defaultCheckColor : "brand"
+                                color: this.state.instanceList[this.state.currentInstanceIndex].clickCountDominance == 0? defaultBackgroundColor : "brand"
                             }
                         }
                     }}
@@ -421,6 +420,10 @@ export default class LabelInstance extends Component {
                     onChange={this.onInconsistanceChecked}
           />
 
+          <div className="progressBarContainer">
+              <div className="progressBar"><Meter type="bar" color="brand" background={defaultBackgroundColor} value={(this.state.currentInstanceIndex + 1) / this.state.instanceNumber * 100} /></div>
+              <div className="progressLabel"><Text>{this.state.currentInstanceIndex + 1} / {this.state.instanceNumber}</Text></div>
+          </div>
 
           <div className="navigationContainer">
             <div className="previousBox">
