@@ -15,13 +15,13 @@
 
 .categoryColumn {
 	width: 100px;
-	height: 310px;
+	height: 370px;
 	display: flex;
 	flex-direction: column;
 }
 
 .pleasureText {
-	padding: 10px;
+	padding-top: 30px;
 	justify-content: center; 
 	display: flex;
 	flex-grow: 2;
@@ -30,7 +30,7 @@
 }
 
 .arousalText {
-	padding: 10px;
+	padding-bottom: 20px;
 	justify-content: center; 
 	display: flex;
 	flex-grow: 2;
@@ -39,7 +39,6 @@
 }
 
 .dominanceText {
-	padding: 10px;
 	justify-content: center; 
 	display: flex;
 	flex-grow: 2;
@@ -49,7 +48,7 @@
 
 .imageColumn {
 	width: 500px;
-	height: 310px;
+	height: 360px;
 	display: flex;
 	flex-direction: column;
 }
@@ -80,7 +79,7 @@
 .dominanceImages {
 	padding: 10px;
 	width: 480px;
-	height: 100px;
+	height: 150px;
 	display: flex;
 	flex-direction: row;
 }
