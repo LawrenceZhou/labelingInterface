@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Grommet, DropButton, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Stack, Select as SelectG, Button as GButton} from 'grommet'; 
+import {Grommet, DropButton, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Select as SelectG, Button as GButton} from 'grommet'; 
 import ReactAudioPlayer from 'react-audio-player';
 
 import p1 from '../../assets/images/11.png';
@@ -20,9 +20,10 @@ import '../../css/LabelInstance.css';
 
 const defaultBackgroundColor = "#bcccd1";
 
+
 export default class LabelInstance extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       timeStamp: "",
       timeUsage: 0,
@@ -36,6 +37,7 @@ export default class LabelInstance extends Component {
       menuItems:[],
       menuText: "Loading...",
       instanceNumber: 0,
+      open: false,
     };
 
    
@@ -51,6 +53,9 @@ export default class LabelInstance extends Component {
     this.generateMenuItems=this.generateMenuItems.bind(this);
     this.onInstanceMenuSelected=this.onInstanceMenuSelected.bind(this);
     this.isLabeledCheck=this.isLabeledCheck.bind(this);
+    this.onClose=this.onClose.bind(this);
+    this.onOpen=this.onOpen.bind(this);
+    this.onSubmit=this.onSubmit.bind(this);
   }
 
     componentDidMount(){
@@ -61,6 +66,21 @@ export default class LabelInstance extends Component {
       this.getInstanceList();
   }
 
+  onClose() {
+    var that = this;
+    that.setState({open: false});
+  }
+
+  onOpen() {
+    var that = this;
+    that.setState({open: true});
+  }
+
+  onSubmit() {
+    var that = this;
+    that.setState({open: false});
+    that.props.finish();
+  }
 
   isLabeledCheck () {
     var that = this;
@@ -270,20 +290,14 @@ export default class LabelInstance extends Component {
     render() {
 
     return(
-          <div className="instanceOuterContainer">
+        <div className="instanceOuterContainer">
 
 
-            <div style={{height:50}}>
+          <div style={{height:50}}>
           </div> 
 
           <div className="topBarOuterContainer">
-                <div className="TitleLine">
-                    <div className="topBarTitle">
-                        <Box>
-                            <Heading level='2' size='medium'>{this.state.title}</Heading>
-                        </Box>
-                    </div>
-                </div>
+                
                 <div className="NavigationLine">
                     <div className="userID">
                         <Box>
@@ -312,7 +326,7 @@ export default class LabelInstance extends Component {
                     </div>
                 </div>
           </div>
-            <div className="instanceContainer">
+          <div className="instanceContainer">
                 <div className="categoryColumn">
                     <div className="pleasureText">
                         <Text>Pleasure</Text>
@@ -442,15 +456,55 @@ export default class LabelInstance extends Component {
                     <Button label="Next" onClick={() => {this.gotoNext()}} />
                 </Box>
             </div>
-        </div>
+          </div>
 
-        <div className="submitContainer" style={{display: this.state.currentInstanceIndex == this.state.instanceList.length - 1 ? 'block' : 'none' }}>
+          <div className="submitContainer" style={{display: this.state.currentInstanceIndex == this.state.instanceList.length - 1 ? 'block' : 'none' }}>
             <div className="submitBox">
                 <Box align="center" pad="medium">
-                    <Button label="Submit" size="large" onClick={() => {this.gotoPrevious()}} />
+                    <Button label="Submit" size="large" onClick={() => {this.onOpen()}} />
                 </Box>
             </div>
-        </div>
+          </div>
+
+        
+        <Grommet >
+         {this.state.open && (
+         <Layer
+          id="hello world"
+          position="center"
+          onClickOutside={() => {this.onClose()}}
+          onEsc={() => {this.onClose()}}
+        >
+          <Box pad="medium" gap="small" width="medium">
+            <Heading level={3} margin="none">
+              Confirm
+            </Heading>
+
+            <Text>Are you sure you want to submit your results?</Text>
+            <Box
+              as="footer"
+              gap="small"
+              direction="row"
+              align="center"
+              justify="end"
+              pad={{ top: 'medium', bottom: 'small' }}
+            >
+              <Button label="Cancel" onClick={() => {this.onClose()}} color="dark-3" />
+              <Button
+                label={
+                  <Text color="white">
+                    <strong>Submit</strong>
+                  </Text>
+                }
+                onClick={() => {this.onSubmit()}}
+                primary
+                color="status-critical"
+              />
+            </Box>
+          </Box>
+        </Layer>
+        )}
+        </Grommet>
 
         </div>
 
