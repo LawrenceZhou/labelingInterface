@@ -444,6 +444,14 @@ export default class LabelInstance extends Component {
             </div>
         </div>
 
+        <div className="submitContainer" style={{display: this.state.currentInstanceIndex == this.state.instanceList.length - 1 ? 'block' : 'none' }}>
+            <div className="submitBox">
+                <Box align="center" pad="medium">
+                    <Button label="Submit" size="large" onClick={() => {this.gotoPrevious()}} />
+                </Box>
+            </div>
+        </div>
+
         </div>
 
     )
