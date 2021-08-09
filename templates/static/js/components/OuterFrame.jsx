@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Box, Heading} from 'grommet'; 
 
 
+import Login from './Login';
 import LabelInstance from './LabelInstance';
 import FinishConfirmation from './FinishConfirmation';
 import '../../css/LabelInstance.css';
@@ -12,11 +13,19 @@ export default class OuterFrame extends Component {
     super();
     this.state = {
       title: "Emotional Japanese Speech Annotation",
-      progress: "label",
+      progress: "login",
+      username: "",
+      password: "",
     };
+    this.loginSuccess = this.loginSuccess.bind(this);
     this.finish = this.finish.bind(this);
   }
   
+  loginSuccess(userName, password) {
+    var that = this;
+    that.setState({progress :"label", userName: userName, password: password});
+  }
+
   finish() {
     var that = this;
     that.setState({progress :"finish"});
@@ -41,7 +50,8 @@ export default class OuterFrame extends Component {
                     </div>
                 </div>
 
-                {this.state.progress == "label" ? <LabelInstance finish = {this.finish} />: null}
+                {this.state.progress == "login" ? <Login loginSuccess = {this.loginSuccess} />: null}
+                {this.state.progress == "label" ? <LabelInstance finish = {this.finish} userName = {this.state.userName} password = {this.state.password} />: null}
                 {this.state.progress == "finish" ? <FinishConfirmation />: null}
 
             </div>

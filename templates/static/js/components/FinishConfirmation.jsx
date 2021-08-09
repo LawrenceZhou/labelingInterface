@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Box, Heading, Text} from 'grommet'; 
+import {Box, Heading, Text } from 'grommet'; 
 
 import '../../css/LabelInstance.css';
 
@@ -10,8 +10,8 @@ export default class FinishConfirmation extends Component {
     this.state = {
       message: "Thank you! Your results have been recorded.",
     };
-
   }
+
 
 
 

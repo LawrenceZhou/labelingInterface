@@ -36,6 +36,7 @@ func main() {
 
   api := r.Group("/api")
   {
+    api.POST("/log_in", loginHandler)
     api.POST("/save", saveHandler)
     api.POST("/get_list", getListHandler)
   }
@@ -107,9 +108,42 @@ type (
 )
 
 
+func loginHandler(c *gin.Context) {
+
+  completed:= false
+  userName := c.PostForm("userName")
+  fmt.Printf("userName: %s \n", userName)
+
+  password := c.PostForm("password")
+  fmt.Printf("password: %s \n", password)
+
+  var user Users
+    
+  db.AutoMigrate(&Users{})
+  err := db.Where("user_name = ? AND password = ?", userName, password).First(&user).Error
+
+  if err != nil {
+    //username not found
+    fmt.Println("error：", err)
+    c.JSON(http.StatusNotFound, gin.H {
+      "message": "User Unauthorized!",
+    })
+    completed = true
+  }
+
+  if !completed {
+    c.JSON(http.StatusOK, gin.H {
+        "message": "login success!",
+      })
+  }
+
+}
 
 
 func saveHandler(c *gin.Context) {
+
+    completed:= false
+
     userName := c.PostForm("userName")
     fmt.Printf("userName: %s \n", userName)
     instanceID, _ := strconv.Atoi(c.PostForm("ID"))
@@ -149,6 +183,7 @@ func saveHandler(c *gin.Context) {
       c.JSON(http.StatusNotFound, gin.H {
             "message": "User Unauthorized!",
         })
+      completed = true
     }
     
     fmt.Printf("user: %#v\n", user)
@@ -160,22 +195,27 @@ func saveHandler(c *gin.Context) {
 
     res := db.Create(&label) // pass pointer of data to Create
 
-    if res.Error != nil {
+    if !completed && res.Error != nil {
       //username not found
       fmt.Println("error：", res.Error)
       c.JSON(http.StatusNotFound, gin.H {
             "message": "Insertion Failed!",
         })
+      completed = true      
     }
 
+    if !completed {
       c.JSON(http.StatusOK, gin.H {
         "message": "pong",
       })
     }
+}
 
 
 func getListHandler(c *gin.Context) {
     
+    completed := false
+
     userName:= c.PostForm("userName")
 
     fmt.Println("UserName:", userName)
@@ -191,6 +231,7 @@ func getListHandler(c *gin.Context) {
       c.JSON(http.StatusNotFound, gin.H {
             "message": "User Unauthorized!",
         })
+      completed = true
     }
     
     fmt.Printf("user: %#v\n", user)
@@ -202,12 +243,13 @@ func getListHandler(c *gin.Context) {
     db.AutoMigrate(&Assignments{})
     err = db.Where("user_id=?", user.ID).Find(&assignments).Error
 
-    if err != nil || len(assignments) == 0 {
+    if !completed && err != nil || len(assignments) == 0 {
       //Assignments not found
       fmt.Println("error：", err)
       c.JSON(http.StatusNotFound, gin.H {
             "message": "Assignments not found!",
         })
+      completed = true
     }
 
     
@@ -219,9 +261,10 @@ func getListHandler(c *gin.Context) {
       fmt.Printf("assignment: %#v\n", assignment)
 
       err := db.First(&instance, assignment.InstanceID).Error
-      if err != nil {
+      if !completed && err != nil {
         //instance not found
         fmt.Println("error：", err)
+        completed = true
       } else {
         fmt.Printf("instance: %#v\n", instance)
         instance_to_return = append(instance_to_return, instance)
@@ -230,7 +273,10 @@ func getListHandler(c *gin.Context) {
 
     fmt.Println("instance list: ", instance_to_return)
 
+    if !completed {
     c.JSON(http.StatusOK, gin.H {
         "instance_list": instance_to_return,
       })
     }
+}
+
