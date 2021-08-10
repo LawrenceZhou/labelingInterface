@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Grommet, DropButton, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Select as SelectG, Button as GButton} from 'grommet'; 
+import {Grommet, DropButton, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select as SelectG, Button as GButton} from 'grommet'; 
 import ReactAudioPlayer from 'react-audio-player';
 
 import p1 from '../../assets/images/11.png';
@@ -28,7 +28,6 @@ export default class LabelInstance extends Component {
       timeStamp: "",
       timeUsage: 0,
       title: "Emotional Japanese Speech Annotation",
-      //userName: "admin",
       userName: this.props.userName,
       password: this.props.password,
       instanceID: "loading...",
@@ -40,6 +39,12 @@ export default class LabelInstance extends Component {
       menuText: "Loading...",
       instanceNumber: 0,
       open: false,
+      tutorialOn: false,
+      currentRef: 0,
+      refs:{},
+      refPositions: {},
+      refTexts: {},
+      refNames: ["navigationRef", "audioRef", "labelRef", "synthesisRef", "inconsistantRef", "previousNextRef", "selectRef", "submitRef"],
     };
 
    
@@ -58,6 +63,8 @@ export default class LabelInstance extends Component {
     this.onClose=this.onClose.bind(this);
     this.onOpen=this.onOpen.bind(this);
     this.onSubmit=this.onSubmit.bind(this);
+    this.watchTutorial=this.watchTutorial.bind(this);
+    this.onNextTutorial=this.onNextTutorial.bind(this);
   }
 
     componentDidMount(){
@@ -66,7 +73,51 @@ export default class LabelInstance extends Component {
       var timeUsage = Date.now();
       this.setState({timeStamp: timeStamp, timeUsage: timeUsage },function(){ console.log("timestamp: ", this.state.timeStamp, "time usage: ", this.state.timeUsage)});
       this.getInstanceList();
+      
+      var refs_ = {};
+      var refPositions_ = {};
+      var refTexts_ = {};
+
+      for (var i = 0; i < this.state.refNames.length; i++) {
+        refs_[this.state.refNames[i]] = React.createRef();
+      }
+
+      refPositions_["navigationRef"] = {top:"top", right: "left"};
+      refPositions_["audioRef"] = {top:"top", left: "right"};
+      refPositions_["labelRef"] = {top:"top", right: "left"};
+      refPositions_["synthesisRef"] = {top:"top", left: "right"};
+      refPositions_["inconsistantRef"] = {top:"top", right: "left"};
+      refPositions_["previousNextRef"] = {top:"top", right: "left"};
+      refPositions_["selectRef"] = {top:"top", left: "right"};
+      refPositions_["submitRef"] = {top:"bottom", left: "right"};
+
+      refTexts_["navigationRef"] = "Your email and time usage will show here.";
+      refTexts_["audioRef"] = "Click the play button to hear the emotional utterance to label.";
+      refTexts_["labelRef"] = "Select values of Pleasure, Arousal, and Dominance to give your labels.";
+      refTexts_["synthesisRef"] = "Click the play button to hear the synthesized sample based on your selection.";
+      refTexts_["inconsistantRef"] = "If your selections do not give a satisfying synthesized result, please keep your selection and check this.";
+      refTexts_["previousNextRef"] = "Click \"Previous\" and \"Next\" button to navigate through utterances.";
+      refTexts_["selectRef"] = "You can also go to the utterance using this menu. It shows whether each utterance labeling task is finished.";
+      refTexts_["submitRef"] = "Click the \"Submit\" buttion to submit your results after you finish all the utterance labeling tasks." ;
+
+      this.setState({refs: refs_, refPositions: refPositions_, refTexts: refTexts_});
   }
+
+  watchTutorial() {
+    var that = this;
+    that.setState({tutorialOn: true});
+  }
+
+  onNextTutorial() {
+    var that = this;
+    if (that.state.currentRef == that.state.refNames.length - 1) {
+      that.setState({currentRef: 0, tutorialOn: false});
+
+    }else {
+      that.setState({currentRef: that.state.currentRef + 1});    
+    }
+  }
+
 
   onClose() {
     var that = this;
@@ -296,12 +347,13 @@ export default class LabelInstance extends Component {
 
 
           <div style={{height:50}}>
+          <Button label="Watch Tutorial" onClick={() => {this.watchTutorial()}} color="dark-3" />
           </div> 
 
           <div className="topBarOuterContainer">
                 
-                <div className="NavigationLine">
-                    <div className="userID">
+                <div className="NavigationLine"  >
+                    <div className="userID" ref={this.state.refs["navigationRef"]}>
                         <Box>
                             <Text>User ID: {this.state.userName}</Text>
                         </Box>
@@ -317,7 +369,7 @@ export default class LabelInstance extends Component {
                             <Text>Instance ID: {this.state.instanceID}</Text>
                         </Box>
                     </div>
-                    <div className="instanceList">
+                    <div className="instanceList" ref={this.state.refs["selectRef"]} >
                         <Box>
                             <SelectG
                                 placeholder={this.state.menuText}
@@ -328,8 +380,9 @@ export default class LabelInstance extends Component {
                     </div>
                 </div>
           </div>
-          <div className="instanceContainer">
-                <div className="categoryColumn">
+
+          <div className="instanceContainer" >
+                <div className="categoryColumn"  ref={this.state.refs["labelRef"]}>
                     <div className="pleasureText">
                         <Text>Pleasure</Text>
                     </div>
@@ -413,7 +466,7 @@ export default class LabelInstance extends Component {
                 </div>
 
                 <div className="instanceColumn">
-                    <div className="instance">
+                    <div className="instance" ref={this.state.refs["audioRef"]} >
                         <Text>Utterance: </Text>
                         <ReactAudioPlayer
                             src={this.state.instanceFilePath}
@@ -426,7 +479,7 @@ export default class LabelInstance extends Component {
                         <Text>Arousal: {this.state.instanceList[this.state.currentInstanceIndex].clickCountArousal!=0?this.state.instanceList[this.state.currentInstanceIndex].selectedArousal:""}</Text>
                         <Text>Dominance: {this.state.instanceList[this.state.currentInstanceIndex].clickCountDominance!=0?this.state.instanceList[this.state.currentInstanceIndex].selectedDominance:""}</Text>
                     </div>
-                    <div className="synthesizedInstance">
+                    <div className="synthesizedInstance" ref={this.state.refs["synthesisRef"]} >
                         <Text>Synthesized Utterance: </Text>
                         <ReactAudioPlayer
                             src={this.state.instanceSynthesisPath}
@@ -435,35 +488,38 @@ export default class LabelInstance extends Component {
                     </div>
                 </div>
           </div>
+
+          <div className="InconsistantContainer" ref={this.state.refs["inconsistantRef"]} >
           <CheckBox
                     label="Is there any inconsistance between your selection and your perception?"
                     checked={this.state.instanceList[this.state.currentInstanceIndex].isInconsistent}
-                    onChange={this.onInconsistanceChecked}
+                    onChange={this.onInconsistanceChecked}               
           />
+          </div>
 
           <div className="progressBarContainer">
               <div className="progressBar"><Meter type="bar" color="brand" background={defaultBackgroundColor} value={(this.state.currentInstanceIndex + 1) / this.state.instanceNumber * 100} /></div>
               <div className="progressLabel"><Text>{this.state.currentInstanceIndex + 1} / {this.state.instanceNumber}</Text></div>
           </div>
 
-          <div className="navigationContainer">
-            <div className="previousBox">
+          <div className="navigationContainer" >
+            <div className="previousBox" ref={this.state.refs["previousNextRef"]}>
                 <Box align="center" pad="medium">
                     <Button label="Previous" onClick={() => {this.gotoPrevious()}} />
                 </Box>
             </div>
 
-            <div className="nextBox"> 
+            <div className="nextBox"  ref={this.state.refs["submitRef"]}> 
                 <Box align="center" pad="medium">
                     <Button label="Next" onClick={() => {this.gotoNext()}} />
                 </Box>
             </div>
           </div>
 
-          <div className="submitContainer" style={{display: this.state.currentInstanceIndex == this.state.instanceList.length - 1 ? 'block' : 'none' }}>
-            <div className="submitBox">
+          <div className="submitContainer" style={{visibility: this.state.currentInstanceIndex == this.state.instanceList.length - 1 || this.state.tutorialOn ? 'visible' : 'hidden' }}  >
+            <div className="submitBox"  >
                 <Box align="center" pad="medium">
-                    <Button label="Submit" size="large" onClick={() => {this.onOpen()}} />
+                    <Button label="Submit" size="large" disabled = {this.state.tutorialOn} onClick={() => {this.onOpen()}} />
                 </Box>
             </div>
           </div>
@@ -472,7 +528,7 @@ export default class LabelInstance extends Component {
         <Grommet >
          {this.state.open && (
          <Layer
-          id="hello world"
+          id="submitConfirmation"
           position="center"
           onClickOutside={() => {this.onClose()}}
           onEsc={() => {this.onClose()}}
@@ -505,6 +561,40 @@ export default class LabelInstance extends Component {
             </Box>
           </Box>
         </Layer>
+        )}
+        </Grommet>
+
+          <Grommet >
+         {this.state.tutorialOn && (
+         <Drop
+          id="tutorialLayer"
+          modal={false}
+          stretch={false}
+          round="small"
+          elevation="small"
+          background="background-contrast"
+          align={this.state.refPositions[this.state.refNames[this.state.currentRef]]}
+          target={this.state.refs[this.state.refNames[this.state.currentRef]].current}
+        >
+          <Box width="medium">
+            <Heading level={4} margin="none">
+              {this.state.currentRef + 1}
+            </Heading>
+
+            <Text>{this.state.refTexts[this.state.refNames[this.state.currentRef]]}</Text>
+            <Box
+              as="footer"
+              gap="small"
+              direction="row"
+              align="center"
+              justify="end"
+              pad ="small"
+             
+            >
+              <Button label={this.state.currentRef == this.state.refNames.length - 1 ? "Finish Tutorial" : "Next"} onClick={() => {this.onNextTutorial()}} color="dark-3" />
+            </Box>
+          </Box>
+        </Drop>
         )}
         </Grommet>
 
