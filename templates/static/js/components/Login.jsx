@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Box, Heading, Text, Form, FormField, TextInput, Button} from 'grommet'; 
+import {Box, Heading, Text, Form, FormField, TextInput, Button, Grommet, Layer} from 'grommet'; 
 import { Hide, View } from 'grommet-icons';
 
 import '../../css/LabelInstance.css';
@@ -9,29 +9,41 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      reveal: false,
       email: "",
-      password: "",
+      emailAgain: "",
+      password: "label",
+      open: false,
+      messageOn: false,
+      mesage: "",
+      messageColor: "",
     };
 
-    this.onReveal = this.onReveal.bind(this);
     this.onLogin = this.onLogin.bind(this);
+    this.onClose=this.onClose.bind(this);
     this.userAuthentication = this.userAuthentication.bind(this);
+    this.onLoginConfirmed = this.onLoginConfirmed.bind(this);
   }
 
-    onReveal() {
+    onClose() {
         var that = this;
-        that.setState({reveal :!that.state.reveal});
+        that.setState({open: false});
     }
 
     onLogin(value) {
         var that = this;
         console.log(value);
-        that.setState({email :value.email, password: value.password}, function(){ console.log("state information, email: ", that.state.email, " password: ", that.state.password), that.userAuthentication()});
+        if (value.email != value.email_again) {
+            that.setState({messageOn: true, message: "Email address input mismatched. Please check it again.", messageColor: "status-error"});
+        }else{
+            that.setState({email :value.email, emailAgain: value.email_again}, function(){ console.log("state information, email: ", that.state.email, " email again: ", that.state.emailAgain), that.userAuthentication()});
+        }
     }
 
     userAuthentication(){
         var that = this;
+
+        var d = new Date();
+        var timeStamp = d.toString();
 
         var http = new XMLHttpRequest();
         var url = 'http://localhost:8080/api/log_in';    
@@ -39,21 +51,29 @@ export default class Login extends Component {
 
 
         data.append("userName", that.state.email);
-        data.append("password", that.state.password);
+        data.append("timeStamp", timeStamp);
+        
         console.log(data.get("userName"));
 
         http.addEventListener("readystatechange", function() {
             if(this.readyState === 4 && this.status == 200 ) {
                 console.log("Login succeeded!", this.responseText);
-                that.props.loginSuccess(that.state.email, that.state.password);
+                that.setState({messageOn: true, message: "Login succeeded!", messageColor: "status-ok", open:true});
             }else {
-                console.log("Email and password didn't match.");
+                that.setState({messageOn: true, message: "Login failed. Please contacted that operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.", messageColor: "status-error"});
+                console.log("Login failed. Please contacted that operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.");
             }
         });
 
     http.open('POST', url, true);
     http.send(data);
 
+  }
+
+  onLoginConfirmed() {
+    var that = this;
+    that.onClose();
+    that.props.loginSuccess(that.state.email, that.state.password);
   }
 
 
@@ -64,43 +84,75 @@ export default class Login extends Component {
 
                 <div style={{height:150}}>
                 </div> 
+
                 <Box background="#F7F7F7" gap="medium" align="center" pad="large">
                 <Text weight="bold">Log In</Text>
                     <Form
                     onSubmit={({value}) => {this.onLogin(value)}}
                     >
-                        <FormField label="Email*" name="email" htmlFor="email" required>
+                        <FormField label="Email Address*" name="email" htmlFor="email" required>
                         <TextInput placeholder="your@email.com" name="email" id="email" type = "email" />
                         </FormField>
 
-                        <FormField label="Password*" name="password" htmlFor="password" required>
-                        <Box
-                        direction="row"
-                        align="center"
-                        >
-                        <TextInput placeholder="your password" 
-                        plain
-                        name="password"
-                        id="password"
-                        type={this.state.reveal ? 'text' : 'password'}
-                        />
-                        <Button
-                        icon={this.state.reveal ? <View size="medium" /> : <Hide size="medium" />}
-                        onClick={() => this.onReveal()}
-                        />
-                        </Box>
+                        <FormField label="Email Address (again)*" name="email_again" htmlFor="email_again" required>
+                        <TextInput placeholder="your@email.com" name="email_again" id="email_again" type = "email" />
                         </FormField>
 
-                        <Button type="submit" label="log in" />
+                        <Button type="submit" label="Log In" />
 
-                        <Text margin={{ left: 'small' }} size="small" color="status-critical">
+                        <Text margin={{ left: 'small' }} size="small" color="dark-3">
                         * Required Field
                         </Text>
 
                     </Form>
+                    {this.state.messageOn ? (
+                        <Box pad={{ horizontal: 'small' }}>
+                            <Text color={this.state.messageColor}>{this.state.message}</Text>
+                        </Box>
+                    ): null}
 
                 </Box>
 
+                <Grommet >
+                    {this.state.open && (
+                        <Layer
+                            id="loginConfirmation"
+                            position="center"
+                            onClickOutside={() => {this.onClose()}}
+                            onEsc={() => {this.onClose()}}
+                        >
+                            <Box pad="medium" gap="small" width="medium">
+                                <Heading level={3} margin="none">
+                                    Confirm
+                                </Heading>
+
+                            <Text>Are you sure you want to log in as <strong>{this.state.email}</strong>?</Text> 
+                            <Text>We will send the gift card to this email. If you finds errors in the email address, please input it again.</Text>
+                            
+                            <Box
+                                as="footer"
+                                gap="small"
+                                direction="row"
+                                align="center"
+                                justify="end"
+                                pad={{ top: 'medium', bottom: 'small' }}
+                            >
+                                <Button label="Input Again" onClick={() => {this.onClose()}} color="dark-3" />
+                                <Button
+                                    label={
+                                    <Text color="white">
+                                        <strong>Log In</strong>
+                                    </Text>
+                                 }
+                                onClick={() => {this.onLoginConfirmed()}}
+                                primary
+                                color="status-ok"
+                                />
+                            </Box>
+                            </Box>
+                        </Layer>
+                    )}
+                </Grommet>
             </div>
         )
     }
