@@ -110,6 +110,7 @@ func loginHandler(c *gin.Context) {
 		if !completed {
 			c.JSON(http.StatusOK, gin.H {
 				"message": "login success!",
+				"status": user.IsFinished,
 			})
 			completed = true
 		}
@@ -157,7 +158,8 @@ func loginHandler(c *gin.Context) {
 
     	if !completed {
 	    	c.JSON(http.StatusOK, gin.H {
-				"message": "login success!",
+				"message": "Login Succeeded!",
+				"status" : 0,
 			})
     		completed = true
     	}
@@ -242,7 +244,7 @@ func saveHandler(c *gin.Context) {
 
 		if !completed {
 			c.JSON(http.StatusOK, gin.H {
-				"message": "pong",
+				"message": "Insertion Succeeded!",
 			})
 		}
 }

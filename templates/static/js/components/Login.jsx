@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {Box, Heading, Text, Form, FormField, TextInput, Button, Grommet, Layer} from 'grommet'; 
-import { Hide, View } from 'grommet-icons';
 
 import '../../css/LabelInstance.css';
 
@@ -16,6 +15,7 @@ export default class Login extends Component {
       messageOn: false,
       mesage: "",
       messageColor: "",
+      status: 0,
     };
 
     this.onLogin = this.onLogin.bind(this);
@@ -58,7 +58,10 @@ export default class Login extends Component {
         http.addEventListener("readystatechange", function() {
             if(this.readyState === 4 && this.status == 200 ) {
                 console.log("Login succeeded!", this.responseText);
-                that.setState({messageOn: true, message: "Login succeeded!", messageColor: "status-ok", open:true});
+                var obj = JSON.parse(http.responseText);
+                console.log("Status: ", obj.status);
+
+                that.setState({messageOn: true, message: "Login succeeded!", messageColor: "status-ok", open:true, status: obj.status});
             }else {
                 that.setState({messageOn: true, message: "Login failed. Please contacted that operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.", messageColor: "status-error"});
                 console.log("Login failed. Please contacted that operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.");
@@ -73,7 +76,7 @@ export default class Login extends Component {
   onLoginConfirmed() {
     var that = this;
     that.onClose();
-    that.props.loginSuccess(that.state.email, that.state.password);
+    that.props.loginSuccess(that.state.email, that.state.password, that.state.status);
   }
 
 
