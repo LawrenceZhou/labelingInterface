@@ -110,9 +110,9 @@ export default class MainMenu extends Component {
                 <Text>Your email: {this.props.userName}</Text>
                  <Grommet theme={theme}>
 
-    <Box pad="large">
-      <Grid gap="medium" rows={{ count: 'fit', size: 'small' }} columns="small">
+    <Box pad="large" gap="medium" width="large"  align="center" justify="center">
 
+        <Box   width={this.props.status == 0 ? "large": "medium"}>
           <Card background={this.props.status >= 1 ? "grey" : "yellow"} key="survey" onClick={() => {this.clickSurvey()}}>
             <CardBody pad="small">
               <Identifier
@@ -129,7 +129,9 @@ export default class MainMenu extends Component {
               <Text size="xsmall">{this.props.status >= 1 ? "Finished" : "Not Finished" }</Text>
             </CardFooter>
           </Card>
+          </Box>
 
+        <Box  width={this.props.status == 1 ? "large": "medium"}>
           <Card background={this.props.status >= 2 ? "grey" : this.props.status == 1 ? "yellow" : "green" } key="label" onClick={() => {this.clickLabel()}}>
             <CardBody pad="small">
               <Identifier
@@ -146,7 +148,9 @@ export default class MainMenu extends Component {
               <Text size="xsmall">{this.props.status >= 2 ? "Finished" : "Not Finished" }</Text>
             </CardFooter>
           </Card>
-
+          </Box>
+        
+        <Box  width={this.props.status == 2 ? "large": "medium"}>
           <Card background={this.props.status >= 3 ? "grey" : this.props.status == 2 ? "yellow" : "green" } key="questionnaire" onClick={() => {this.clickQuestionnaire()}}>
             <CardBody pad="small">
               <Identifier
@@ -163,8 +167,9 @@ export default class MainMenu extends Component {
               <Text size="xsmall">{this.props.status >= 3 ? "Finished" : "Not Finished" }</Text>
             </CardFooter>
           </Card>
+          </Box>
 
-      </Grid>
+
     </Box>
   </Grommet>
             </div>

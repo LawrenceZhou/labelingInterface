@@ -86,6 +86,30 @@ type (
 		ValueA int                         //`json:"value_a"`
 		ValueD int                         //`json:"value_d"`
 	}
+
+	//Surveys schema in mysql
+	Surveys struct {
+		ID     int `gorm:"AUTO_INCREMENT"` //`json:"id"`
+		UserID int                         //`json:"user_id"`
+		Age int                            //`json:"age"`
+		Gender string                      //`json:"gender"`
+		Ethnicity string                   //`json:"ethnicity"`
+		Nationality string                 //`json:"nationality"`
+		EducationLevel string              //`json:"education_level"`
+		IncomeLevel string                 //`json:"income_level"`
+	}
+
+	//Questionnaires schema in mysql
+	Questionnaires struct {
+		ID     int `gorm:"AUTO_INCREMENT"` //`json:"id"`
+		UserID int                         //`json:"user_id"`
+		Easiness int                       //`json:"age"`
+		Satisfaction int               //`json:"satisfaction"`
+		Helpness int                   //`json:"helpness"`
+		AdvantageComment string                 //`json:"advantage_comment"`
+		DisadvantageComment string              //`json:"disadvantage_comment"`
+		OtherComment string                 //`json:"other_comment"`
+	}
 )
 
 

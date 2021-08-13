@@ -131,7 +131,7 @@ export default class LabelInstance extends Component {
 
   onSubmit() {
     var that = this;
-    that.setState({open: false});
+    that.setState({open: false}, function(){alert('Thank you! Your results have been recorded.');});
     that.props.finish();
   }
 

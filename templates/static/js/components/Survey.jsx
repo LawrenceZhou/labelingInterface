@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import {Box, Heading, Text, Form, FormField, TextInput, Button, Grommet, Layer} from 'grommet'; 
+import {Box, Heading, Text, Form, FormField, TextInput, Button, Grommet, Layer, CheckBox, RadioButtonGroup, RangeInput, Select } from 'grommet'; 
 
+import { grommet } from 'grommet/themes';
 import '../../css/LabelInstance.css';
 
 
@@ -18,7 +19,7 @@ export default class Survey extends Component {
       status: 0,
     };
 
-    this.onLogin = this.onLogin.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
     this.onClose=this.onClose.bind(this);
     this.userAuthentication = this.userAuthentication.bind(this);
     this.onLoginConfirmed = this.onLoginConfirmed.bind(this);
@@ -29,14 +30,9 @@ export default class Survey extends Component {
         that.setState({open: false});
     }
 
-    onLogin(value) {
+    onSubmit(value) {
         var that = this;
         console.log(value);
-        if (value.email != value.email_again) {
-            that.setState({messageOn: true, message: "Email address input mismatched. Please check it again.", messageColor: "status-error"});
-        }else{
-            that.setState({email :value.email, emailAgain: value.email_again}, function(){ console.log("state information, email: ", that.state.email, " email again: ", that.state.emailAgain), that.userAuthentication()});
-        }
     }
 
     userAuthentication(){
@@ -83,79 +79,73 @@ export default class Survey extends Component {
     render() {
 
         return(
-            <div className="LoginContainer">
+            <div className="SurveyContainer">
 
                 <div style={{height:150}}>
                 </div> 
 
-                <Box background="#F7F7F7" gap="medium" align="center" pad="large">
-                <Text weight="bold">Log In</Text>
-                    <Form
-                    onSubmit={({value}) => {this.onLogin(value)}}
-                    >
-                        <FormField label="Email Address*" name="email" htmlFor="email" required>
-                        <TextInput placeholder="your@email.com" name="email" id="email" type = "email" />
-                        </FormField>
+      <Box background="#F7F7F7" align="center" justify="center" pad="small">
 
-                        <FormField label="Email Address (again)*" name="email_again" htmlFor="email_again" required>
-                        <TextInput placeholder="your@email.com" name="email_again" id="email_again" type = "email" />
-                        </FormField>
+        <Box width="medium">
 
-                        <Button type="submit" label="Log In" />
+        <Text weight="bold">Background Survey</Text>
 
-                        <Text margin={{ left: 'small' }} size="small" color="dark-3">
-                        * Required Field
-                        </Text>
+          <Form
+            onSubmit={({value}) => {this.onSubmit(value)}}
+          >
 
-                    </Form>
-                    {this.state.messageOn ? (
-                        <Box pad={{ horizontal: 'small' }}>
-                            <Text color={this.state.messageColor}>{this.state.message}</Text>
-                        </Box>
-                    ): null}
+            <FormField label="Age" name="age" pad>
 
-                </Box>
+              <RangeInput name="age" min={15} max={75} />
 
-                <Grommet >
-                    {this.state.open && (
-                        <Layer
-                            id="loginConfirmation"
-                            position="center"
-                            onClickOutside={() => {this.onClose()}}
-                            onEsc={() => {this.onClose()}}
-                        >
-                            <Box pad="medium" gap="small" width="medium">
-                                <Heading level={3} margin="none">
-                                    Confirm
-                                </Heading>
+            </FormField>
 
-                            <Text>Are you sure you want to log in as <strong>{this.state.email}</strong>?</Text> 
-                            <Text>We will send the gift card to this email. If you finds errors in the email address, please input it again.</Text>
-                            
-                            <Box
-                                as="footer"
-                                gap="small"
-                                direction="row"
-                                align="center"
-                                justify="end"
-                                pad={{ top: 'medium', bottom: 'small' }}
-                            >
-                                <Button label="Input Again" onClick={() => {this.onClose()}} color="dark-3" />
-                                <Button
-                                    label={
-                                    <Text color="white">
-                                        <strong>Log In</strong>
-                                    </Text>
-                                 }
-                                onClick={() => {this.onLoginConfirmed()}}
-                                primary
-                                color="status-ok"
-                                />
-                            </Box>
-                            </Box>
-                        </Layer>
-                    )}
-                </Grommet>
+            <FormField label="Gender" name="gender">
+
+              <Select name="gender" options={['male', 'female', 'N/A']} />
+
+            </FormField>
+
+             <FormField label="Ethnicity" name="ethnicity">
+
+              <Select name="ethnicity" options={['white', 'black', 'asian']} />
+
+            </FormField>
+
+            <FormField label="Nationality" name="nationality">
+
+              <Select name="nationality" options={['Japan', 'China', 'United States']} />
+
+            </FormField>
+
+            <FormField label="Education Level" name="education">
+
+              <Select name="education" options={['graduate', 'undergraduate', 'middle school']} />
+
+            </FormField>
+
+            <FormField label="Income Level" name="income">
+
+              <Select name="income" options={['low', 'middle', 'high']} />
+
+            </FormField>
+
+
+            <Box direction="row" justify="between" margin={{ top: 'medium' }}>
+
+              <Button label="Back" onClick={()=>{this.props.back()}}/>
+
+              <Button type="reset" label="Reset" />
+
+              <Button type="submit" label="Submit" primary />
+
+            </Box>
+
+          </Form>
+
+        </Box>
+
+      </Box>
             </div>
         )
     }

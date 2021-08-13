@@ -24,6 +24,7 @@ export default class OuterFrame extends Component {
     this.loginSuccess = this.loginSuccess.bind(this);
     this.selectTask = this.selectTask.bind(this);
     this.finish = this.finish.bind(this);
+    this.back = this.back.bind(this);
   }
   
   loginSuccess(userName, password, status) {
@@ -38,7 +39,12 @@ export default class OuterFrame extends Component {
 
   finish() {
     var that = this;
-    that.setState({progress :"finish"});
+    that.setState({status: that.state.status + 1}, function(){that.setState({progress :"main"})});
+  }
+
+  back() {
+    var that = this;
+    that.setState({progress :"main"});
   }
 
 
@@ -62,9 +68,9 @@ export default class OuterFrame extends Component {
 
                 {this.state.progress == "login" ? <Login loginSuccess = {this.loginSuccess} />: null}
                 {this.state.progress == "main" ? <MainMenu userName = {this.state.userName} status = {this.state.status} selectTask = {this.selectTask} />: null}
-                {this.state.progress == "survey" ? <Survey finish = {this.finish} userName = {this.state.userName} password = {this.state.password} />: null}
+                {this.state.progress == "survey" ? <Survey finish = {this.finish} back= {this.back} userName = {this.state.userName} password = {this.state.password} />: null}
                 {this.state.progress == "label" ? <LabelInstance finish = {this.finish} userName = {this.state.userName} password = {this.state.password} />: null}
-                {this.state.progress == "questionnaire" ? <Questionnaire finish = {this.finish} userName = {this.state.userName} password = {this.state.password} />: null}
+                {this.state.progress == "questionnaire" ? <Questionnaire finish = {this.finish} back= {this.back} userName = {this.state.userName} password = {this.state.password} />: null}
                 {this.state.progress == "finish" ? <FinishConfirmation />: null}
 
             </div>
