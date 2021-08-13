@@ -275,7 +275,7 @@ export default class LabelInstance extends Component {
     var that = this;
 
     var http = new XMLHttpRequest();
-    var url = 'http://localhost:8080/api/save';
+    var url = 'http://localhost:8080/api/save_label';
     var data = new FormData();
 
     Object.keys(instance).forEach(key => data.append(key, instance[key]));

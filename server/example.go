@@ -35,9 +35,13 @@ func main() {
 		//login checking
 		api.POST("/log_in", loginHandler)
 		//save label 
-		api.POST("/save", saveHandler) 
+		api.POST("/save_label", saveLabelHandler) 
 		//get instance list
 		api.POST("/get_list", getListHandler)
+		//save survey
+		api.POST("/save_survey", saveSurveyHandler)
+		//save questionnaire
+		api.POST("/save_questionnaire", saveQuestionnaireHandler)
 	}
 
 	r.Run()
@@ -50,7 +54,7 @@ type (
 		ID     int `gorm:"AUTO_INCREMENT"`  //`json:"id"`
 		UserName string                     //`json:"user_name"`
 		Password string                     //`json:"password"`
-		CreatedTimestamp string           //`json:"created_timestamp"`
+		CreatedTimestamp string             //`json:"created_timestamp"`
 		IsFinished int                      //`json:"is_finished"`
 	}
 
@@ -91,7 +95,7 @@ type (
 	Surveys struct {
 		ID     int `gorm:"AUTO_INCREMENT"` //`json:"id"`
 		UserID int                         //`json:"user_id"`
-		Age int                            //`json:"age"`
+		Age string                         //`json:"age"`
 		Gender string                      //`json:"gender"`
 		Ethnicity string                   //`json:"ethnicity"`
 		Nationality string                 //`json:"nationality"`
@@ -104,11 +108,11 @@ type (
 		ID     int `gorm:"AUTO_INCREMENT"` //`json:"id"`
 		UserID int                         //`json:"user_id"`
 		Easiness int                       //`json:"age"`
-		Satisfaction int               //`json:"satisfaction"`
-		Helpness int                   //`json:"helpness"`
-		AdvantageComment string                 //`json:"advantage_comment"`
-		DisadvantageComment string              //`json:"disadvantage_comment"`
-		OtherComment string                 //`json:"other_comment"`
+		Satisfaction int                   //`json:"satisfaction"`
+		Helpness int                       //`json:"helpness"`
+		AdvantageComment string            //`json:"advantage_comment"`
+		DisadvantageComment string         //`json:"disadvantage_comment"`
+		OtherComment string                //`json:"other_comment"`
 	}
 )
 
@@ -202,7 +206,7 @@ func loginHandler(c *gin.Context) {
 }
 
 
-func saveHandler(c *gin.Context) {
+func saveLabelHandler(c *gin.Context) {
 
 		completed:= false
 
@@ -269,6 +273,147 @@ func saveHandler(c *gin.Context) {
 		if !completed {
 			c.JSON(http.StatusOK, gin.H {
 				"message": "Insertion Succeeded!",
+			})
+		}
+}
+
+
+func saveSurveyHandler(c *gin.Context) {
+
+		completed:= false
+
+		userName := c.PostForm("userName")
+		fmt.Printf("userName: %s \n", userName)
+
+		age := c.PostForm("age")
+		fmt.Printf("age: %s \n", age)
+
+		gender := c.PostForm("gender")
+		fmt.Printf("gender: %s \n", gender)
+
+		ethnicity := c.PostForm("ethnicity")
+		fmt.Printf("ethnicity: %s \n", ethnicity)
+
+		nationality := c.PostForm("nationality")
+		fmt.Printf("nationality: %s \n", nationality)
+
+		educationLevel := c.PostForm("educationLevel")
+		fmt.Printf("educationLevel: %s \n", educationLevel)
+
+		incomeLevel := c.PostForm("incomeLevel")
+		fmt.Printf("incomeLevel: %s \n", incomeLevel)
+
+
+		var user Users
+		
+		db.AutoMigrate(&Users{})
+
+		err := db.Where("user_name = ?", userName).First(&user).Error
+
+		user.IsFinished = 1
+		db.Save(&user)
+
+		if err != nil {
+			//username not found
+			fmt.Println("error：", err)
+			c.JSON(http.StatusNotFound, gin.H {
+						"message": "User Not Found!",
+				})
+			completed = true
+		}
+		
+		fmt.Printf("user: %#v\n", user)
+		fmt.Printf("userID: %d\n", user.ID)
+		
+		db.AutoMigrate(&Surveys{})
+
+		survey := Surveys{UserID: user.ID, Age: age, Gender: gender, Ethnicity: ethnicity, Nationality:nationality, EducationLevel: educationLevel, IncomeLevel: incomeLevel}
+
+		res := db.Create(&survey) // pass pointer of data to Create
+
+		if !completed && res.Error != nil {
+			//username not found
+			fmt.Println("error：", res.Error)
+			c.JSON(http.StatusNotFound, gin.H {
+						"message": "Insertion Failed!",
+				})
+			completed = true      
+		}
+
+		if !completed {
+			c.JSON(http.StatusOK, gin.H {
+				"message": "Submission Succeeded!",
+			})
+		}
+}
+
+
+
+func saveQuestionnaireHandler(c *gin.Context) {
+
+		completed:= false
+
+		userName := c.PostForm("userName")
+		fmt.Printf("userName: %s \n", userName)
+
+		easiness , _ := strconv.Atoi(c.PostForm("easiness"))
+		fmt.Printf(": %d \n", easiness)
+
+		satisfaction, _ := strconv.Atoi(c.PostForm("satisfaction"))
+		fmt.Printf("satisfaction: %d \n", satisfaction)
+
+		helpness, _ := strconv.Atoi(c.PostForm("helpness"))
+		fmt.Printf("helpness: %d \n", helpness)
+
+		advantageComment := c.PostForm("advantageComment")
+		fmt.Printf("advantageComment: %s \n", advantageComment)
+
+		disadvantageComment := c.PostForm("disadvantageComment")
+		fmt.Printf("disadvantageComment: %s \n", disadvantageComment)
+
+		otherComment := c.PostForm("otherComment")
+		fmt.Printf("otherComment: %s \n", otherComment)
+
+
+		var user Users
+		
+		db.AutoMigrate(&Users{})
+
+		err := db.Where("user_name = ?", userName).First(&user).Error
+
+		user.IsFinished = 3
+		db.Save(&user)
+
+		if err != nil {
+			//username not found
+			fmt.Println("error：", err)
+			c.JSON(http.StatusNotFound, gin.H {
+						"message": "User Not Found!",
+				})
+			completed = true
+		}
+		
+		fmt.Printf("user: %#v\n", user)
+		fmt.Printf("userID: %d\n", user.ID)
+		
+		db.AutoMigrate(&Questionnaires{})
+
+		questionnaire := Questionnaires{UserID: user.ID, Easiness: easiness, Satisfaction: satisfaction, Helpness:helpness, AdvantageComment: advantageComment, DisadvantageComment: disadvantageComment, OtherComment: otherComment}
+
+		res := db.Create(&questionnaire) // pass pointer of data to Create
+
+		if !completed && res.Error != nil {
+			//username not found
+			fmt.Println("error：", res.Error)
+			c.JSON(http.StatusNotFound, gin.H {
+						"message": "Insertion Failed!",
+				})
+			completed = true      
+		}
+
+		if !completed {
+			c.JSON(http.StatusOK, gin.H {
+				"message": "Submission Succeeded!",
 			})
 		}
 }

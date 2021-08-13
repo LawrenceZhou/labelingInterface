@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Box, Heading, Text, Form, FormField, TextInput, Button, Grommet, Layer, CheckBox, RadioButtonGroup, RangeInput, Select } from 'grommet'; 
+import {Box, Heading, Text, TextArea, Form, FormField, TextInput, Button, Grommet, Layer, CheckBox, RadioButtonGroup, RangeInput, Select } from 'grommet'; 
 
 import { grommet } from 'grommet/themes';
 import '../../css/LabelInstance.css';
@@ -9,20 +9,30 @@ export default class Questionnaire extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
-      emailAgain: "",
       password: "label",
       open: false,
-      messageOn: false,
-      mesage: "",
-      messageColor: "",
-      status: 0,
+      easiness: 5,
+      helpness: 5,
+      satisfaction: 5,
+      advantage: "",
+      disadvantage: "",
+      other: "",
+
     };
 
     this.onSubmit = this.onSubmit.bind(this);
     this.onClose=this.onClose.bind(this);
-    this.userAuthentication = this.userAuthentication.bind(this);
-    this.onLoginConfirmed = this.onLoginConfirmed.bind(this);
+    this.onSubmitConfirmed = this.onSubmitConfirmed.bind(this);
+  }
+
+  componentDidMount(){
+    var ageOptions_ = ["under 12"];
+    for(var i = 12; i < 76;i++){
+      ageOptions_.push(i.toString());
+    }
+    ageOptions_.push("over 75");
+
+    this.setState({ageOptions: ageOptions_});
   }
 
     onClose() {
@@ -33,34 +43,36 @@ export default class Questionnaire extends Component {
     onSubmit(value) {
         var that = this;
         console.log(value);
+        that.setState({open:true, easiness:value.easiness, satisfaction: value.satisfaction, helpness: value.helpness, advantage:value.advantage, disadvantage:value.disadvantage, other:value.other});
     }
 
-    userAuthentication(){
-        var that = this;
-
-        var d = new Date();
-        var timeStamp = d.toString();
-
-        var http = new XMLHttpRequest();
-        var url = 'http://localhost:8080/api/log_in';    
-        var data = new FormData();
+  onSubmitConfirmed() {
+    var that = this;
+    that.onClose();
+    var http = new XMLHttpRequest();
+    var url = 'http://localhost:8080/api/save_questionnaire';    
+    var data = new FormData();
 
 
-        data.append("userName", that.state.email);
-        data.append("timeStamp", timeStamp);
+    data.append("userName", that.props.userName);
+    data.append("easiness", that.state.easiness);
+    data.append("satisfaction", that.state.satisfaction);
+    data.append("helpness", that.state.helpness);
+    data.append("advantageComment", that.state.advantage);
+    data.append("disadvantageComment", that.state.disadvantage);
+    data.append("otherComment", that.state.other);
         
-        console.log(data.get("userName"));
+    console.log(data.get("userName"));
 
-        http.addEventListener("readystatechange", function() {
-            if(this.readyState === 4 && this.status == 200 ) {
-                console.log("Login succeeded!", this.responseText);
+    http.addEventListener("readystatechange", function() {
+        if(this.readyState === 4 && this.status == 200 ) {
+            console.log("Submission succeeded!", this.responseText);
                 var obj = JSON.parse(http.responseText);
-                console.log("Status: ", obj.status);
-
-                that.setState({messageOn: true, message: "Login succeeded!", messageColor: "status-ok", open:true, status: obj.status});
+                console.log("Response: ", obj);
+                that.onClose();
+                that.props.finish();
             }else {
-                that.setState({messageOn: true, message: "Login failed. Please contacted that operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.", messageColor: "status-error"});
-                console.log("Login failed. Please contacted that operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.");
+                console.log("Submission failed. Please contacted that operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.");
             }
         });
 
@@ -69,17 +81,11 @@ export default class Questionnaire extends Component {
 
   }
 
-  onLoginConfirmed() {
-    var that = this;
-    that.onClose();
-    that.props.loginSuccess(that.state.email, that.state.password, that.state.status);
-  }
-
 
     render() {
 
         return(
-            <div className="SurveyContainer">
+            <div className="QuestionnaireContainer">
 
                 <div style={{height:150}}>
                 </div> 
@@ -88,45 +94,121 @@ export default class Questionnaire extends Component {
 
         <Box width="medium">
 
-        <Text weight="bold">Background Survey</Text>
+        <Text weight="bold">Questionnaire on labeling experience</Text>
 
           <Form
             onSubmit={({value}) => {this.onSubmit(value)}}
           >
 
-            <FormField label="Age" name="age" pad>
+            <FormField label="Easiness" name="easiness" required>
 
-              <RangeInput name="age" min={15} max={75} />
+               <Box align="center" pad="large">
+
+              <RadioButtonGroup
+
+                name="easiness"
+                direction="row"
+
+                gap="xsmall"
+
+                options={[
+
+                { label: '1', value: 1 },
+                { label: '2', value: 2 },
+                { label: '3', value: 3 },
+                { label: '4', value: 4 },
+                { label: '5', value: 5 },
+                { label: '6', value: 6 },
+                { label: '7', value: 7 },
+                { label: '8', value: 8 },
+                { label: '9', value: 9 },
+
+                ]}
+
+            />
+
+      </Box>
 
             </FormField>
 
-            <FormField label="Gender" name="gender">
 
-              <Select name="gender" options={['male', 'female', 'N/A']} />
+            <FormField label="Satisfaction" name="satisfaction" required>
+
+              <Box align="center" pad="large">
+
+              <RadioButtonGroup
+
+                name="satisfaction"
+                direction="row"
+
+                gap="xsmall"
+
+                options={[
+
+                { label: '1', value: 1 },
+                { label: '2', value: 2 },
+                { label: '3', value: 3 },
+                { label: '4', value: 4 },
+                { label: '5', value: 5 },
+                { label: '6', value: 6 },
+                { label: '7', value: 7 },
+                { label: '8', value: 8 },
+                { label: '9', value: 9 },
+
+                ]}
+
+            />
+
+      </Box>
 
             </FormField>
 
-             <FormField label="Ethnicity" name="ethnicity">
+            <FormField label="Helpness" name="helpness" required>
 
-              <Select name="ethnicity" options={['white', 'black', 'asian']} />
+              <Box align="center" pad="large">
+
+              <RadioButtonGroup
+
+                name="helpness"
+                direction="row"
+
+                gap="xsmall"
+
+                options={[
+
+                { label: '1', value: 1 },
+                { label: '2', value: 2 },
+                { label: '3', value: 3 },
+                { label: '4', value: 4 },
+                { label: '5', value: 5 },
+                { label: '6', value: 6 },
+                { label: '7', value: 7 },
+                { label: '8', value: 8 },
+                { label: '9', value: 9 },
+
+                ]}
+
+            />
+
+      </Box>
 
             </FormField>
 
-            <FormField label="Nationality" name="nationality">
+            <FormField label="Comments on the advatange" name="advantage" required>
 
-              <Select name="nationality" options={['Japan', 'China', 'United States']} />
-
-            </FormField>
-
-            <FormField label="Education Level" name="education">
-
-              <Select name="education" options={['graduate', 'undergraduate', 'middle school']} />
+                <TextArea name="advantage" placeholder="Tell us about the advantage..." />
 
             </FormField>
 
-            <FormField label="Income Level" name="income">
+            <FormField label="Comments on the disadvatange" name="disadvantage" required>
 
-              <Select name="income" options={['low', 'middle', 'high']} />
+                <TextArea name="disadvantage" placeholder="Tell us about the disadvantage..." />
+
+            </FormField>
+
+            <FormField label="Other Comments" name="other" required>
+
+                <TextArea name="other" placeholder="Other comments..." />
 
             </FormField>
 
@@ -146,7 +228,54 @@ export default class Questionnaire extends Component {
         </Box>
 
       </Box>
-            </div>
+            
+      <Grommet >
+                    {this.state.open && (
+                        <Layer
+                            id="questionnaireConfirmation"
+                            position="center"
+                            onClickOutside={() => {this.onClose()}}
+                            onEsc={() => {this.onClose()}}
+                        >
+                            <Box pad="medium" gap="small" width="medium">
+                                <Heading level={3} margin="none">
+                                    Confirm
+                                </Heading>
+
+                            <Text>Please double check the questionnaire input :</Text>
+                            <Text><strong>Easiness: {this.state.easiness}</strong></Text> 
+                            <Text><strong>Satisfaction: {this.state.satisfaction}</strong></Text> 
+                            <Text><strong>Helpness: {this.state.helpness}</strong></Text> 
+                            <Text><strong>Comments on advantage: {this.state.advantage}</strong></Text> 
+                            <Text><strong>Comments on disadvantage: {this.state.disadvantage}</strong></Text> 
+                            <Text><strong>Other comments: {this.state.other}</strong></Text> 
+                          
+                            <Box
+                                as="footer"
+                                gap="small"
+                                direction="row"
+                                align="center"
+                                justify="end"
+                                pad={{ top: 'medium', bottom: 'small' }}
+                            >
+                                <Button label="Cancel" onClick={() => {this.onClose()}} color="dark-3" />
+                                <Button
+                                    label={
+                                    <Text color="white">
+                                        <strong>Submit</strong>
+                                    </Text>
+                                 }
+                                onClick={() => {this.onSubmitConfirmed()}}
+                                primary
+                                color="status-ok"
+                                />
+                            </Box>
+                            </Box>
+                        </Layer>
+                    )}
+                </Grommet>
+
+    </div>
         )
     }
 }

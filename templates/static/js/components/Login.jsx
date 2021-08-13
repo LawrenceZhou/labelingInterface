@@ -140,7 +140,7 @@ export default class Login extends Component {
                                 justify="end"
                                 pad={{ top: 'medium', bottom: 'small' }}
                             >
-                                <Button label="Input Again" onClick={() => {this.onClose()}} color="dark-3" />
+                                <Button label="Cancel" onClick={() => {this.onClose()}} color="dark-3" />
                                 <Button
                                     label={
                                     <Text color="white">
