@@ -87,10 +87,8 @@ export default class Questionnaire extends Component {
         return(
             <div className="QuestionnaireContainer">
 
-                <div style={{height:150}}>
-                </div> 
 
-      <Box background="#F7F7F7" align="center" justify="center" pad="small">
+      <Box background="#F7F7F7" align="center" justify="center" pad="large">
 
         <Box width="medium">
 
@@ -102,7 +100,7 @@ export default class Questionnaire extends Component {
 
             <FormField label="Easiness" name="easiness" required>
 
-               <Box align="center" pad="large">
+               <Box align="center" pad={{top:"medium", bottom: "medium"}}>
 
               <RadioButtonGroup
 
@@ -134,7 +132,7 @@ export default class Questionnaire extends Component {
 
             <FormField label="Satisfaction" name="satisfaction" required>
 
-              <Box align="center" pad="large">
+              <Box align="center" pad={{top:"medium", bottom: "medium"}}>
 
               <RadioButtonGroup
 
@@ -165,7 +163,7 @@ export default class Questionnaire extends Component {
 
             <FormField label="Helpness" name="helpness" required>
 
-              <Box align="center" pad="large">
+              <Box align="center" pad={{top:"medium", bottom: "medium"}}>
 
               <RadioButtonGroup
 

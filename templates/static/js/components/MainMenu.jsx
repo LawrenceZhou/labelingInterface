@@ -104,13 +104,9 @@ export default class MainMenu extends Component {
 
         return(
             <div className="MainMenuContainer">
-
-                <div style={{height:150}}>
-                </div> 
-                <Text>Your email: {this.props.userName}</Text>
                  <Grommet theme={theme}>
 
-    <Box pad="large" gap="medium" width="large"  align="center" justify="center">
+    <Box pad="large" gap="medium" background="#EEEEEE" align="center" justify="center">
 
         <Box   width={this.props.status == 0 ? "large": "medium"}>
           <Card background={this.props.status >= 1 ? "grey" : "yellow"} key="survey" onClick={() => {this.clickSurvey()}}>

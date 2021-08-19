@@ -357,7 +357,7 @@ func saveQuestionnaireHandler(c *gin.Context) {
 		fmt.Printf("userName: %s \n", userName)
 
 		easiness , _ := strconv.Atoi(c.PostForm("easiness"))
-		fmt.Printf(": %d \n", easiness)
+		fmt.Printf("easiness: %d \n", easiness)
 
 		satisfaction, _ := strconv.Atoi(c.PostForm("satisfaction"))
 		fmt.Printf("satisfaction: %d \n", satisfaction)

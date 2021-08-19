@@ -89,10 +89,7 @@ export default class Survey extends Component {
         return(
             <div className="SurveyContainer">
 
-                <div style={{height:150}}>
-                </div> 
-
-      <Box background="#F7F7F7" align="center" justify="center" pad="small">
+      <Box background="#F7F7F7" align="center" justify="center" pad="large">
 
         <Box width="medium">
 

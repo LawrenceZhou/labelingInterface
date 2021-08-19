@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import {Box, Heading} from 'grommet'; 
-
+import {Grommet, Box, Heading, Tip, Text, DropButton} from 'grommet'; 
+import { grommet } from 'grommet/themes';
+import { User } from 'grommet-icons';
 
 import Login from './Login';
 import MainMenu from './MainMenu';
@@ -17,9 +18,10 @@ export default class OuterFrame extends Component {
     this.state = {
       title: "Emotional Japanese Speech Annotation",
       progress: "login",
-      username: "",
+      userName: "",
       password: "",
       status: 0,
+      login: false,
     };
     this.loginSuccess = this.loginSuccess.bind(this);
     this.selectTask = this.selectTask.bind(this);
@@ -29,7 +31,12 @@ export default class OuterFrame extends Component {
   
   loginSuccess(userName, password, status) {
     var that = this;
-    that.setState({progress :"main", userName: userName, password: password, status: status});
+    that.setState({progress :"main", userName: userName, password: password, status: status, login: true});
+  }
+
+  logOut() {
+    var that = this;
+    that.setState({progress :"login", login: false});
   }
 
   selectTask(taskName) {
@@ -53,18 +60,20 @@ export default class OuterFrame extends Component {
     render() {
 
         return(
-            <div className="outerContainer">
-
-                <div style={{height:50}}>
-                </div> 
-
-                <div className="TitleLine">
-                    <div className="topBarTitle">
-                    <Box>
-                        <Heading level='2' size='medium'>{this.state.title}</Heading>
-                    </Box>
-                    </div>
-                </div>
+            <div className="outerContainer"> 
+                <Grommet theme={grommet}>
+                <Box background="#EEEEEE" pad="large">
+                    <Heading level='2' size='medium' textAlign="center">{this.state.title}</Heading>
+                </Box>
+                {this.state.login?<Box background="#EEEEEE" pad={{left:"80%"}}>
+                <DropButton
+                  dropAlign={{ top: 'bottom', right: 'right' }}
+                  dropContent={<Box pad="medium" onClick={() => {this.logOut()}} >Logout</Box>}>
+                  <User size="medium" />
+                </DropButton>
+                <Text>Login as: {this.state.userName}</Text>
+                <Box background="#EEEEEE" pad="xsmall" />
+                </Box> : null}  
 
                 {this.state.progress == "login" ? <Login loginSuccess = {this.loginSuccess} />: null}
                 {this.state.progress == "main" ? <MainMenu userName = {this.state.userName} status = {this.state.status} selectTask = {this.selectTask} />: null}
@@ -73,6 +82,7 @@ export default class OuterFrame extends Component {
                 {this.state.progress == "questionnaire" ? <Questionnaire finish = {this.finish} back= {this.back} userName = {this.state.userName} password = {this.state.password} />: null}
                 {this.state.progress == "finish" ? <FinishConfirmation />: null}
 
+                </Grommet>
             </div>
         )
     }

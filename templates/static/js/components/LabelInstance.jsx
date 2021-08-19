@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Grommet, DropButton, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select as SelectG, Button as GButton} from 'grommet'; 
+import {Grommet, DropButton, Card, Grid, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select } from 'grommet'; 
 import ReactAudioPlayer from 'react-audio-player';
 
 import p1 from '../../assets/images/11.png';
@@ -83,15 +83,15 @@ export default class LabelInstance extends Component {
       }
 
       refPositions_["navigationRef"] = {top:"top", right: "left"};
-      refPositions_["audioRef"] = {top:"top", left: "right"};
+      refPositions_["audioRef"] = {top:"top", right: "left"};
       refPositions_["labelRef"] = {top:"top", right: "left"};
-      refPositions_["synthesisRef"] = {top:"top", left: "right"};
+      refPositions_["synthesisRef"] = {top:"top", right: "left"};
       refPositions_["inconsistantRef"] = {top:"top", right: "left"};
       refPositions_["previousNextRef"] = {top:"top", right: "left"};
       refPositions_["selectRef"] = {top:"top", left: "right"};
       refPositions_["submitRef"] = {top:"bottom", left: "right"};
 
-      refTexts_["navigationRef"] = "Your email and time usage will show here.";
+      refTexts_["navigationRef"] = "Time usage and instance ID will show here.";
       refTexts_["audioRef"] = "Click the play button to hear the emotional utterance to label.";
       refTexts_["labelRef"] = "Select values of Pleasure, Arousal, and Dominance to give your labels.";
       refTexts_["synthesisRef"] = "Click the play button to hear the synthesized sample based on your selection.";
@@ -157,7 +157,7 @@ export default class LabelInstance extends Component {
       checked = true;
       that.setState({instanceList: newInstanceList});
       var mI = that.state.menuItems;
-      mI[that.state.currentInstanceIndex] = <div className="optionContainer"><Text>No.{that.state.instanceList[that.state.currentInstanceIndex].ID}</Text> <Text size="xsmall" color="brand" >Finished</Text></div>;
+      mI[that.state.currentInstanceIndex] = <Box gap="xxsmall"><Text>No.{that.state.instanceList[that.state.currentInstanceIndex].ID}</Text> <Text size="xsmall" color="brand" >Finished</Text></Box>;
       that.setState({menuItems: mI});
 
     }
@@ -189,7 +189,7 @@ export default class LabelInstance extends Component {
     var mI=[];
     for(var i = 0; i< that.state.instanceList.length; i++){
       //mI.push("Utterance " + String(that.state.instanceList[i].ID));
-      mI.push(<div className="optionContainer"><Text>No.{that.state.instanceList[i].ID}</Text> <Text size="xsmall" color={defaultBackgroundColor} >Unfinished</Text></div>);
+      mI.push(<Box ap="xxsmall"><Text>No.{that.state.instanceList[i].ID}</Text> <Text size="xsmall" color={defaultBackgroundColor} >Unfinished</Text></Box>);
     }
     that.setState({menuText: "All Utterances", menuItems: mI});
   }
@@ -343,46 +343,47 @@ export default class LabelInstance extends Component {
     render() {
 
     return(
-        <div className="instanceOuterContainer">
-
-
-          <div style={{height:50}}>
-          <Button label="Watch Tutorial" onClick={() => {this.watchTutorial()}} color="dark-3" />
-          </div> 
-
-          <div className="topBarOuterContainer">
+        <Box pad="xsmall" direction="column" background="#EEEEEE"  gap="xsmall">
+          <Box width="small" background="#EEEEEE">
+          <Button label="Watch Tips" onClick={() => {this.watchTutorial()}} color="dark-3" />
+          </Box> 
                 
-                <div className="NavigationLine"  >
-                    <div className="userID" ref={this.state.refs["navigationRef"]}>
-                        <Box>
-                            <Text>User ID: {this.state.userName}</Text>
-                        </Box>
-                    </div>
-                    <div className="timeUsage">
-                        <Box>
-                            <Text>Time: </Text>
-                            <Clock type="digital" time="PT0H0M0S" run="forward" />
-                        </Box>
-                    </div>
-                    <div className="instanceID">
-                        <Box>
-                            <Text>Instance ID: {this.state.instanceID}</Text>
-                        </Box>
-                    </div>
-                    <div className="instanceList" ref={this.state.refs["selectRef"]} >
-                        <Box>
-                            <SelectG
-                                placeholder={this.state.menuText}
-                                options={this.state.menuItems}
-                                onChange={this.onInstanceMenuSelected}
-                            />
-                        </Box>
-                    </div>
-                </div>
-          </div>
+                <Box className="topBar" direction="row" background="transparent" gap="medium" pad="xsmall">
+                    <Card pad="xsmall" gap="xsmall" background="light-3" width="medium"  height="xsmall" ref={this.state.refs["navigationRef"]}>
+                      <Text>Time</Text>
+                      <Clock type="digital" time="PT0H0M0S" run="forward" />          
+                    </Card>
 
-          <div className="instanceContainer" >
-                <div className="categoryColumn"  ref={this.state.refs["labelRef"]}>
+                    <Card pad="xsmall" gap="xsmall" background="light-3" width="medium" height="xsmall">
+                      <Text>Instance ID</Text>
+                      <Text><strong>{this.state.instanceID}</strong></Text>        
+                    </Card>
+
+                    <Card pad="xsmall" gap="xsmall" background="light-3" width="medium"  height="xsmall" ref={this.state.refs["selectRef"]}>
+                      <Text>Utterance List</Text>
+                      <Box height="">
+                        <Select
+                            placeholder={this.state.menuText}
+                            options={this.state.menuItems}
+                            onChange={this.onInstanceMenuSelected}
+                        />
+                      </Box>
+                    </Card>
+
+                </Box>
+
+                <Card pad="xsmall" gap="xsmall" background="light-2" ref={this.state.refs["audioRef"]}>
+                  <Text>Utterance</Text>
+                  <ReactAudioPlayer
+                      src={this.state.instanceFilePath}
+                      controls
+                    />
+                </Card>
+
+
+          <Card pad="xsmall" gap="xsmall" background="light-1">
+          <Box direction="row" >
+                <Box  width="25%" ref={this.state.refs["labelRef"]}>
                     <div className="pleasureText">
                         <Text>Pleasure</Text>
                     </div>
@@ -392,9 +393,9 @@ export default class LabelInstance extends Component {
                     <div className="dominanceText">
                         <Text>Dominance</Text>
                     </div>
-                </div>
+                </Box>
 
-                <div className="imageColumn">
+                <Box >
                 
                     <Grommet
                     theme={{
@@ -463,44 +464,32 @@ export default class LabelInstance extends Component {
                     </div>
                     </Grommet>
                   
-                </div>
+                </Box>
 
-                <div className="instanceColumn">
-                    <div className="instance" ref={this.state.refs["audioRef"]} >
-                        <Text>Utterance: </Text>
-                        <ReactAudioPlayer
-                            src={this.state.instanceFilePath}
-                            controls
-                        />
-                    </div>
-                    <div className="selection">
-                        <Text>Your selection: </Text>
-                        <Text>Pleasure: {this.state.instanceList[this.state.currentInstanceIndex].clickCountPleasure!=0?this.state.instanceList[this.state.currentInstanceIndex].selectedPleasure:""}</Text>
-                        <Text>Arousal: {this.state.instanceList[this.state.currentInstanceIndex].clickCountArousal!=0?this.state.instanceList[this.state.currentInstanceIndex].selectedArousal:""}</Text>
-                        <Text>Dominance: {this.state.instanceList[this.state.currentInstanceIndex].clickCountDominance!=0?this.state.instanceList[this.state.currentInstanceIndex].selectedDominance:""}</Text>
-                    </div>
-                    <div className="synthesizedInstance" ref={this.state.refs["synthesisRef"]} >
-                        <Text>Synthesized Utterance: </Text>
-                        <ReactAudioPlayer
-                            src={this.state.instanceSynthesisPath}
-                            controls
-                        />
-                    </div>
-                </div>
-          </div>
+          </Box>
+          </Card>
 
-          <div className="InconsistantContainer" ref={this.state.refs["inconsistantRef"]} >
+           <Card pad="xsmall" gap="xsmall" background="light-2" ref={this.state.refs["synthesisRef"]}>
+                  <Text>Synthesis based on your selection</Text>
+                  <Text>Pleasure: <strong>{this.state.instanceList[this.state.currentInstanceIndex].clickCountPleasure!=0?this.state.instanceList[this.state.currentInstanceIndex].selectedPleasure:"N/A "}</strong> Arousal: <strong>{this.state.instanceList[this.state.currentInstanceIndex].clickCountArousal!=0?this.state.instanceList[this.state.currentInstanceIndex].selectedArousal:"N/A "}</strong> Dominance: <strong>{this.state.instanceList[this.state.currentInstanceIndex].clickCountDominance!=0?this.state.instanceList[this.state.currentInstanceIndex].selectedDominance:"N/A"}</strong></Text>
+                  <ReactAudioPlayer
+                      src={this.state.instanceSynthesisPath}
+                      controls
+                    />
+                </Card>
+
+          <Box ref={this.state.refs["inconsistantRef"]} >
           <CheckBox
                     label="Is there any inconsistance between your selection and your perception?"
                     checked={this.state.instanceList[this.state.currentInstanceIndex].isInconsistent}
                     onChange={this.onInconsistanceChecked}               
           />
-          </div>
+          </Box>
 
-          <div className="progressBarContainer">
+          <Box>
               <div className="progressBar"><Meter type="bar" color="brand" background={defaultBackgroundColor} value={(this.state.currentInstanceIndex + 1) / this.state.instanceNumber * 100} /></div>
               <div className="progressLabel"><Text>{this.state.currentInstanceIndex + 1} / {this.state.instanceNumber}</Text></div>
-          </div>
+          </Box>
 
           <div className="navigationContainer" >
             <div className="previousBox" ref={this.state.refs["previousNextRef"]}>
@@ -509,7 +498,7 @@ export default class LabelInstance extends Component {
                 </Box>
             </div>
 
-            <div className="nextBox"  ref={this.state.refs["submitRef"]}> 
+            <div className="nextBox"  > 
                 <Box align="center" pad="medium">
                     <Button label="Next" onClick={() => {this.gotoNext()}} />
                 </Box>
@@ -517,11 +506,9 @@ export default class LabelInstance extends Component {
           </div>
 
           <div className="submitContainer" style={{visibility: this.state.currentInstanceIndex == this.state.instanceList.length - 1 || this.state.tutorialOn ? 'visible' : 'hidden' }}  >
-            <div className="submitBox"  >
-                <Box align="center" pad="medium">
+                <Box align="center" pad="medium" ref={this.state.refs["submitRef"]}>
                     <Button label="Submit" size="large" disabled = {this.state.tutorialOn} onClick={() => {this.onOpen()}} />
                 </Box>
-            </div>
           </div>
 
         
@@ -598,7 +585,7 @@ export default class LabelInstance extends Component {
         )}
         </Grommet>
 
-        </div>
+        </Box>
 
     )
     }

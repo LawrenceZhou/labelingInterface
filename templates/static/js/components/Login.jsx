@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {Box, Heading, Text, Form, FormField, TextInput, Button, Grommet, Layer} from 'grommet'; 
+import { grommet } from 'grommet/themes';
 
 import '../../css/LabelInstance.css';
 
@@ -84,10 +85,7 @@ export default class Login extends Component {
 
         return(
             <div className="LoginContainer">
-
-                <div style={{height:150}}>
-                </div> 
-
+                <Grommet theme={grommet}>
                 <Box background="#F7F7F7" gap="medium" align="center" pad="large">
                 <Text weight="bold">Log In</Text>
                     <Form
@@ -116,7 +114,6 @@ export default class Login extends Component {
 
                 </Box>
 
-                <Grommet >
                     {this.state.open && (
                         <Layer
                             id="loginConfirmation"
