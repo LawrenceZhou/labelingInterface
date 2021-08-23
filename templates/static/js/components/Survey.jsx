@@ -52,7 +52,7 @@ export default class Survey extends Component {
     var that = this;
     that.onClose();
     var http = new XMLHttpRequest();
-    var url = 'http://localhost:8080/api/save_survey';    
+    var url = 'http://localhost:8080/api/v1/save_survey';    
     var data = new FormData();
 
 

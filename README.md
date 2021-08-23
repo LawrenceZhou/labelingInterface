@@ -111,7 +111,7 @@ Go to `http://localhost/phpmyadmin` for checking the mysql.
 
 ### Running
 
-1. Go to the `server/` directory and start the server with `go run example.go`
+1. Go to the `server/` directory create database and tables: ` go run *.go -mode=init_database -database_name=label_task_schema` and start the server with `go run *.go -mode=server -database_name=label_task_schema`
 
 2. If all is working correctly, check the address http://localhost:8080/ which you can open in your  browser and see the application running.
 

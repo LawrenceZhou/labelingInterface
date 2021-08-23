@@ -50,7 +50,7 @@ export default class Questionnaire extends Component {
     var that = this;
     that.onClose();
     var http = new XMLHttpRequest();
-    var url = 'http://localhost:8080/api/save_questionnaire';    
+    var url = 'http://localhost:8080/api/v1/save_questionnaire';    
     var data = new FormData();
 
 

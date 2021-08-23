@@ -275,7 +275,7 @@ export default class LabelInstance extends Component {
     var that = this;
 
     var http = new XMLHttpRequest();
-    var url = 'http://localhost:8080/api/save_label';
+    var url = 'http://localhost:8080/api/v1/save_label';
     var data = new FormData();
 
     Object.keys(instance).forEach(key => data.append(key, instance[key]));
@@ -300,7 +300,7 @@ export default class LabelInstance extends Component {
     var that = this;
 
     var http = new XMLHttpRequest();
-    var url = 'http://localhost:8080/api/get_list';    
+    var url = 'http://localhost:8080/api/v1/get_list';    
     var data = new FormData();
 
 
@@ -308,7 +308,7 @@ export default class LabelInstance extends Component {
     console.log(data.get("userName"));
 
     http.addEventListener("readystatechange", function() {
-      if(this.readyState === 4) {
+      if(this.readyState === 4 && this.status == 200 ) {
         console.log("Instance list received!", this.responseText);
         var obj = JSON.parse(http.responseText);
         console.log(obj);
