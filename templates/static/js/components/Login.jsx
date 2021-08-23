@@ -57,15 +57,17 @@ export default class Login extends Component {
         console.log(data.get("userName"));
 
         http.addEventListener("readystatechange", function() {
-            if(this.readyState === 4 && this.status == 200 ) {
-                console.log("Login succeeded!", this.responseText);
-                var obj = JSON.parse(http.responseText);
-                console.log("Status: ", obj.status);
+            if(this.readyState === 4 ) {
+                if(this.status == 200){
+                    console.log("Login succeeded!", this.responseText);
+                    var obj = JSON.parse(http.responseText);
+                    console.log("Status: ", obj.status);
 
-                that.setState({messageOn: false, message: "Login succeeded!", messageColor: "status-ok", open:true, status: obj.status});
-            }else {
-                that.setState({messageOn: true, message: "Login failed. Please contacted that operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.", messageColor: "status-error"});
-                console.log("Login failed. Please contacted that operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.");
+                    that.setState({messageOn: false, message: "Login succeeded!", messageColor: "status-ok", open:true, status: obj.status});
+                }else {
+                    that.setState({messageOn: true, message: "Login failed. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.", messageColor: "status-error"});
+                    console.log("Login failed. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.");
+                }
             }
         });
 

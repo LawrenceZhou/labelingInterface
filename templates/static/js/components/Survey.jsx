@@ -67,15 +67,18 @@ export default class Survey extends Component {
     console.log(data.get("userName"));
 
     http.addEventListener("readystatechange", function() {
-        if(this.readyState === 4 && this.status == 200 ) {
+        if(this.readyState === 4 ) {
+                if(this.status == 200){
             console.log("Submission succeeded!", this.responseText);
                 var obj = JSON.parse(http.responseText);
                 console.log("Response: ", obj);
                 that.onClose();
                 that.props.finish();
             }else {
-                console.log("Submission failed. Please contacted that operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.");
+                alert('Submission failed. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
+                console.log("Submission failed. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.");
             }
+          }
         });
 
     http.open('POST', url, true);

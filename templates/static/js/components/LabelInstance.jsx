@@ -45,6 +45,7 @@ export default class LabelInstance extends Component {
       refPositions: {},
       refTexts: {},
       refNames: ["navigationRef", "audioRef", "labelRef", "synthesisRef", "inconsistantRef", "previousNextRef", "selectRef", "submitRef"],
+      confirmed: false,
     };
 
    
@@ -121,7 +122,11 @@ export default class LabelInstance extends Component {
 
   onClose() {
     var that = this;
-    that.setState({open: false});
+    if(!that.state.confirmed) {
+      that.setState({open: false});
+    }else{
+      that.props.finish();
+    }
   }
 
   onOpen() {
@@ -131,8 +136,13 @@ export default class LabelInstance extends Component {
 
   onSubmit() {
     var that = this;
-    that.setState({open: false}, function(){alert('Thank you! Your results have been recorded.');});
-    that.props.finish();
+    if(!that.state.confirmed) {
+      that.setState({confirmed: true});
+    }
+    else{
+      that.setState({open: false});
+      that.props.finish();
+    }
   }
 
   isLabeledCheck () {
@@ -285,9 +295,14 @@ export default class LabelInstance extends Component {
     }
     
     http.addEventListener("readystatechange", function() {
-      if(this.readyState === 4) {
-        console.log("Result saved!", this.responseText);
-      }
+      if(this.readyState === 4 ) {
+                if(this.status == 200){
+                    console.log("Result saved!", this.responseText);
+                  }
+                else{
+                  alert('There is a problem with saving the labeling result. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
+                }
+              }
     });
 
     http.open('POST', url, true);
@@ -308,7 +323,8 @@ export default class LabelInstance extends Component {
     console.log(data.get("userName"));
 
     http.addEventListener("readystatechange", function() {
-      if(this.readyState === 4 && this.status == 200 ) {
+      if(this.readyState === 4 ) {
+                if(this.status == 200){
         console.log("Instance list received!", this.responseText);
         var obj = JSON.parse(http.responseText);
         console.log(obj);
@@ -331,6 +347,10 @@ export default class LabelInstance extends Component {
         }
         
         that.setState({ instanceList : instance_list_}, function(){ console.log( "instance list in state: ", that.state.instanceList); that.updateCurrentInstance(0); that.generateMenuItems();});
+      }else {
+        alert('There is a problem with getting the speech. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
+        that.props.finish();
+      }
       }
     });
 
@@ -525,7 +545,7 @@ export default class LabelInstance extends Component {
               Confirm
             </Heading>
 
-            <Text>Are you sure you want to submit your results?</Text>
+            <Text>{this.state.confirmed ? "Thank you! Your results have been recorded." : "Are you sure you want to submit your results?"}</Text>
             <Box
               as="footer"
               gap="small"
@@ -534,11 +554,11 @@ export default class LabelInstance extends Component {
               justify="end"
               pad={{ top: 'medium', bottom: 'small' }}
             >
-              <Button label="Cancel" onClick={() => {this.onClose()}} color="dark-3" />
+              {!this.state.confirmed && <Button label="Cancel" onClick={() => {this.onClose()}} color="dark-3" />}
               <Button
                 label={
                   <Text color="white">
-                    <strong>Submit</strong>
+                    <strong>{this.state.confirmed ? "Close" : "Submit"}</strong>
                   </Text>
                 }
                 onClick={() => {this.onSubmit()}}
@@ -578,7 +598,7 @@ export default class LabelInstance extends Component {
               pad ="small"
              
             >
-              <Button label={this.state.currentRef == this.state.refNames.length - 1 ? "Finish Tutorial" : "Next"} onClick={() => {this.onNextTutorial()}} color="dark-3" />
+              <Button label={this.state.currentRef == this.state.refNames.length - 1 ? "Close Tips" : "Next"} onClick={() => {this.onNextTutorial()}} color="dark-3" />
             </Box>
           </Box>
         </Drop>
