@@ -8,6 +8,7 @@ import (
 )
 
 var db *gorm.DB
+var assignmentNumber int
 
 func main (){
 	modePtr := flag.String("mode", "server", "select the mode, 'server' or 'init_database'")
@@ -24,6 +25,7 @@ func main (){
 	fmt.Println("database username:", *databaseUserPtr)
 	fmt.Println("database password:", *databasePasswordPtr)
     fmt.Println("number:", *numPtr)
+    assignmentNumber = *numPtr
 
     if *modePtr == "server" {
     	fmt.Println("Starting the web server...")

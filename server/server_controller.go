@@ -71,7 +71,7 @@ func loginHandler(c *gin.Context) {
 
 
 		//generate assignment
-		success = assignUser(userName, 50)
+		success = assignUser(userName, assignmentNumber)
     	if !completed && !success {
 			//assignment failed	
 			c.JSON(http.StatusNotFound, gin.H {

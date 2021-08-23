@@ -220,7 +220,18 @@ func insertQuestionnaire(questionnaire Questionnaires) bool {
 
 
 func getInstancesIDList(number int) []int {
-     instance_id_list := makeRange(101, 200)
-     selected_id_list := shuffle(instance_id_list, number)
-     return selected_id_list
+    db.AutoMigrate(&Instances{})
+    var instances []Instances
+    result := db.Find(&instances)
+
+    if result.Error != nil {
+        fmt.Println("instance list read error：", result.Error)
+    }
+    var instance_id_list []int
+    for _, instance := range instances {
+        instance_id_list = append(instance_id_list, instance.ID)
+    }
+    fmt.Println("Instance list：", instance_id_list)
+    selected_id_list := shuffle(instance_id_list, number)
+    return selected_id_list
 }

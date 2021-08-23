@@ -62,6 +62,9 @@ export default class OuterFrame extends Component {
         return(
             <div className="outerContainer"> 
                 <Grommet theme={grommet}>
+                <Box background="#EEEEEE" pad="small">
+                    <Text color="status-critical">Please DO NOT click the Back or Refesh button of the browser.</Text>
+                </Box>
                 <Box background="#EEEEEE" pad="large">
                     <Heading level='2' size='medium' textAlign="center">{this.state.title}</Heading>
                 </Box>
