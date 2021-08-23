@@ -44,14 +44,40 @@ export default class OuterFrame extends Component {
     that.setState({progress :taskName});
   }
 
-  finish() {
-    var that = this;
-    that.setState({status: that.state.status + 1}, function(){that.setState({progress :"main"})});
-  }
-
   back() {
     var that = this;
     that.setState({progress :"main"});
+  }
+
+  finish() {
+    var that = this;
+
+    var http = new XMLHttpRequest();
+    var url = 'http://localhost:8080/api/v1/get_status';    
+    var data = new FormData();
+
+
+    data.append("userName", that.state.userName);
+        
+    console.log(data.get("userName"));
+
+    http.addEventListener("readystatechange", function() {
+            if(this.readyState === 4 ) {
+                if(this.status == 200){
+                    console.log("Status retrieved!", this.responseText);
+                    var obj = JSON.parse(http.responseText);
+                    console.log("Status: ", obj.status);
+
+                    that.setState({status: obj.status}, function(){that.setState({progress :"main"})});
+                }else {
+                    alert('Status retrieval failed. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
+                    console.log("Status retrieval failed. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.");
+                }
+            }
+        });
+
+    http.open('POST', url, true);
+    http.send(data);
   }
 
 
@@ -63,11 +89,14 @@ export default class OuterFrame extends Component {
             <div className="outerContainer"> 
                 <Grommet theme={grommet}>
                 <Box background="#EEEEEE" pad="small">
-                    <Text color="status-critical" textAlign="center">Please DO NOT click the Back or Refesh button of the browser.</Text>
+                    <Text color="status-critical" textAlign="center"><strong>Please DO NOT click the Back or Refesh button of the browser.</strong></Text>
                 </Box>
                 <Box background="#EEEEEE" pad="large">
                     <Heading level='2' size='medium' textAlign="center">{this.state.title}</Heading>
                 </Box>
+                {this.state.status==3 && <Box background="#EEEEEE" pad="small">
+                    <Text textAlign="center">You have finish the whole experiment. Please logout or close this page. Thank you!</Text>
+                </Box>}
                 {this.state.login?<Box background="#EEEEEE" pad={{left:"80%"}}>
                 <DropButton
                   dropAlign={{ top: 'bottom', right: 'right' }}

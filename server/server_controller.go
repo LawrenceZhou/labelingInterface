@@ -21,7 +21,9 @@ func webServer(ip string, name string, user string, password string) {
 	{
 		//login checking
 		api.POST("/log_in", loginHandler)
-		//save label 
+		//get user status
+		api.POST("/get_status", getStatusHandler) 
+		//save label
 		api.POST("/save_label", saveLabelHandler) 
 		//get instance list
 		api.POST("/get_list", getListHandler)
@@ -92,6 +94,38 @@ func loginHandler(c *gin.Context) {
 }
 
 
+
+//get user status
+func getStatusHandler(c *gin.Context) {
+
+	completed := false
+
+	userName := c.PostForm("userName")
+	fmt.Printf("userName: %s \n", userName)
+
+	var user Users
+	result := getUser(userName, &user)
+	
+	if result.RowsAffected >= 1 {
+		if !completed {
+			c.JSON(http.StatusOK, gin.H {
+				"message": "user status retrieved!",
+				"status": user.IsFinished,
+			})
+			completed = true
+		}
+	
+	if !completed {
+	    	c.JSON(http.StatusNotFound, gin.H {
+				"message": "User not found!",
+				"status" : 0,
+			})
+    		completed = true
+    	}
+	}
+}
+
+
 func saveLabelHandler(c *gin.Context) {
 
 		completed:= false
@@ -136,11 +170,24 @@ func saveLabelHandler(c *gin.Context) {
 			completed = true
 		}
 		
+		//need to revise; just for debugging
+		user.IsFinished = 2
+
+		success := updateUser(user)
+		
+		if !success {
+			c.JSON(http.StatusNotFound, gin.H {
+						"message": "User Not Found!",
+				})
+			completed = true
+		}
+		/////////////////////
+
 		fmt.Printf("user: %#v\n", user)
 		fmt.Printf("userID: %d\n", user.ID)
     	
     	label := Labels{UserID: user.ID, InstanceID: instanceID, IsConflicted: isConflicted, Timestamp: timeStamp, TimeUsage: timeUsage, ChangeTimesP: clickCountPleasure, ChangeTimesA: clickCountArousal, ChangeTimesD: clickCountDominance, ValueP: selectedPleasure, ValueA: selectedArousal, ValueD: selectedDominance}
-		success := insertLabel(label)
+		success = insertLabel(label)
 
 		if !completed && !success {
 			c.JSON(http.StatusNotFound, gin.H {
