@@ -89,7 +89,7 @@ export default class Login extends Component {
 		return(
 			<Grommet theme={grommet}>
 
-				<Box background="#eeeeee" pad="large" />
+				<Box background="#EEEEEE" pad="large" />
 
 				<Box background="light-1" gap="medium" align="center" pad="large">
 					
@@ -164,7 +164,6 @@ export default class Login extends Component {
 				}
 
 			</Grommet>
-
 		)
 	}
 }

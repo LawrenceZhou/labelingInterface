@@ -80,12 +80,12 @@ export default class MainMenu extends Component {
 					<Box  width={this.props.status == 1 ? "large": "medium"}>
 						
 						<ProgressModule 
-								statusColor={this.props.status >= 2 ? "status-disabled" : this.props.status == 1 ? "accent-1" : "brand" }
-								key="label"
-								clickModule={this.clickLabel}
-								title="Part 2"
-								subTitle="Labeling Task"
-								footer={this.props.status >= 2 ? "Finished" : "Not Finished" }
+							statusColor={this.props.status >= 2 ? "status-disabled" : this.props.status == 1 ? "accent-1" : "brand" }
+							key="label"
+							clickModule={this.clickLabel}
+							title="Part 2"
+							subTitle="Labeling Task"
+							footer={this.props.status >= 2 ? "Finished" : "Not Finished" }
 						>
 									
 							<Tasks size="large" />
@@ -114,7 +114,6 @@ export default class MainMenu extends Component {
 				</Box>
 
 			</Grommet>
-
 		)
 	}
 }

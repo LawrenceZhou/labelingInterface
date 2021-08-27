@@ -9,7 +9,6 @@ export default class ProgressModule extends Component {
 
 	render() {
 		return (
-
 			<Card background={this.props.statusColor} key={this.props.key} onClick={() => {this.props.clickModule()}}>
 
 				<CardBody pad="small">
@@ -37,7 +36,6 @@ export default class ProgressModule extends Component {
 				</CardFooter>
 
 			</Card>
-
 		)
 
 	}
