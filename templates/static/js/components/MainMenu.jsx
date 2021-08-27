@@ -21,7 +21,7 @@ export default class MainMenu extends Component {
 		var that = this;
 		if (that.props.status == 0) {
 			that.props.selectTask("survey");
-		}else{
+		}else {
 			alert('You already finished this part.');
 		}
 	}
@@ -31,9 +31,9 @@ export default class MainMenu extends Component {
 		var that = this;
 		if (that.props.status == 1) {
 			that.props.selectTask("label");
-		}else if(that.props.status > 1){
+		}else if (that.props.status > 1){
 			alert('You already finished this part.');
-		}else{
+		}else {
 			alert('Please finish the Background Survey part first.');
 		}
 	}
@@ -43,9 +43,9 @@ export default class MainMenu extends Component {
 		var that = this;
 		if (that.props.status == 2) {
 			that.props.selectTask("questionnaire");
-		}else if(that.props.status > 2){
+		}else if (that.props.status > 2){
 			alert('You already finished this part.');
-		}else if(that.props.status == 1){
+		}else if (that.props.status == 1){
 			alert('Please finish the Labeling Task part first.');
 		}else {
 			alert('Please finish the Background Survey part first.');

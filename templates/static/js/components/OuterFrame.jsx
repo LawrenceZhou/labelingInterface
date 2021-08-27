@@ -60,7 +60,7 @@ export default class OuterFrame extends Component {
 
 		http.addEventListener("readystatechange", function() {
 			if(this.readyState === 4 ) {
-				if(this.status == 200){
+				if(this.status == 200) {
 					console.log("Status retrieved!", this.responseText);
 					var obj = JSON.parse(http.responseText);
 					console.log("Status: ", obj.status);

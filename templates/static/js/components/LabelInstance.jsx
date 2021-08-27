@@ -119,7 +119,7 @@ export default class LabelInstance extends Component {
 		var that = this;
 		if(!that.state.confirmed) {
 			that.setState({open: false});
-		}else{
+		}else {
 			that.props.finish();
 		}
 	}
@@ -135,8 +135,7 @@ export default class LabelInstance extends Component {
 		var that = this;
 		if(!that.state.confirmed) {
 			that.setState({confirmed: true});
-		}
-		else{
+		}else {
 			that.setState({open: false});
 			that.props.finish();
 		}
@@ -153,8 +152,7 @@ export default class LabelInstance extends Component {
 			newInstanceList[that.state.currentInstanceIndex].clickCountArousal == 0 && 
 			newInstanceList[that.state.currentInstanceIndex].clickCountDominance == 0) {
 				newInstanceList[that.state.currentInstanceIndex].isLabeled = false;
-		}
-		else{
+		}else {
 			var timeUsage = Date.now();
 			newInstanceList[that.state.currentInstanceIndex].timeStamp = that.state.timeStamp;
 			newInstanceList[that.state.currentInstanceIndex].timeUsage = timeUsage - that.state.timeUsage;
@@ -302,7 +300,7 @@ export default class LabelInstance extends Component {
 			if(this.readyState === 4 ) {
 				if(this.status == 200){
 					console.log("Result saved!", this.responseText);
-				}else{
+				}else {
 					alert('There is a problem with saving the labeling result. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
 				}
 			}
@@ -325,13 +323,13 @@ export default class LabelInstance extends Component {
 
 		http.addEventListener("readystatechange", function() {
 			if(this.readyState === 4 ) {
-				if(this.status == 200){
+				if(this.status == 200) {
 					console.log("Instance list received!", this.responseText);
 					var obj = JSON.parse(http.responseText);
 					console.log(obj);
 					//add front-end key-value: selectedP, selectedA, selectedD, clickCountP, clickCountA, clickCountD, timeUsage, timeStamp, isLabeled, isInconsistent
 					var instance_list_ = obj.instance_list;
-					if (obj.instance_list != null){
+					if (obj.instance_list != null) {
 						that.setState({instanceNumber: instance_list_.length});
 						for(var i = 0; i < instance_list_.length; i++){
 							instance_list_[i].selectedPleasure = instance_list_[i].DefaultValueP;

@@ -29,7 +29,7 @@ export default class Login extends Component {
 		console.log(value);
 		if (value.email != value.email_again) {
 			that.setState({messageOn: true, message: "Email address input mismatched. Please check it again.", messageColor: "status-error"});
-		}else{
+		}else {
 			that.setState({email :value.email, emailAgain: value.email_again}, function(){ console.log("state information, email: ", that.state.email, " email again: ", that.state.emailAgain), that.userAuthentication()});
 		}
 	}
@@ -59,7 +59,7 @@ export default class Login extends Component {
 
 		http.addEventListener("readystatechange", function() {
 			if(this.readyState === 4 ) {
-				if(this.status == 200){
+				if(this.status == 200) {
 					console.log("Login succeeded!", this.responseText);
 					var obj = JSON.parse(http.responseText);
 					console.log("Status: ", obj.status);

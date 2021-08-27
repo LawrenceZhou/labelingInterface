@@ -77,7 +77,7 @@ export default class Questionnaire extends Component {
 
 		http.addEventListener("readystatechange", function() {
 			if(this.readyState === 4 ) {
-				if(this.status == 200){
+				if(this.status == 200) {
 					console.log("Submission succeeded!", this.responseText);
 					var obj = JSON.parse(http.responseText);
 					console.log("Response: ", obj);

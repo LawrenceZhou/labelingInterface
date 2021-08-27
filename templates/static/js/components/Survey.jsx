@@ -26,7 +26,7 @@ export default class Survey extends Component {
 	componentDidMount(){
 		var ageOptions_ = ["under 12"];
 
-		for(var i = 12; i < 76;i++){
+		for(var i = 12; i < 76; i++){
 			ageOptions_.push(i.toString());
 		}
 
@@ -69,16 +69,16 @@ export default class Survey extends Component {
 
 		http.addEventListener("readystatechange", function() {
 			if(this.readyState === 4 ) {
-					if(this.status == 200){
-						console.log("Submission succeeded!", this.responseText);
-						var obj = JSON.parse(http.responseText);
-						console.log("Response: ", obj);
-						that.onClose();
-						that.props.finish();
-					}else {
-						alert('Submission failed. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
-						console.log("Submission failed. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.");
-					}
+				if(this.status == 200) {
+					console.log("Submission succeeded!", this.responseText);
+					var obj = JSON.parse(http.responseText);
+					console.log("Response: ", obj);
+					that.onClose();
+					that.props.finish();
+				}else {
+					alert('Submission failed. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
+					console.log("Submission failed. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.");
+				}
 			}
 		});
 
