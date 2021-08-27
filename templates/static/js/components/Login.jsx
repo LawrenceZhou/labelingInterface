@@ -17,10 +17,10 @@ export default class Login extends Component {
 			status: 0,
 		};
 
-	this.onLogin = this.onLogin.bind(this);
-	this.onClose=this.onClose.bind(this);
-	this.userAuthentication = this.userAuthentication.bind(this);
-	this.onLoginConfirmed = this.onLoginConfirmed.bind(this);
+		this.onLogin = this.onLogin.bind(this);
+		this.onClose=this.onClose.bind(this);
+		this.userAuthentication = this.userAuthentication.bind(this);
+		this.onLoginConfirmed = this.onLoginConfirmed.bind(this);
 	}
 
 
@@ -72,8 +72,8 @@ export default class Login extends Component {
 			}
 		});
 
-	http.open('POST', url, true);
-	http.send(data);
+		http.open('POST', url, true);
+		http.send(data);
 	}
 
 
@@ -88,6 +88,9 @@ export default class Login extends Component {
 
 		return(
 			<Grommet theme={grommet}>
+
+				<Box background="#eeeeee" pad="large" />
+
 				<Box background="light-1" gap="medium" align="center" pad="large">
 					
 					<Text weight="bold">Log In</Text>
@@ -96,13 +99,13 @@ export default class Login extends Component {
 
 						<FormField label="Email Address*" name="email" htmlFor="email" required>
 
-							<TextInput placeholder="your@email.com" name="email" id="email" type = "email" />
+							<TextInput placeholder="your@email.com" name="email" id="email" type="email" />
 
 						</FormField>
 
 						<FormField label="Email Address (again)*" name="email_again" htmlFor="email_again" required>
 
-							<TextInput placeholder="your@email.com" name="email_again" id="email_again" type = "email" />
+							<TextInput placeholder="your@email.com" name="email_again" id="email_again" type="email" />
 
 						</FormField>
 
@@ -113,7 +116,7 @@ export default class Login extends Component {
 					</Form>
 
 					{this.state.messageOn && 
-					<Box pad={{ horizontal: 'small' }}>
+					<Box pad={{horizontal: 'small'}}>
 
 						<Text color={this.state.messageColor}>{this.state.message}</Text>
 
