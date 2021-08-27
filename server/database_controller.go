@@ -5,6 +5,7 @@ import (
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/mysql"
     "fmt"
+    "github.com/pkg/errors"
 )
 
 
@@ -24,33 +25,34 @@ func initDatabase(ip string, name string, user string, password string) {
     }  
 }
 
+
 func connectDatabase(ip string, name string, user string, password string) {
     //open a db connection when initiated
     var err error
     db, err = gorm.Open("mysql", user+":"+password+"@"+ip+"/"+name+"?charset=utf8&parseTime=True&loc=Local")
     if err != nil {
-        panic(err)
-        panic("failed to connect database")
+        panic(errors.Wrap(err, "Failed to connect database"))
     }
 }
 
+
 func createDatabase(ip string, name string, user string, password string) {
 
-   db_sql, err := sql.Open("mysql", user+":"+password+"@"+ip+"/")
-   if err != nil {
-       panic(err)
-   }
-   defer db_sql.Close()
+    db_sql, err := sql.Open("mysql", user+":"+password+"@"+ip+"/")
+    if err != nil {
+        panic(err)
+    }
+    defer db_sql.Close()
 
-   _,err = db_sql.Exec("CREATE DATABASE "+ name)
-   if err != nil {
-       panic(err)
-   }
+    _,err = db_sql.Exec("CREATE DATABASE "+ name)
+    if err != nil {
+        panic(err)
+    }
 
-   _,err = db_sql.Exec("USE "+ name)
-   if err != nil {
-       panic(err)
-   }
+    _,err = db_sql.Exec("USE "+ name)
+    if err != nil {
+        panic(err)
+    }
 }
 
 
@@ -93,7 +95,8 @@ func getAssignments(userName string, assignmentsPtr *[]Assignments) bool {
 
 
 func getInstance(instanceID int, instancePtr *Instances) bool {
-   db.AutoMigrate(&Instances{})
+    
+    db.AutoMigrate(&Instances{})
 
     result := db.First(instancePtr, instanceID)
     if result.Error != nil {

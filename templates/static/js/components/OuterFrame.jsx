@@ -67,7 +67,6 @@ export default class OuterFrame extends Component {
                     console.log("Status retrieved!", this.responseText);
                     var obj = JSON.parse(http.responseText);
                     console.log("Status: ", obj.status);
-
                     that.setState({status: obj.status}, function(){that.setState({progress :"main"})});
                 }else {
                     alert('Status retrieval failed. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
