@@ -8,7 +8,7 @@ import MainMenu from './MainMenu';
 import Survey from './Survey';
 import Questionnaire from './Questionnaire';
 import LabelInstance from './LabelInstance';
-import FinishConfirmation from './FinishConfirmation';
+
 import '../../css/LabelInstance.css';
 
 
@@ -111,7 +111,6 @@ export default class OuterFrame extends Component {
                 {this.state.progress == "survey" ? <Survey finish = {this.finish} back= {this.back} userName = {this.state.userName} password = {this.state.password} />: null}
                 {this.state.progress == "label" ? <LabelInstance finish = {this.finish} userName = {this.state.userName} password = {this.state.password} />: null}
                 {this.state.progress == "questionnaire" ? <Questionnaire finish = {this.finish} back= {this.back} userName = {this.state.userName} password = {this.state.password} />: null}
-                {this.state.progress == "finish" ? <FinishConfirmation />: null}
 
                 </Grommet>
             </div>
