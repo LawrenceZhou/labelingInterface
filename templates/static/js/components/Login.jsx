@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Box, Heading, Text, Form, FormField, TextInput, Button, Grommet, Layer} from 'grommet'; 
+import { Box, Heading, Text, Form, FormField, TextInput, Button, Grommet, Layer } from 'grommet'; 
 import { grommet } from 'grommet/themes';
 
 

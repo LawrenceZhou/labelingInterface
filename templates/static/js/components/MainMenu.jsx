@@ -1,174 +1,120 @@
 import React, { Component } from 'react';
-import { Box, Card, CardBody, CardFooter, Grid, Grommet, Text } from 'grommet'; 
+import { Box, Grommet, Text } from 'grommet'; 
+import { grommet } from 'grommet/themes';
 import { ContactInfo, Notes, Tasks } from 'grommet-icons';
 
-import '../../css/LabelInstance.css';
-
-
-const theme = {
-  global: {
-    font: {
-      family: `-apple-system,
-         BlinkMacSystemFont, 
-         "Segoe UI"`,
-    },
-    colors: {
-      blue: '#00C8FF',
-      green: '#17EBA0',
-      teal: '#82FFF2',
-      purple: '#F740FF',
-      red: '#FC6161',
-      orange: '#FFBC44',
-      yellow: '#FFEB59',
-      grey: '#CCCCCC',
-    },
-  },
-
-  card: {
-    footer: {
-      pad: { horizontal: 'medium', vertical: 'small' },
-      background: '#FFFFFF27',
-    },
-  },
-};
-
-
-const Identifier = ({ children, title, subTitle, size }) => (
-  <Box gap="small" align="center" >
-    {children}
-    <Box>
-      <Text size={size}>
-        {title}
-      </Text>
-      <Text size={size}  weight="bold">{subTitle}</Text>
-    </Box>
-  </Box>
-
-);
-
+import LabelInstance from './LabelInstance';
+import ProgressModule from './ProgressModule';
 
 
 export default class MainMenu extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: "",
-      emailAgain: "",
-      password: "label",
-      open: false,
-      messageOn: false,
-      mesage: "",
-      messageColor: "",
-    };
-    this.clickSurvey = this.clickSurvey.bind(this);
-    this.clickLabel = this.clickLabel.bind(this);
-    this.clickLabel = this.clickLabel.bind(this);
-  }
+	constructor(props) {
+		super(props);
 
-  clickSurvey() {
-    var that = this;
-    if (that.props.status == 0) {
-      that.props.selectTask("survey");
-    }else{
-      alert('You already finished this part.');
-    }
-  }
-
-  clickLabel() {
-    var that = this;
-    if (that.props.status == 1) {
-      that.props.selectTask("label");
-    }else if(that.props.status > 1){
-      alert('You already finished this part.');
-    }else{
-      alert('Please finish the Background Survey part first.');
-    }
-  }
-
-  clickQuestionnaire() {
-    var that = this;
-    if (that.props.status == 2) {
-      that.props.selectTask("questionnaire");
-    }else if(that.props.status > 2){
-      alert('You already finished this part.');
-    }else if(that.props.status == 1){
-      alert('Please finish the Labeling Task part first.');
-    }else {
-      alert('Please finish the Background Survey part first.');
-    }
-  }
+		this.clickSurvey = this.clickSurvey.bind(this);
+		this.clickLabel = this.clickLabel.bind(this);
+		this.clickQuestionnaire = this.clickQuestionnaire.bind(this);
+	}
 
 
-
-    render() {
-
-        return(
-            <div className="MainMenuContainer">
-                 <Grommet theme={theme}>
-
-    <Box pad="large" gap="medium" background="#EEEEEE" align="center" justify="center">
-
-        <Box   width={this.props.status == 0 ? "large": "medium"}>
-          <Card background={this.props.status >= 1 ? "grey" : "yellow"} key="survey" onClick={() => {this.clickSurvey()}}>
-            <CardBody pad="small">
-              <Identifier
-                pad="small"
-                title="Part 1"
-                subTitle="Background Survey"
-                size="small"
-                align="start"
-              >
-                <ContactInfo size="large" />
-              </Identifier>
-            </CardBody>
-            <CardFooter pad={{ horizontal: 'medium', vertical: 'small' }}>
-              <Text size="xsmall">{this.props.status >= 1 ? "Finished" : "Not Finished" }</Text>
-            </CardFooter>
-          </Card>
-          </Box>
-
-        <Box  width={this.props.status == 1 ? "large": "medium"}>
-          <Card background={this.props.status >= 2 ? "grey" : this.props.status == 1 ? "yellow" : "green" } key="label" onClick={() => {this.clickLabel()}}>
-            <CardBody pad="small">
-              <Identifier
-                pad="small"
-                title="Part 2"
-                subTitle="Labeling Task"
-                size="small"
-                align="start"
-              >
-                <Tasks size="large" />
-              </Identifier>
-            </CardBody>
-            <CardFooter pad={{ horizontal: 'medium', vertical: 'small' }}>
-              <Text size="xsmall">{this.props.status >= 2 ? "Finished" : "Not Finished" }</Text>
-            </CardFooter>
-          </Card>
-          </Box>
-        
-        <Box  width={this.props.status == 2 ? "large": "medium"}>
-          <Card background={this.props.status >= 3 ? "grey" : this.props.status == 2 ? "yellow" : "green" } key="questionnaire" onClick={() => {this.clickQuestionnaire()}}>
-            <CardBody pad="small">
-              <Identifier
-                pad="small"
-                title="Part 3"
-                subTitle="Questionnaire"
-                size="small"
-                align="start"
-              >
-                <Notes size="large" />
-              </Identifier>
-            </CardBody>
-            <CardFooter pad={{ horizontal: 'medium', vertical: 'small' }}>
-              <Text size="xsmall">{this.props.status >= 3 ? "Finished" : "Not Finished" }</Text>
-            </CardFooter>
-          </Card>
-          </Box>
+	clickSurvey() {
+		var that = this;
+		if (that.props.status == 0) {
+			that.props.selectTask("survey");
+		}else{
+			alert('You already finished this part.');
+		}
+	}
 
 
-    </Box>
-  </Grommet>
-            </div>
-        )
-    }
+	clickLabel() {
+		var that = this;
+		if (that.props.status == 1) {
+			that.props.selectTask("label");
+		}else if(that.props.status > 1){
+			alert('You already finished this part.');
+		}else{
+			alert('Please finish the Background Survey part first.');
+		}
+	}
+
+
+	clickQuestionnaire() {
+		var that = this;
+		if (that.props.status == 2) {
+			that.props.selectTask("questionnaire");
+		}else if(that.props.status > 2){
+			alert('You already finished this part.');
+		}else if(that.props.status == 1){
+			alert('Please finish the Labeling Task part first.');
+		}else {
+			alert('Please finish the Background Survey part first.');
+		}
+	}
+
+
+	render() {
+
+		return(
+			<Grommet theme={grommet}>
+
+				<Box pad="large" gap="medium" background="#EEEEEE" align="center" justify="center">
+				
+					<Box  width={this.props.status == 0 ? "large": "medium"}>
+						
+						<ProgressModule 
+							statusColor={this.props.status >= 1 ? "status-disabled" : "accent-1" }
+							key="survey"
+							clickModule={this.clickSurvey}
+							title="Part 1"
+							subTitle="Background Survey"
+							footer={this.props.status >= 1 ? "Finished" : "Not Finished" }
+						>
+							
+							<ContactInfo size="large" />
+
+						</ProgressModule>
+					
+					</Box>
+
+					<Box  width={this.props.status == 1 ? "large": "medium"}>
+						
+						<ProgressModule 
+								statusColor={this.props.status >= 2 ? "status-disabled" : this.props.status == 1 ? "accent-1" : "brand" }
+								key="label"
+								clickModule={this.clickLabel}
+								title="Part 2"
+								subTitle="Labeling Task"
+								footer={this.props.status >= 2 ? "Finished" : "Not Finished" }
+						>
+									
+							<Tasks size="large" />
+
+						</ProgressModule>
+
+					</Box>
+
+					<Box  width={this.props.status == 2 ? "large": "medium"}>
+						
+						<ProgressModule 
+							statusColor={this.props.status >= 3 ? "status-disabled" : this.props.status == 2 ? "accent-1" : "brand" }
+							key="questionnaire"
+							clickModule={this.clickQuestionnaire}
+							title="Part 3"
+							subTitle="Questionnaire"
+							footer={this.props.status >= 3 ? "Finished" : "Not Finished" }
+						>
+							
+							<Notes size="large" />
+
+						</ProgressModule>
+
+					</Box>
+
+				</Box>
+
+			</Grommet>
+
+		)
+	}
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Grommet, Box, Heading, Text, DropButton} from 'grommet'; 
+import { Grommet, Box, Heading, Text, DropButton, Layer } from 'grommet'; 
 import { grommet } from 'grommet/themes';
 import { User } from 'grommet-icons';
 
@@ -103,11 +103,16 @@ export default class OuterFrame extends Component {
 					</Box>
 
 					{this.state.status == 3 && 
-					<Box background="#EEEEEE" pad="small">
+					<Layer
+						id="finishConfirmation"
+						position="center">
+					
+						<Box background="#EEEEEE27" pad="small">
 
-						<Text textAlign="center">You have finish the whole experiment. Please logout or close this page. Thank you!</Text>
+							<Text textAlign="center">You have finish the whole experiment. Please close this page. Thank you!</Text>
 
-					</Box>
+						</Box>
+					</Layer>
 					}
 
 					{this.state.login && 
