@@ -14,7 +14,7 @@ func main (){
 	modePtr := flag.String("mode", "server", "select the mode, 'server' or 'init_database'")
 	databaseNamePtr := flag.String("database_name", "trial", "indicate the database name")
 	databaseIPPtr := flag.String("database_ip", "", "indicate the database ip address")
-	databaseUserPtr := flag.String("database_user", "root", "indicate the database user")
+	databaseUserPtr := flag.String("database_user", "lawrence", "indicate the database user")
 	databasePasswordPtr := flag.String("database_password", "123456", "indicate the database user's password")
 	numPtr := flag.Int("assignment_number", 50, "number of instances for each participant")
 	
