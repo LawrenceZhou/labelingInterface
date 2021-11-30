@@ -3,7 +3,6 @@ import { Box, Grommet, Text } from 'grommet';
 import { grommet } from 'grommet/themes';
 import { ContactInfo, Notes, Tasks } from 'grommet-icons';
 
-import LabelInstance from './LabelInstance';
 import ProgressModule from './ProgressModule';
 
 

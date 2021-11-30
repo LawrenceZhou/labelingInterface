@@ -8,6 +8,7 @@ import MainMenu from './MainMenu';
 import Survey from './Survey';
 import Questionnaire from './Questionnaire';
 import LabelInstance from './LabelInstance';
+import LabelTask from './LabelTask';
 
 
 export default class OuterFrame extends Component {
@@ -146,7 +147,7 @@ export default class OuterFrame extends Component {
 					}
 
 					{this.state.progress == "label" && 
-					<LabelInstance finish={this.finish} userName={this.state.userName} password={this.state.password} />
+					<LabelTask finish={this.finish} userName={this.state.userName} password={this.state.password} />
 					}
 
 					{this.state.progress == "questionnaire" && 
