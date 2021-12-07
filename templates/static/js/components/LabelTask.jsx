@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {Grommet, Card, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select } from 'grommet'; 
-import ReactAudioPlayer from 'react-audio-player';
+import {Grommet, Card, CardHeader, CardBody, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select, Avatar } from 'grommet';
+import { Play, Pause } from 'grommet-icons';
 import Scrollbars from "react-custom-scrollbars";
 import ComparisonArea from './ComparisonArea';
 
@@ -25,9 +25,19 @@ export default class LabelTask extends Component {
 			refs:{},
 			refPositions: {},
 			refTexts: {},
-			refNames: ["navigationRef", "audioRef", "labelRef", "synthesisRef", "inconsistantRef", "previousNextRef", "selectRef", "submitRef"],
+			refNames: ["navigationRef", "labelRef", "synthesisRef", "inconsistantRef", "previousNextRef", "selectRef", "submitRef"],
 			confirmed: false,
 			color:'green',
+			boxes: [],
+			isPlaying: false,
+			currentSpeakerName: "",
+			currentSpeakerAvatar: "",
+			currentTranscript: "",
+			avatarPaths: ["//s.gravatar.com/avatar/99020cae7ff399a4fbea19c0634f77c3?s=80", "//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80"],
+			speakerToLabel: 'M',
+			dimensionToLabel: 'A',
+			speakers: ['M', 'F'],
+			dimensions:['A', 'P'],
 		};
 
 		this.watchTutorial=this.watchTutorial.bind(this);
@@ -48,14 +58,17 @@ export default class LabelTask extends Component {
 		this.sendResult = this.sendResult.bind(this);
 		this.getInstanceList = this.getInstanceList.bind(this);	
 		this.handleClick = this.handleClick.bind(this);	
+		this.togglePlay = this.togglePlay.bind(this);	
+		this.updateCurrentTime = this.updateCurrentTime.bind(this);	
+
 	}
 
 	handleClick(){
-    	var that = this;
-    	that.setState({
-      		color: Konva.Util.getRandomColor()
-    	});
-  };
+	var that = this;
+	that.setState({
+		color: Konva.Util.getRandomColor()
+	});
+};
 
 	componentDidMount(){
 		var d = new Date();
@@ -73,7 +86,6 @@ export default class LabelTask extends Component {
 		}
 
 		refPositions_["navigationRef"] = {top:"top", right: "left"};
-		refPositions_["audioRef"] = {top:"top", right: "left"};
 		refPositions_["labelRef"] = {top:"top", right: "left"};
 		refPositions_["synthesisRef"] = {top:"top", right: "left"};
 		refPositions_["inconsistantRef"] = {top:"top", right: "left"};
@@ -82,7 +94,6 @@ export default class LabelTask extends Component {
 		refPositions_["submitRef"] = {top:"bottom", left: "right"};
 
 		refTexts_["navigationRef"] = "Time usage and instance ID will show here.";
-		refTexts_["audioRef"] = "Click the play button to hear the emotional utterance to label.";
 		refTexts_["labelRef"] = "Select values of Pleasure, Arousal, and Dominance to give your labels.";
 		refTexts_["synthesisRef"] = "Click the play button to hear the synthesized sample based on your selection.";
 		refTexts_["inconsistantRef"] = "If your selections do not give a satisfying synthesized result, please keep your selection and check this.";
@@ -90,7 +101,43 @@ export default class LabelTask extends Component {
 		refTexts_["selectRef"] = "You can also go to the utterance using this menu. It shows whether each utterance labeling task is finished.";
 		refTexts_["submitRef"] = "Click the \"Submit\" buttion to submit your results after you finish all the utterance labeling tasks." ;
 
-		this.setState({refs: refs_, refPositions: refPositions_, refTexts: refTexts_});
+		
+
+		var boxes_ = [{index: 0, x: 67, y: 201, speaker: 'F', end: 106, transcript:"Why did he invite her here?"}, 
+					{index: 1, x: 100, y: 101, speaker: 'M', end: 135, transcript:"Why does that bother you?"},
+					{index: 2, x: 127, y: 201, speaker: 'F', end: 173, transcript:"She's been in New York three and an half years, why all of a sudden?"},
+					{index: 3, x: 166, y: 101, speaker: 'M', end: 217, transcript:"Well maybe...maybe he just wanted to see her."},
+					{index: 4, x: 212, y: 201, speaker: 'F', end: 265, transcript:"Nobody comes seven hundred miles just to see."},
+					{index: 5, x: 257, y: 101, speaker: 'M', end: 331, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
+					{index: 6, x: 336, y: 101, speaker: 'M', end: 406, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
+					{index: 7, x: 399, y: 201, speaker: 'F', end: 430, transcript:"He's not going to marry her."},
+					{index: 8, x: 424, y: 101, speaker: 'M', end: 453, transcript:"How do you know he's even thinking about it?"},
+					{index: 9, x: 443, y: 201, speaker: 'F', end: 463, transcript:"It's got that about it."},
+					{index: 10, x: 458, y: 101, speaker: 'M', end: 476, transcript:"Oh.  So what."},
+					{index: 11, x: 471, y: 201, speaker: 'F', end: 509, transcript:"What is going on here, Joe?"},
+					{index: 12, x: 506, y: 101, speaker: 'M', end: 526, transcript:"Now listen."},
+					{index: 13, x: 520, y: 201, speaker: 'F', end: 565, transcript:"She is not his girl.  She knows she's not."},
+					{index: 14, x: 558, y: 101, speaker: 'M', end: 582, transcript:"You can't read her mind."},
+					{index: 15, x: 577, y: 201, speaker: 'F', end: 667, transcript:"Then why is she still single?  New York is full of men, why is she still single?  Probably a hundred people told her she's foolish, but she waited."},
+					{index: 16, x: 661, y: 101, speaker: 'M', end: 684, transcript:"How do you know why she waited?"},
+					{index: 17, x: 674, y: 201, speaker: 'F', end: 783, transcript:"Because she knows what I know, that's why.  She's faithful as a rock.  In my darkest moments, I think of her waiting and I know that I'm right."},
+					{index: 18, x: 783, y: 101, speaker: 'M', end: 827, transcript:"Hey look, it's a nice day, huh?  Why are we arguing?"},
+					{index: 19, x: 821, y: 201, speaker: 'F', end: 913, transcript:"Nobody in this house dares take away her faith, Joe.  You know strangers might, but not his father, not his brother."},
+					{index: 20, x: 906, y: 101, speaker: 'M', end: 949, transcript:"What do you want me to do? What do you want?"},
+					{index: 21, x: 923, y: 201, speaker: 'F', end: 1022, transcript:"I want you to-- I want you to act like he is coming back, both of you.  Don't think I haven't noticed you since Chris invited her here."},
+					{index: 22, x: 1022, y: 201, speaker: 'F', end: 1058, transcript:"I won't stand for any nonsense."},
+					{index: 23, x: 1066, y: 101, speaker: 'M', end: 1082, transcript:"Kate."},
+					{index: 24, x: 1082, y: 201, speaker: 'F', end: 1224, transcript:"Because if he's not coming back, I'll kill myself.  Oh laugh, laugh all you like but why does this happen the very night he comes back.  She goes to sleep in his room and his memorial breaks in pieces.  Look at it, Joe, look."},
+					{index: 25, x: 1093, y: 101, speaker: 'M', end: 1117, transcript:"[BREATHING]"},
+					{index: 26, x: 1212, y: 101, speaker: 'M', end: 1233, transcript:"Calm yourself."},
+					{index: 27, x: 1224, y: 201, speaker: 'F', end: 1327, transcript:"Just believe with me, Joe. Only last week a man came back in Detroit missing longer than Larry.  Believe with me. You, above all, have got to believe. Just believe."},
+					{index: 28, x: 1241, y: 101, speaker: 'M', end: 1264, transcript:"Okay. Calm yourself."},
+					{index: 29, x: 1265, y: 101, speaker: 'M', end: 1338, transcript:"I know. All right, all right. All right. Okay.  Calm yourself. What does that mean, me above all?"},
+					{index: 30, x: 1346, y: 101, speaker: 'M', end: 1381, transcript:"Look at you, you're shaking."},
+					{index: 31, x: 1379, y: 201, speaker: 'F', end: 1407, transcript:"I can't help it."},
+					{index: 32, x: 1409, y: 101, speaker: 'M', end: 1476, transcript:"What have I got to hide?  What the hell is the matter with you, Kate?"},
+];
+	this.setState({refs: refs_, refPositions: refPositions_, refTexts: refTexts_, boxes: boxes_});
 	}
 
 
@@ -105,7 +152,7 @@ export default class LabelTask extends Component {
 		if (that.state.currentRef == that.state.refNames.length - 1) {
 			that.setState({currentRef: 0, tutorialOn: false});
 		}else {
-			that.setState({currentRef: that.state.currentRef + 1});    
+			that.setState({currentRef: that.state.currentRef + 1});
 		}
 	}
 
@@ -310,7 +357,7 @@ export default class LabelTask extends Component {
 		var that = this;
 
 		var http = new XMLHttpRequest();
-		var url = 'http://localhost:8080/api/v1/get_list';    
+		var url = 'http://localhost:8080/api/v1/get_list';
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);
@@ -352,6 +399,25 @@ export default class LabelTask extends Component {
 		http.send(data);
 	}
 
+	
+	togglePlay(){
+    	var that = this;
+    	that.setState({isPlaying: !that.state.isPlaying});
+  	}
+
+
+  	updateCurrentTime(time) {
+  		var that = this;
+  		console.log("timing");
+  		for (var i = 0; i < that.state.boxes.length; i++){
+  			if ( time * 10 > that.state.boxes[i].x && time * 10 <= that.state.boxes[i].end) {
+  				that.setState({currentSpeakerName: that.state.boxes[i].speaker=='M'?"Speaker A": "Speaker B", currentSpeakerAvatar: that.state.boxes[i].speaker=='M'? that.state.avatarPaths[0]: that.state.avatarPaths[1], currentTranscript: that.state.boxes[i].transcript});
+  				break;
+  			}
+  		}
+  	}
+
+
 
 	render() {
 
@@ -366,11 +432,11 @@ export default class LabelTask extends Component {
 
 				<Box className="topBar" direction="row" background="transparent" gap="medium" pad="xsmall">
 
-					<Card pad="xsmall" gap="xsmall" background="light-3" width="medium"  height="xsmall" ref={this.state.refs["navigationRef"]}>
+					<Card pad="xsmall" gap="xsmall" background="light-3" width="medium"height="xsmall" ref={this.state.refs["navigationRef"]}>
 						
 						<Text>Time</Text>
 						
-						<strong><Clock type="digital" time="PT0H0M0S" run="forward" /></strong>        
+						<strong><Clock type="digital" time="PT0H0M0S" run="forward" /></strong>
 										
 					</Card>
 
@@ -378,11 +444,11 @@ export default class LabelTask extends Component {
 											
 						<Text>Task ID</Text>
 											
-						<Text><strong>{this.state.instanceID}</strong></Text>        
+						<Text><strong>{this.state.instanceID}</strong></Text>
 										
 					</Card>
 
-					<Card pad="xsmall" gap="xsmall" background="light-3" width="medium"  height="xsmall" ref={this.state.refs["selectRef"]}>
+					<Card pad="xsmall" gap="xsmall" background="light-3" width="medium"height="xsmall" ref={this.state.refs["selectRef"]}>
 											
 						<Text>Task List</Text>
 
@@ -395,31 +461,31 @@ export default class LabelTask extends Component {
 
 				</Box>
 
-				<Card pad="xsmall" gap="xsmall" background="light-2" ref={this.state.refs["audioRef"]}>
-									
-					<Text>Task</Text>
-									
-					<ReactAudioPlayer src={this.state.instanceFilePath} controls />
-					
-				</Card>
-
 				<Box justify="center" align="center">
 
 					<Scrollbars ref="scrollbars" style={{ width: "100%", height: "400px", display: "inline-block"}} renderTrackVertical={props => <div {...props} className="track-vertical" style={{display:"none"}}/>} renderThumbVertical={props => <div {...props} className="thumb-vertical" style={{display:"none"}}/>}>
-          			
-          				<ComparisonArea />
-        
-        			</Scrollbars>
+			
+						<ComparisonArea boxesPassed={this.state.boxes} isPlaying={this.state.isPlaying} getCurrentTime={this.updateCurrentTime}/>
 
-        		</Box>
+					</Scrollbars>
+
+					{this.state.isPlaying?<Pause color='brand' onClick={() => {this.togglePlay()}} />:<Play color='brand' onClick={() => {this.togglePlay()}} />}
+
+				</Box>
 
 				<Card pad="xsmall" gap="xsmall" background="light-2" ref={this.state.refs["synthesisRef"]}>
 						
-					<Text>Synthesis based on your selection</Text>
+					<CardHeader pad="xxsmall" justify="start">Transcript</CardHeader>
 									
-					<Text>Pleasure: <strong>{this.state.instanceList[this.state.currentInstanceIndex].clickCountPleasure!=0?this.state.instanceList[this.state.currentInstanceIndex].selectedPleasure:"N/A "}</strong> Arousal: <strong>{this.state.instanceList[this.state.currentInstanceIndex].clickCountArousal!=0?this.state.instanceList[this.state.currentInstanceIndex].selectedArousal:"N/A "}</strong> Dominance: <strong>{this.state.instanceList[this.state.currentInstanceIndex].clickCountDominance!=0?this.state.instanceList[this.state.currentInstanceIndex].selectedDominance:"N/A"}</strong></Text>
-						
-					<ReactAudioPlayer src={this.state.instanceSynthesisPath} controls />
+					<CardBody pad="medium">
+						<Box direction="row">
+							<Avatar src={this.state.currentSpeakerAvatar} a11yTitle="avatar" />
+							<Text><strong>{this.state.currentSpeakerName}</strong></Text>
+						</Box>
+						<Box>
+							<Text>{this.state.currentTranscript}</Text>
+						</Box>
+					</CardBody>
 								
 				</Card>
 
@@ -428,7 +494,7 @@ export default class LabelTask extends Component {
 					<CheckBox
 						label="Is there any inconsistance between your selection and your perception?"
 						checked={this.state.instanceList[this.state.currentInstanceIndex].isInconsistent}
-						onChange={this.onInconsistanceChecked}               
+						onChange={this.onInconsistanceChecked} 
 					/>
 					
 				</Box>
