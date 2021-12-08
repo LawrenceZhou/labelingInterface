@@ -116,7 +116,7 @@ export default class ComparisonArea extends Component{
     var that = this;
     var boxes_ = that.state.boxes;
     for (var i = boxes_.length - 1; i >= 0; i -- ) {
-      if ( this.state.currentTime * 10 > boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker) {
+      if ( this.state.currentTime * 10 >= boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker) {
         if (that.audio.currentTime * 10 - boxes_[i].x < 5 && i != 0 && boxes_[i - 1].speaker == boxes_[i].speaker) {
           that.audio.currentTime = boxes_[i - 1].x / 10;
         }else {
@@ -133,7 +133,7 @@ export default class ComparisonArea extends Component{
     var that = this;
     var boxes_ = that.state.boxes;
     for (var i = boxes_.length - 1; i >= 0; i -- ) {
-      if ( this.state.currentTime * 10 > boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker && i != boxes_.length - 1) {
+      if ( this.state.currentTime * 10 >= boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker && i != boxes_.length - 1) {
         that.audio.currentTime = boxes_[i + 1].x / 10;
         break;
       }

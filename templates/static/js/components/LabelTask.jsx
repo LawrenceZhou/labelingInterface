@@ -38,6 +38,7 @@ export default class LabelTask extends Component {
 			dimensionToLabel: 'Arousal',
 			speakers: ['Male', 'Female'],
 			dimensions:['Arousal', 'Pleasure'],
+			currentIndex: -1,
 		};
 
 		this.watchTutorial=this.watchTutorial.bind(this);
@@ -403,14 +404,18 @@ export default class LabelTask extends Component {
 
   	updateCurrentTime(time) {
   		var that = this;
-  		console.log("timing");
-  		for (var i = 0; i < that.state.boxes.length; i++){
-  			if ( time * 10 > that.state.boxes[i].x && time * 10 <= that.state.boxes[i].end) {
-  				that.setState({currentSpeakerName: that.state.boxes[i].speaker=='M'?"Speaker A": "Speaker B", currentSpeakerAvatar: that.state.boxes[i].speaker=='M'? that.state.avatarPaths[0]: that.state.avatarPaths[1], currentTranscript: that.state.boxes[i].transcript});
-  				break;
+
+  		if(that.state.currentIndex == -1 || time * 10 < that.state.boxes[that.state.currentIndex].x || (that.state.currentIndex < that.state.boxes.length - 1 && time * 10 >= that.state.boxes[that.state.currentIndex + 1].x)) {
+  			for (var i =0; i < that.state.boxes.length; i++){
+  				if ( time * 10 > that.state.boxes[i].x && time * 10 <= that.state.boxes[i].end) {
+  					that.setState({currentIndex: i, currentSpeakerName: that.state.boxes[i].speaker=='M'?"Speaker A": "Speaker B", currentSpeakerAvatar: that.state.boxes[i].speaker=='M'? that.state.avatarPaths[0]: that.state.avatarPaths[1], currentTranscript: that.state.boxes[i].transcript});
+  					break;
+  				}
   			}
   		}
   	}
+
+
 
   	setSpeaker(option) {
   		var that = this;
