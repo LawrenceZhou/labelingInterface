@@ -13,6 +13,8 @@ export default class ComparisonArea extends Component{
       currentTime:0,
       audioPath: "static/assets/wavs/Ses01F_script01_2.wav",
       isPlaying: false,
+      speaker: "Female",
+      dimension: "Arousal",
     };
 
     this.tickingTimer = this.tickingTimer.bind(this);
@@ -24,7 +26,24 @@ export default class ComparisonArea extends Component{
 
   componentWillReceiveProps(nextProps){
     if(nextProps.boxesPassed !== this.props.boxesPassed){
-         this.setState({ boxes: nextProps.boxesPassed })
+      var _boxes = nextProps.boxesPassed;
+        var boxes_top = _boxes.filter(box => box.speaker == nextProps.speaker[0]);
+        var boxes_btm = _boxes.filter(box => box.speaker != nextProps.speaker[0]);
+        var _boxes = boxes_btm.concat(boxes_top);
+        this.setState({boxes: _boxes});
+    }
+
+    if(nextProps.speaker !== this.props.speaker){
+        this.setState({ speaker: nextProps.speaker });
+        var _boxes = this.state.boxes;
+        var boxes_top = _boxes.filter(box => box.speaker == nextProps.speaker[0]);
+        var boxes_btm = _boxes.filter(box => box.speaker != nextProps.speaker[0]);
+        var _boxes = boxes_btm.concat(boxes_top);
+        this.setState({boxes: _boxes});
+    }
+
+    if(nextProps.dimension !== this.props.dimension){
+        this.setState({ dimension: nextProps.dimension });
     }
 
     if(nextProps.isPlaying !== this.state.isPlaying){
@@ -35,13 +54,17 @@ export default class ComparisonArea extends Component{
       else{
         this.audio.pause();
       }
-      this.setState({ isPlaying: nextProps.isPlaying })
+      this.setState({ isPlaying: nextProps.isPlaying });
     }
 }
 
   componentDidMount(){
     this.timerId = setInterval(this.tickingTimer, 30);
-    this.setState({boxes: this.props.boxesPassed});
+    var _boxes = this.props.boxesPassed;
+    var boxes_top = _boxes.filter(box => box.speaker == this.state.speaker[0]);
+    var boxes_btm = _boxes.filter(box => box.speaker != this.state.speaker[0]);
+    var _boxes = boxes_btm.concat(boxes_top);
+    this.setState({boxes: _boxes});
     console.log(this.state.boxes);
     console.log(this.props.boxesPassed);
   }
@@ -62,7 +85,7 @@ export default class ComparisonArea extends Component{
     var boxes_ = that.state.boxes;
 
     for (var i = 0; i < boxes_.length; i++) {
-      if ( this.state.currentTime * 10 > boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end) {
+      if ( this.state.currentTime * 10 > boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker) {
         boxes_[i].y -= 50;
         break;
       }
@@ -78,7 +101,7 @@ export default class ComparisonArea extends Component{
     var boxes_ = that.state.boxes;
 
     for (var i = 0; i < boxes_.length; i++) {
-      if ( this.state.currentTime * 10 > boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end) {
+      if ( this.state.currentTime * 10 > boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker) {
         boxes_[i].y += 50;
         break;
       }
@@ -110,7 +133,7 @@ export default class ComparisonArea extends Component{
                 width={box.end-box.x}
                 height={48}
                 
-                fill={box.speaker=='M'? 'blue': 'green'}
+                fill={box.speaker=='M'? (this.state.speaker == "Male"? 'blue' : 'gray'):(this.state.speaker == "Female"? 'green' : 'gray')}
                 shadowBlur={1}
               draggable
               onDragStart={() => {

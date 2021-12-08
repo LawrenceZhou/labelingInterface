@@ -34,10 +34,10 @@ export default class LabelTask extends Component {
 			currentSpeakerAvatar: "",
 			currentTranscript: "",
 			avatarPaths: ["//s.gravatar.com/avatar/99020cae7ff399a4fbea19c0634f77c3?s=80", "//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80"],
-			speakerToLabel: 'M',
-			dimensionToLabel: 'A',
-			speakers: ['M', 'F'],
-			dimensions:['A', 'P'],
+			speakerToLabel: 'Female',
+			dimensionToLabel: 'Arousal',
+			speakers: ['Male', 'Female'],
+			dimensions:['Arousal', 'Pleasure'],
 		};
 
 		this.watchTutorial=this.watchTutorial.bind(this);
@@ -57,18 +57,13 @@ export default class LabelTask extends Component {
 		this.onInconsistanceChecked=this.onInconsistanceChecked.bind(this);
 		this.sendResult = this.sendResult.bind(this);
 		this.getInstanceList = this.getInstanceList.bind(this);	
-		this.handleClick = this.handleClick.bind(this);	
 		this.togglePlay = this.togglePlay.bind(this);	
 		this.updateCurrentTime = this.updateCurrentTime.bind(this);	
+		this.setSpeaker = this.setSpeaker.bind(this);	
+		this.setDimension = this.setDimension.bind(this);	
 
 	}
 
-	handleClick(){
-	var that = this;
-	that.setState({
-		color: Konva.Util.getRandomColor()
-	});
-};
 
 	componentDidMount(){
 		var d = new Date();
@@ -103,39 +98,39 @@ export default class LabelTask extends Component {
 
 		
 
-		var boxes_ = [{index: 0, x: 67, y: 201, speaker: 'F', end: 106, transcript:"Why did he invite her here?"}, 
-					{index: 1, x: 100, y: 101, speaker: 'M', end: 135, transcript:"Why does that bother you?"},
-					{index: 2, x: 127, y: 201, speaker: 'F', end: 173, transcript:"She's been in New York three and an half years, why all of a sudden?"},
-					{index: 3, x: 166, y: 101, speaker: 'M', end: 217, transcript:"Well maybe...maybe he just wanted to see her."},
-					{index: 4, x: 212, y: 201, speaker: 'F', end: 265, transcript:"Nobody comes seven hundred miles just to see."},
-					{index: 5, x: 257, y: 101, speaker: 'M', end: 331, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
-					{index: 6, x: 336, y: 101, speaker: 'M', end: 406, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
-					{index: 7, x: 399, y: 201, speaker: 'F', end: 430, transcript:"He's not going to marry her."},
-					{index: 8, x: 424, y: 101, speaker: 'M', end: 453, transcript:"How do you know he's even thinking about it?"},
-					{index: 9, x: 443, y: 201, speaker: 'F', end: 463, transcript:"It's got that about it."},
-					{index: 10, x: 458, y: 101, speaker: 'M', end: 476, transcript:"Oh.  So what."},
-					{index: 11, x: 471, y: 201, speaker: 'F', end: 509, transcript:"What is going on here, Joe?"},
-					{index: 12, x: 506, y: 101, speaker: 'M', end: 526, transcript:"Now listen."},
-					{index: 13, x: 520, y: 201, speaker: 'F', end: 565, transcript:"She is not his girl.  She knows she's not."},
-					{index: 14, x: 558, y: 101, speaker: 'M', end: 582, transcript:"You can't read her mind."},
-					{index: 15, x: 577, y: 201, speaker: 'F', end: 667, transcript:"Then why is she still single?  New York is full of men, why is she still single?  Probably a hundred people told her she's foolish, but she waited."},
-					{index: 16, x: 661, y: 101, speaker: 'M', end: 684, transcript:"How do you know why she waited?"},
-					{index: 17, x: 674, y: 201, speaker: 'F', end: 783, transcript:"Because she knows what I know, that's why.  She's faithful as a rock.  In my darkest moments, I think of her waiting and I know that I'm right."},
-					{index: 18, x: 783, y: 101, speaker: 'M', end: 827, transcript:"Hey look, it's a nice day, huh?  Why are we arguing?"},
-					{index: 19, x: 821, y: 201, speaker: 'F', end: 913, transcript:"Nobody in this house dares take away her faith, Joe.  You know strangers might, but not his father, not his brother."},
-					{index: 20, x: 906, y: 101, speaker: 'M', end: 949, transcript:"What do you want me to do? What do you want?"},
-					{index: 21, x: 923, y: 201, speaker: 'F', end: 1022, transcript:"I want you to-- I want you to act like he is coming back, both of you.  Don't think I haven't noticed you since Chris invited her here."},
-					{index: 22, x: 1022, y: 201, speaker: 'F', end: 1058, transcript:"I won't stand for any nonsense."},
-					{index: 23, x: 1066, y: 101, speaker: 'M', end: 1082, transcript:"Kate."},
-					{index: 24, x: 1082, y: 201, speaker: 'F', end: 1224, transcript:"Because if he's not coming back, I'll kill myself.  Oh laugh, laugh all you like but why does this happen the very night he comes back.  She goes to sleep in his room and his memorial breaks in pieces.  Look at it, Joe, look."},
-					{index: 25, x: 1093, y: 101, speaker: 'M', end: 1117, transcript:"[BREATHING]"},
-					{index: 26, x: 1212, y: 101, speaker: 'M', end: 1233, transcript:"Calm yourself."},
-					{index: 27, x: 1224, y: 201, speaker: 'F', end: 1327, transcript:"Just believe with me, Joe. Only last week a man came back in Detroit missing longer than Larry.  Believe with me. You, above all, have got to believe. Just believe."},
-					{index: 28, x: 1241, y: 101, speaker: 'M', end: 1264, transcript:"Okay. Calm yourself."},
-					{index: 29, x: 1265, y: 101, speaker: 'M', end: 1338, transcript:"I know. All right, all right. All right. Okay.  Calm yourself. What does that mean, me above all?"},
-					{index: 30, x: 1346, y: 101, speaker: 'M', end: 1381, transcript:"Look at you, you're shaking."},
-					{index: 31, x: 1379, y: 201, speaker: 'F', end: 1407, transcript:"I can't help it."},
-					{index: 32, x: 1409, y: 101, speaker: 'M', end: 1476, transcript:"What have I got to hide?  What the hell is the matter with you, Kate?"},
+		var boxes_ = [{index: 0, x: 67, y: 151, speaker: 'F', end: 106, transcript:"Why did he invite her here?"}, 
+					{index: 1, x: 100, y: 151, speaker: 'M', end: 135, transcript:"Why does that bother you?"},
+					{index: 2, x: 127, y: 151, speaker: 'F', end: 173, transcript:"She's been in New York three and an half years, why all of a sudden?"},
+					{index: 3, x: 166, y: 151, speaker: 'M', end: 217, transcript:"Well maybe...maybe he just wanted to see her."},
+					{index: 4, x: 212, y: 151, speaker: 'F', end: 265, transcript:"Nobody comes seven hundred miles just to see."},
+					{index: 5, x: 257, y: 151, speaker: 'M', end: 331, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
+					{index: 6, x: 336, y: 151, speaker: 'M', end: 406, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
+					{index: 7, x: 399, y: 151, speaker: 'F', end: 430, transcript:"He's not going to marry her."},
+					{index: 8, x: 424, y: 151, speaker: 'M', end: 453, transcript:"How do you know he's even thinking about it?"},
+					{index: 9, x: 443, y: 151, speaker: 'F', end: 463, transcript:"It's got that about it."},
+					{index: 10, x: 458, y: 151, speaker: 'M', end: 476, transcript:"Oh.  So what."},
+					{index: 11, x: 471, y: 151, speaker: 'F', end: 509, transcript:"What is going on here, Joe?"},
+					{index: 12, x: 506, y: 151, speaker: 'M', end: 526, transcript:"Now listen."},
+					{index: 13, x: 520, y: 151, speaker: 'F', end: 565, transcript:"She is not his girl.  She knows she's not."},
+					{index: 14, x: 558, y: 151, speaker: 'M', end: 582, transcript:"You can't read her mind."},
+					{index: 15, x: 577, y: 151, speaker: 'F', end: 667, transcript:"Then why is she still single?  New York is full of men, why is she still single?  Probably a hundred people told her she's foolish, but she waited."},
+					{index: 16, x: 661, y: 151, speaker: 'M', end: 684, transcript:"How do you know why she waited?"},
+					{index: 17, x: 674, y: 151, speaker: 'F', end: 783, transcript:"Because she knows what I know, that's why.  She's faithful as a rock.  In my darkest moments, I think of her waiting and I know that I'm right."},
+					{index: 18, x: 783, y: 151, speaker: 'M', end: 827, transcript:"Hey look, it's a nice day, huh?  Why are we arguing?"},
+					{index: 19, x: 821, y: 151, speaker: 'F', end: 913, transcript:"Nobody in this house dares take away her faith, Joe.  You know strangers might, but not his father, not his brother."},
+					{index: 20, x: 906, y: 151, speaker: 'M', end: 949, transcript:"What do you want me to do? What do you want?"},
+					{index: 21, x: 923, y: 151, speaker: 'F', end: 1022, transcript:"I want you to-- I want you to act like he is coming back, both of you.  Don't think I haven't noticed you since Chris invited her here."},
+					{index: 22, x: 1022, y: 151, speaker: 'F', end: 1058, transcript:"I won't stand for any nonsense."},
+					{index: 23, x: 1066, y: 151, speaker: 'M', end: 1082, transcript:"Kate."},
+					{index: 24, x: 1082, y: 151, speaker: 'F', end: 1224, transcript:"Because if he's not coming back, I'll kill myself.  Oh laugh, laugh all you like but why does this happen the very night he comes back.  She goes to sleep in his room and his memorial breaks in pieces.  Look at it, Joe, look."},
+					{index: 25, x: 1093, y: 151, speaker: 'M', end: 1117, transcript:"[BREATHING]"},
+					{index: 26, x: 1212, y: 151, speaker: 'M', end: 1233, transcript:"Calm yourself."},
+					{index: 27, x: 1224, y: 151, speaker: 'F', end: 1327, transcript:"Just believe with me, Joe. Only last week a man came back in Detroit missing longer than Larry.  Believe with me. You, above all, have got to believe. Just believe."},
+					{index: 28, x: 1241, y: 151, speaker: 'M', end: 1264, transcript:"Okay. Calm yourself."},
+					{index: 29, x: 1265, y: 151, speaker: 'M', end: 1338, transcript:"I know. All right, all right. All right. Okay.  Calm yourself. What does that mean, me above all?"},
+					{index: 30, x: 1346, y: 151, speaker: 'M', end: 1381, transcript:"Look at you, you're shaking."},
+					{index: 31, x: 1379, y: 151, speaker: 'F', end: 1407, transcript:"I can't help it."},
+					{index: 32, x: 1409, y: 151, speaker: 'M', end: 1476, transcript:"What have I got to hide?  What the hell is the matter with you, Kate?"},
 ];
 	this.setState({refs: refs_, refPositions: refPositions_, refTexts: refTexts_, boxes: boxes_});
 	}
@@ -417,6 +412,16 @@ export default class LabelTask extends Component {
   		}
   	}
 
+  	setSpeaker(option) {
+  		var that = this;
+  		that.setState({speakerToLabel: option});
+  	}
+
+  	setDimension(option) {
+  		var that = this;
+  		that.setState({dimensionToLabel: option});
+  	}
+
 
 
 	render() {
@@ -460,17 +465,36 @@ export default class LabelTask extends Component {
 					</Card>
 
 				</Box>
+				<Box direction="row">
+					<Select
+      					options={this.state.speakers}
+     	 				value={this.state.speakerToLabel}
+      					onChange={({ option }) => this.setSpeaker(option)}
+    				/>
+
+    				<Select
+      					options={this.state.dimensions}
+     	 				value={this.state.dimensionToLabel}
+      					onChange={({ option }) => this.setDimension(option)}
+    				/>
+				</Box>
+
+				<Text>High {this.state.dimensionToLabel}</Text>
 
 				<Box justify="center" align="center">
 
-					<Scrollbars ref="scrollbars" style={{ width: "100%", height: "400px", display: "inline-block"}} renderTrackVertical={props => <div {...props} className="track-vertical" style={{display:"none"}}/>} renderThumbVertical={props => <div {...props} className="thumb-vertical" style={{display:"none"}}/>}>
+					<Scrollbars ref="scrollbars" style={{ width: "100%", height: "350px", display: "inline-block"}} renderTrackVertical={props => <div {...props} className="track-vertical" style={{display:"none"}}/>} renderThumbVertical={props => <div {...props} className="thumb-vertical" style={{display:"none"}}/>}>
 			
-						<ComparisonArea boxesPassed={this.state.boxes} isPlaying={this.state.isPlaying} getCurrentTime={this.updateCurrentTime}/>
+						<ComparisonArea boxesPassed={this.state.boxes} isPlaying={this.state.isPlaying} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel}/>
 
 					</Scrollbars>
 
-					{this.state.isPlaying?<Pause color='brand' onClick={() => {this.togglePlay()}} />:<Play color='brand' onClick={() => {this.togglePlay()}} />}
+				</Box>
 
+				<Text>Low {this.state.dimensionToLabel}</Text>
+
+				<Box justify="center" align="center">
+					{this.state.isPlaying?<Pause color='brand' onClick={() => {this.togglePlay()}} />:<Play color='brand' onClick={() => {this.togglePlay()}} />}
 				</Box>
 
 				<Card pad="xsmall" gap="xsmall" background="light-2" ref={this.state.refs["synthesisRef"]}>
