@@ -7,18 +7,22 @@ export default class ComparisonArea extends Component{
   constructor(props) {
     super(props);
     this.state = {  
-      horizontalLines: [50, 100, 150, 200, 250, 300, 350],
+      horizontalLines: [50, 100, 150, 200],
       verticalLines: [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500],
       boxes: props.boxesPassed,
+      boxesTimeOrder: props.boxesPassed,
       currentTime:0,
       audioPath: "static/assets/wavs/Ses01F_script01_2.wav",
       isPlaying: false,
       speaker: "Female",
       dimension: "Arousal",
+      canvasHeight: 250,
+      currentSpeakerSentenceNumber: 0,
     };
 
     this.audio = new Audio(this.state.audioPath);
     this.tickingTimer = this.tickingTimer.bind(this);
+    this.handleKeySpacePressed = this.handleKeySpacePressed.bind(this);
     this.handleKeyUpPressed = this.handleKeyUpPressed.bind(this);
     this.handleKeyDownPressed = this.handleKeyDownPressed.bind(this);
     this.handleKeyLeftPressed = this.handleKeyLeftPressed.bind(this);
@@ -31,7 +35,7 @@ export default class ComparisonArea extends Component{
         var boxes_top = boxes_.filter(box => box.speaker == nextProps.speaker[0]);
         var boxes_btm = boxes_.filter(box => box.speaker != nextProps.speaker[0]);
         var _boxes = boxes_btm.concat(boxes_top);
-        this.setState({boxes: _boxes});
+        this.setState({boxes: _boxes, boxesTimeOrder: nextProps.boxesPassed, currentSpeakerSentenceNumber: boxes_top.length});
     }
 
     if(nextProps.speaker !== this.props.speaker){
@@ -40,7 +44,7 @@ export default class ComparisonArea extends Component{
         var boxes_top = boxes_.filter(box => box.speaker == nextProps.speaker[0]);
         var boxes_btm = boxes_.filter(box => box.speaker != nextProps.speaker[0]);
         var _boxes = boxes_btm.concat(boxes_top);
-        this.setState({boxes: _boxes});
+        this.setState({boxes: _boxes, currentSpeakerSentenceNumber: boxes_top.length});
     }
 
     if(nextProps.dimension !== this.props.dimension){
@@ -65,14 +69,14 @@ export default class ComparisonArea extends Component{
     var boxes_top = boxes_.filter(box => box.speaker == this.state.speaker[0]);
     var boxes_btm = boxes_.filter(box => box.speaker != this.state.speaker[0]);
     var _boxes = boxes_btm.concat(boxes_top);
-    this.setState({boxes: _boxes});
+    this.setState({boxes: _boxes, boxesTimeOrder: this.props.boxesPassed, currentSpeakerSentenceNumber: boxes_top.length});
     console.log(this.state.boxes);
     console.log(this.props.boxesPassed);
   }
 
   componentWillUnmount() {
     clearInterval(this.timerId);
-}
+  }
 
   tickingTimer() {
     var that = this;
@@ -80,14 +84,40 @@ export default class ComparisonArea extends Component{
     that.props.getCurrentTime(that.audio.currentTime);
   }
 
+
+  handleKeySpacePressed(){
+    var that = this;
+    that.props.togglePlay();
+  }
+
+
   handleKeyUpPressed() {
     console.log("up pressed.");
     var that = this;
     var boxes_ = that.state.boxes;
-
+    //original
     for (var i = 0; i < boxes_.length; i++) {
-      if ( this.state.currentTime * 10 > boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker) {
-        boxes_[i].y -= 50;
+      if ( this.state.currentTime * 10 >= boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker) {
+        if (boxes_[i].y < 50) {
+          var horizontalLines_ = that.state.horizontalLines;
+          horizontalLines_.push(horizontalLines_[horizontalLines_.length - 1] + 50);
+          
+          that.setState({canvasHeight: that.state.canvasHeight + 50, horizontalLines: horizontalLines_}, function(){that.props.updateScrollPosition(boxes_[i].y);});
+          for (var j = 0; j < boxes_.length; j++) {
+            if ( this.state.currentTime * 10 > boxes_[j].end && this.state.speaker[0] == boxes_[j].speaker) {
+              boxes_[j].y += 50;
+            }else if (this.state.speaker[0] != boxes_[j].speaker) {
+              boxes_[j].y += 50;
+            }
+          }
+        }else{
+          that.props.updateScrollPosition(boxes_[i].y - 50);
+          for (var j = 0; j < boxes_.length; j++) {
+            if ( this.state.currentTime * 10 < boxes_[j].end && this.state.speaker[0] == boxes_[j].speaker) {
+              boxes_[j].y -= 50;
+            }
+          }
+        }
         break;
       }
     }
@@ -102,8 +132,26 @@ export default class ComparisonArea extends Component{
     var boxes_ = that.state.boxes;
 
     for (var i = 0; i < boxes_.length; i++) {
-      if ( this.state.currentTime * 10 > boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker) {
-        boxes_[i].y += 50;
+      if ( this.state.currentTime * 10 >= boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker) {
+        //that.props.updateScrollPosition(boxes_[i].y + 50);
+        if (boxes_[i].y > that.state.canvasHeight - 50) {
+          var horizontalLines_ = that.state.horizontalLines;
+          horizontalLines_.push(horizontalLines_[horizontalLines_.length - 1] + 50);
+          
+          that.setState({canvasHeight: that.state.canvasHeight + 50, horizontalLines: horizontalLines_}, function(){that.props.updateScrollPosition(boxes_[i].y + 50);});
+          for (var j = 0; j < boxes_.length; j++) {
+            if ( this.state.currentTime * 10 < boxes_[j].end && this.state.speaker[0] == boxes_[j].speaker) {
+              boxes_[j].y +=50;
+            }
+          }
+        }else{
+          that.props.updateScrollPosition(boxes_[i].y + 50);
+          for (var j = 0; j < boxes_.length; j++) {
+            if ( this.state.currentTime * 10 < boxes_[j].end && this.state.speaker[0] == boxes_[j].speaker) {
+              boxes_[j].y +=50;
+            }
+          }
+        }
         break;
       }
     }
@@ -115,9 +163,10 @@ export default class ComparisonArea extends Component{
     console.log("left pressed.");
     var that = this;
     var boxes_ = that.state.boxes;
-    for (var i = boxes_.length - 1; i >= 0; i -- ) {
-      if ( this.state.currentTime * 10 >= boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker) {
-        if (that.audio.currentTime * 10 - boxes_[i].x < 5 && i != 0 && boxes_[i - 1].speaker == boxes_[i].speaker) {
+
+    for (var i = boxes_.length - 1; i > boxes_.length - that.state.currentSpeakerSentenceNumber; i -- ) {
+      if ( this.state.currentTime * 10 >= boxes_[i].x) {
+        if (that.audio.currentTime * 10 - boxes_[i].x < 5) {
           that.audio.currentTime = boxes_[i - 1].x / 10;
         }else {
           that.audio.currentTime = boxes_[i].x / 10;
@@ -132,8 +181,17 @@ export default class ComparisonArea extends Component{
     console.log("right pressed.");
     var that = this;
     var boxes_ = that.state.boxes;
-    for (var i = boxes_.length - 1; i >= 0; i -- ) {
-      if ( this.state.currentTime * 10 >= boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker && i != boxes_.length - 1) {
+
+    if (that.audio.currentTime * 10 < that.state.boxesTimeOrder[0].x) {
+      that.audio.currentTime = that.state.boxesTimeOrder[0].x / 10;
+      return;
+    }else if (that.audio.currentTime * 10 < boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x) {
+      that.audio.currentTime = boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x / 10;
+      return;
+    }
+
+    for (var i = boxes_.length - 2; i >= boxes_.length - that.state.currentSpeakerSentenceNumber; i --) {
+      if ( this.state.currentTime * 10 >= boxes_[i].x) {
         that.audio.currentTime = boxes_[i + 1].x / 10;
         break;
       }
@@ -142,16 +200,16 @@ export default class ComparisonArea extends Component{
 
   render() {
     return (
-      <Keyboard target='document' onUp={()=>{this.handleKeyUpPressed()}} onDown={()=>{this.handleKeyDownPressed()}} onLeft={()=>{this.handleKeyLeftPressed()}} onRight={()=>{this.handleKeyRightPressed()}}>
+      <Keyboard target='document' onSpace={()=>{this.handleKeySpacePressed()}} onUp={()=>{this.handleKeyUpPressed()}} onDown={()=>{this.handleKeyDownPressed()}} onLeft={()=>{this.handleKeyLeftPressed()}} onRight={()=>{this.handleKeyRightPressed()}}>
       <Box>
-      <Stage width={1600} height={350} >
+      <Stage width={1600} height={this.state.canvasHeight} >
         <Layer >
           
            <Rect
         x={0}
         y={0}
         width={1600}
-        height={350}
+        height={this.state.canvasHeight}
         fill={'white'}
         shadowBlur={0}
       />
@@ -193,7 +251,7 @@ export default class ComparisonArea extends Component{
                 x={this.state.currentTime * 10}
                 y={0}
                 width={2}
-                height={350}
+                height={this.state.canvasHeight}
                 
                 fill={'gray'}
                 shadowBlur={1}
