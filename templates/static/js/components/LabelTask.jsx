@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Grommet, Card, CardHeader, CardBody, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select, Avatar } from 'grommet';
+import {Grommet, Card, CardHeader, CardBody, Text, Box, Button, Grid, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select, Avatar } from 'grommet';
 import { Play, Pause } from 'grommet-icons';
 import Scrollbars from "react-custom-scrollbars";
 import ComparisonArea from './ComparisonArea';
@@ -25,20 +25,24 @@ export default class LabelTask extends Component {
 			refs:{},
 			refPositions: {},
 			refTexts: {},
-			refNames: ["navigationRef", "labelRef", "synthesisRef", "inconsistantRef", "previousNextRef", "selectRef", "submitRef"],
+			refNames: ["navigationRef", "labelRef", "synthesisRef", "previousNextRef", "selectRef", "submitRef"],
 			confirmed: false,
 			color:'green',
 			boxes: [],
 			isPlaying: false,
 			currentSpeakerName: "",
-			currentSpeakerAvatar: "",
-			currentTranscript: "",
-			avatarPaths: ["//s.gravatar.com/avatar/99020cae7ff399a4fbea19c0634f77c3?s=80", "//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80"],
+			currentTranscriptM: "",
+			lastTranscriptM: "",
+			currentTranscriptF: "",
+			lastTranscriptF: "",
 			speakerToLabel: 'Female',
 			dimensionToLabel: 'Arousal',
 			speakers: ['Male', 'Female'],
 			dimensions:['Arousal', 'Pleasure'],
 			currentIndex: -1,
+			currentIndexM: -1,
+			currentIndexF: -1,
+			reset: false,
 		};
 
 		this.watchTutorial=this.watchTutorial.bind(this);
@@ -51,7 +55,8 @@ export default class LabelTask extends Component {
 		this.generateMenuItems=this.generateMenuItems.bind(this);
 		this.onInstanceMenuSelected=this.onInstanceMenuSelected.bind(this);
 		this.gotoNext=this.gotoNext.bind(this);
-		this.gotoPrevious=this.gotoPrevious.bind(this);
+		this.reset=this.reset.bind(this);
+		this.finishReset=this.finishReset.bind(this);
 		this.onPleasureSelected=this.onPleasureSelected.bind(this);
 		this.onArousalSelected=this.onArousalSelected.bind(this);
 		this.onDominanceSelected=this.onDominanceSelected.bind(this);
@@ -59,6 +64,7 @@ export default class LabelTask extends Component {
 		this.sendResult = this.sendResult.bind(this);
 		this.getInstanceList = this.getInstanceList.bind(this);	
 		this.togglePlay = this.togglePlay.bind(this);	
+		this.stopPlay = this.stopPlay.bind(this);	
 		this.updateCurrentTime = this.updateCurrentTime.bind(this);	
 		this.updateScrollPosition = this.updateScrollPosition.bind(this);	
 		this.setSpeaker = this.setSpeaker.bind(this);	
@@ -85,7 +91,6 @@ export default class LabelTask extends Component {
 		refPositions_["navigationRef"] = {top:"top", right: "left"};
 		refPositions_["labelRef"] = {top:"top", right: "left"};
 		refPositions_["synthesisRef"] = {top:"top", right: "left"};
-		refPositions_["inconsistantRef"] = {top:"top", right: "left"};
 		refPositions_["previousNextRef"] = {top:"top", right: "left"};
 		refPositions_["selectRef"] = {top:"top", left: "right"};
 		refPositions_["submitRef"] = {top:"bottom", left: "right"};
@@ -93,7 +98,6 @@ export default class LabelTask extends Component {
 		refTexts_["navigationRef"] = "Time usage and instance ID will show here.";
 		refTexts_["labelRef"] = "Select values of Pleasure, Arousal, and Dominance to give your labels.";
 		refTexts_["synthesisRef"] = "Click the play button to hear the synthesized sample based on your selection.";
-		refTexts_["inconsistantRef"] = "If your selections do not give a satisfying synthesized result, please keep your selection and check this.";
 		refTexts_["previousNextRef"] = "Click \"Previous\" and \"Next\" button to navigate through utterances.";
 		refTexts_["selectRef"] = "You can also go to the utterance using this menu. It shows whether each utterance labeling task is finished.";
 		refTexts_["submitRef"] = "Click the \"Submit\" buttion to submit your results after you finish all the utterance labeling tasks." ;
@@ -249,11 +253,15 @@ export default class LabelTask extends Component {
 	}
 
 
-	gotoPrevious() {
-		var that= this;
-		if(that.state.currentInstanceIndex - 1 >= 0){
-			that.updateCurrentInstance(that.state.currentInstanceIndex - 1);
-		}
+	reset() {
+		var that = this;
+		that.stopPlay();
+		that.setState({reset: true});
+	}
+
+	finishReset() {
+		var that = this;
+		that.setState({reset: false});
 	}
 
 
@@ -403,6 +411,12 @@ export default class LabelTask extends Component {
   	}
 
 
+  	stopPlay(){
+    	var that = this;
+    	that.setState({isPlaying: false});
+  	}
+
+
   	updateCurrentTime(time) {
   		var that = this;
 
@@ -415,7 +429,13 @@ export default class LabelTask extends Component {
   		if(that.state.currentIndex == -1 || time * 10 < that.state.boxes[that.state.currentIndex].x || (that.state.currentIndex < that.state.boxes.length - 1 && time * 10 >= that.state.boxes[that.state.currentIndex + 1].x)) {
   			for (var i = 0; i < that.state.boxes.length; i++){
   				if ( time * 10 > that.state.boxes[i].x && time * 10 <= that.state.boxes[i].end) {
-  					that.setState({currentIndex: i, currentSpeakerName: that.state.boxes[i].speaker=='M'?"Speaker A": "Speaker B", currentSpeakerAvatar: that.state.boxes[i].speaker=='M'? that.state.avatarPaths[0]: that.state.avatarPaths[1], currentTranscript: that.state.boxes[i].transcript});
+
+  					if (that.state.boxes[i].speaker == 'M' && that.state.boxes[i].transcript!= that.state.currentTranscriptM) {
+  						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
+  					}
+  					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript!= that.state.currentTranscriptF) {
+  						that.setState({currentIndex: i,  currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
+  					}
   					break;
   				}
   			}
@@ -464,36 +484,7 @@ export default class LabelTask extends Component {
 
 				</Box> 
 
-				<Box className="topBar" direction="row" background="transparent" gap="medium" pad="xsmall">
-
-					<Card pad="xsmall" gap="xsmall" background="light-3" width="medium"height="xsmall" ref={this.state.refs["navigationRef"]}>
-						
-						<Text>Time</Text>
-						
-						<strong><Clock type="digital" time="PT0H0M0S" run="forward" /></strong>
-										
-					</Card>
-
-					<Card pad="xsmall" gap="xsmall" background="light-3" width="medium" height="xsmall">
-											
-						<Text>Task ID</Text>
-											
-						<Text><strong>{this.state.instanceID}</strong></Text>
-										
-					</Card>
-
-					<Card pad="xsmall" gap="xsmall" background="light-3" width="medium"height="xsmall" ref={this.state.refs["selectRef"]}>
-											
-						<Text>Task List</Text>
-
-							<Select
-								placeholder={this.state.menuText}
-								options={this.state.menuItems}
-								onChange={this.onInstanceMenuSelected}/>
-
-					</Card>
-
-				</Box>
+				
 				<Box direction="row">
 					<Select
       					options={this.state.speakers}
@@ -514,7 +505,7 @@ export default class LabelTask extends Component {
 
 					<Scrollbars ref="scrollbars" style={{ width: "100%", height: "250px", display: "inline-block"}} >
 			
-						<ComparisonArea boxesPassed={this.state.boxes} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition}/>
+						<ComparisonArea boxesPassed={this.state.boxes} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} finishReset={this.finishReset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition}/>
 
 					</Scrollbars>
 
@@ -530,27 +521,40 @@ export default class LabelTask extends Component {
 						
 					<CardHeader pad="xxsmall" justify="start">Transcript</CardHeader>
 									
-					<CardBody pad="medium">
-						<Box direction="row">
-							<Avatar src={this.state.currentSpeakerAvatar} a11yTitle="avatar" />
-							<Text><strong>{this.state.currentSpeakerName}</strong></Text>
-						</Box>
-						<Box>
-							<Text>{this.state.currentTranscript}</Text>
-						</Box>
+					<CardBody pad="xxsmall">
+						<Grid
+  							rows={['auto']}
+  							columns={['1/2', '1/2']}
+  							gap="none"
+  							areas={[
+    							{ name: 'left', start: [0, 0], end: [0, 0] },
+    							{ name: 'right', start: [1, 0], end: [1, 0] },
+  							]}
+						>
+  							<Box gridArea="left" background={this.state.speakerToLabel=="Female"?"green":"light-1"} align="center" ><Text><strong>Female Speaker</strong></Text></Box>
+							<Box gridArea="right" background={this.state.speakerToLabel=="Male"?"brand":"light-1"} align="center"><Text><strong>Male Speaker</strong></Text></Box>
+
+						</Grid>
+						<Grid
+  							rows={['1/3', '2/3']}
+  							columns={['1/2', '1/2']}
+  							gap="none"
+  							areas={[
+    							{ name: 'left-up', start: [0, 0], end: [0, 0] },
+    							{ name: 'right-up', start: [1, 0], end: [1, 0] },
+    							{ name: 'left-down', start: [0, 1], end: [0, 1] },
+    							{ name: 'right-down', start: [1, 1], end: [1, 1] },
+  							]}
+						>
+  							<Box gridArea="left-up" border={{ color: 'dark-3', size: 'xsmall' }}><Box direction="row"><Text size="xsmall">last sentence</Text></Box><Text size="small">{this.state.lastTranscriptF}</Text></Box>
+							<Box gridArea="right-up" border={{ color: 'dark-3', size: 'xsmall' }}><Box direction="row"><Text size="xsmall">last sentence</Text></Box><Text size="small">{this.state.lastTranscriptM}</Text></Box>
+							<Box gridArea="left-down" border={{ color: 'dark-3', size: 'xsmall' }}><Box direction="row"><Text size="small">current sentence: </Text><Box background={this.state.speakerToLabel=="Female"?"green":"dark-3"} width="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexF==-1? "" : this.state.boxes[this.state.currentIndexF].index + 1}</Text></Box></Box><Text>{this.state.currentTranscriptF}</Text></Box>
+							<Box gridArea="right-down" border={{ color: 'dark-3', size: 'xsmall' }}><Box direction="row"><Text size="small">current sentence: </Text><Box background={this.state.speakerToLabel=="Male"?"brand":"dark-3"} width="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexM==-1? "" : this.state.boxes[this.state.currentIndexM].index + 1}</Text></Box></Box><Text>{this.state.currentTranscriptM}</Text></Box>
+						</Grid>
 					</CardBody>
 								
 				</Card>
 
-				<Box ref={this.state.refs["inconsistantRef"]} >
-					
-					<CheckBox
-						label="Is there any inconsistance between your selection and your perception?"
-						checked={this.state.instanceList[this.state.currentInstanceIndex].isInconsistent}
-						onChange={this.onInconsistanceChecked} 
-					/>
-					
-				</Box>
 
 				<Box justify="center" align="center">
 							
@@ -564,7 +568,7 @@ export default class LabelTask extends Component {
 
 					<Box align="center" pad="medium" ref={this.state.refs["previousNextRef"]}>
 							
-						<Button label="Previous" onClick={() => {this.gotoPrevious()}} />
+						<Button label="Reset" color="status-critical" onClick={() => {this.reset()}} />
 						
 					</Box>
 
