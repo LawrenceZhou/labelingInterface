@@ -15,7 +15,7 @@ export default class OuterFrame extends Component {
 	constructor() {
 		super();
 		this.state = {
-			title: "Emotional Japanese Speech Annotation",
+			title: "Emotional Speech Annotation",
 			progress: "login",
 			userName: "",
 			password: "",
@@ -97,9 +97,21 @@ export default class OuterFrame extends Component {
 					
 					</Box>
 
-					<Box background="#EEEEEE" pad="small">
+					<Box background="#EEEEEE" pad="xsmall" direction="row" align="center" justify="center" gap="small">
 
 						<Heading level='2' size='medium' textAlign="center">{this.state.title}</Heading>
+
+						{this.state.login && 
+						
+						<DropButton
+							dropAlign={{top: 'bottom', right: 'right'}}
+							dropContent={<Box pad="medium" onClick={() => {this.logOut()}} >Logout as {this.state.userName} </Box>}>
+				  
+							<User size="medium" />
+					
+						</DropButton>
+
+						}  
 
 					</Box>
 
@@ -116,23 +128,7 @@ export default class OuterFrame extends Component {
 					</Layer>
 					}
 
-					{this.state.login && 
-					<Box background="#EEEEEE" pad={{left:"80%"}}>
-						
-						<DropButton
-							dropAlign={{top: 'bottom', right: 'right'}}
-							dropContent={<Box pad="medium" onClick={() => {this.logOut()}} >Logout</Box>}>
-				  
-							<User size="medium" />
 					
-						</DropButton>
-				
-						<Text>Login as: {this.state.userName}</Text>
-						
-						<Box background="#EEEEEE" pad="xsmall" />
-
-					</Box>
-					}  
 
 					{this.state.progress == "login" && 
 					<Login loginSuccess={this.loginSuccess} />

@@ -4,7 +4,7 @@ import routes from "./routes";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 window.addEventListener("keydown", function(e) {
-    if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+    if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight", "Esc"].indexOf(e.code) > -1) {
         e.preventDefault();
     }
 }, false);

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Stage, Layer, Rect, Text, Line, Group } from 'react-konva';
+import { Stage, Layer, Rect, Text, Line, Group, RegularPolygon } from 'react-konva';
 import Konva from 'konva';
 import { Box, Keyboard } from 'grommet';
 
@@ -8,13 +8,22 @@ export default class ComparisonArea extends Component{
     super(props);
     this.state = {  
       horizontalLines: [50, 100, 150, 200],
-      verticalLines: [150, 300, 450, 600, 750, 900, 1050, 1200, 1350, 1500, 1600],
+      verticalLines: [{x:150, time:"00:15"},
+                      {x:300, time:"00:30"},
+                      {x:450, time:"00:45"},
+                      {x:600, time:"01:00"},
+                      {x:750, time:"01:15"},
+                      {x:900, time:"01:30"},
+                      {x:1050, time:"01:45"},
+                      {x:1200, time:"02:00"},
+                      {x:1350, time:"02:15"},
+                      {x:1500, time:"02:30"}],
       boxes: props.boxesPassed,
       boxesTimeOrder: props.boxesPassed,
       currentTime:0,
       audioPath: "static/assets/wavs/Ses01F_script01_2.wav",
       isPlaying: false,
-      speaker: "Female",
+      speaker: "Male",
       dimension: "Arousal",
       canvasHeight: 250,
       currentSpeakerSentenceNumber: 0,
@@ -34,24 +43,37 @@ export default class ComparisonArea extends Component{
 
   componentWillReceiveProps(nextProps){
     if(nextProps.boxesPassed !== this.props.boxesPassed){
-      var boxes_ = nextProps.boxesPassed;
+      var boxes_ = JSON.parse(JSON.stringify(nextProps.boxesPassed));
         var boxes_top = boxes_.filter(box => box.speaker == nextProps.speaker[0]);
         var boxes_btm = boxes_.filter(box => box.speaker != nextProps.speaker[0]);
         var _boxes = boxes_btm.concat(boxes_top);
-        this.setState({boxes: _boxes, boxesTimeOrder: nextProps.boxesPassed, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: [boxes_]});
+        this.setState({boxes: _boxes, boxesTimeOrder: nextProps.boxesPassed, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
     }
 
     if(nextProps.speaker !== this.props.speaker){
-        this.setState({ speaker: nextProps.speaker });
-        var boxes_ = this.state.boxes;
+      console.log(nextProps.speaker, this.props.speaker, this.state.speaker);
+        this.setState({ speaker: nextProps.speaker }, function(){console.log(nextProps.speaker, this.props.speaker, this.state.speaker);});
+        var boxes_ = JSON.parse(JSON.stringify(nextProps.boxesPassed));
         var boxes_top = boxes_.filter(box => box.speaker == nextProps.speaker[0]);
         var boxes_btm = boxes_.filter(box => box.speaker != nextProps.speaker[0]);
         var _boxes = boxes_btm.concat(boxes_top);
-        this.setState({boxes: _boxes, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: [boxes_]});
+        console.log(_boxes);
+        this.setState({boxes: _boxes, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
+        console.log(nextProps.speaker, this.props.speaker, this.state.speaker);
+        this.audio.currentTime = 0;
     }
 
     if(nextProps.dimension !== this.props.dimension){
-        this.setState({ dimension: nextProps.dimension });
+        console.log(nextProps.dimension, this.props.dimension, this.state.dimension);
+        this.setState({ dimension: nextProps.dimension }, function(){console.log(nextProps.speaker, this.props.speaker, this.state.speaker);});
+        var boxes_ = JSON.parse(JSON.stringify(nextProps.boxesPassed));
+        var boxes_top = boxes_.filter(box => box.speaker == nextProps.speaker[0]);
+        var boxes_btm = boxes_.filter(box => box.speaker != nextProps.speaker[0]);
+        var _boxes = boxes_btm.concat(boxes_top);
+        console.log(_boxes);
+        this.setState({boxes: _boxes, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
+        console.log(nextProps.dimension, this.props.dimension, this.state.dimension);
+        this.audio.currentTime = 0;
     }
 
     if(nextProps.isPlaying !== this.state.isPlaying){
@@ -68,7 +90,6 @@ export default class ComparisonArea extends Component{
     if(nextProps.reset){
       this.setState({boxes: JSON.parse(JSON.stringify(this.state.boxesHistory[0])), boxesHistory: [JSON.parse(JSON.stringify(this.state.boxesHistory[0]))], operationBoxHistory: []});
       this.audio.currentTime = 0;
-      this.props.finishReset();
     }
 }
 
@@ -78,7 +99,7 @@ export default class ComparisonArea extends Component{
     var boxes_top = boxes_.filter(box => box.speaker == this.state.speaker[0]);
     var boxes_btm = boxes_.filter(box => box.speaker != this.state.speaker[0]);
     var _boxes = boxes_btm.concat(boxes_top);
-    this.setState({boxes: _boxes, boxesTimeOrder: this.props.boxesPassed, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
+    this.setState({speaker: this.props.speaker, dimension: this.props.dimension, boxes: _boxes, boxesTimeOrder: this.props.boxesPassed, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
     console.log(this.state.boxes);
     console.log(this.props.boxesPassed);
   }
@@ -130,7 +151,7 @@ export default class ComparisonArea extends Component{
     boxesHistory_.push(boxes__);
     //original
     for (var i = 0; i < boxes_.length; i++) {
-      if ( this.state.currentTime * 10 >= boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker) {
+      if ( that.state.currentTime * 10 >= boxes_[i].x && that.state.currentTime * 10 <= boxes_[i].end && that.state.speaker[0] == boxes_[i].speaker) {
         var operationBoxHistory_ = that.state.operationBoxHistory;
         operationBoxHistory_.push(i);
         that.setState({boxesHistory: boxesHistory_, operationBoxHistory: operationBoxHistory_}, function(){console.log(that.state.boxesHistory[that.state.boxesHistory.length -1 ])});
@@ -141,16 +162,16 @@ export default class ComparisonArea extends Component{
           
           that.setState({canvasHeight: that.state.canvasHeight + 50, horizontalLines: horizontalLines_}, function(){that.props.updateScrollPosition(boxes_[i].y);});
           for (var j = 0; j < boxes_.length; j++) {
-            if ( this.state.currentTime * 10 > boxes_[j].end && this.state.speaker[0] == boxes_[j].speaker) {
+            if ( that.state.currentTime * 10 > boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
               boxes_[j].y += 50;
-            }else if (this.state.speaker[0] != boxes_[j].speaker) {
+            }else if (that.state.speaker[0] != boxes_[j].speaker) {
               boxes_[j].y += 50;
             }
           }
         }else{
           that.props.updateScrollPosition(boxes_[i].y - 50);
           for (var j = 0; j < boxes_.length; j++) {
-            if ( this.state.currentTime * 10 < boxes_[j].end && this.state.speaker[0] == boxes_[j].speaker) {
+            if ( that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
               boxes_[j].y -= 50;
             }
           }
@@ -173,7 +194,7 @@ export default class ComparisonArea extends Component{
     boxesHistory_.push(boxes__);
 
     for (var i = 0; i < boxes_.length; i++) {
-      if ( this.state.currentTime * 10 >= boxes_[i].x && this.state.currentTime * 10 <= boxes_[i].end && this.state.speaker[0] == boxes_[i].speaker) {
+      if ( that.state.currentTime * 10 >= boxes_[i].x && that.state.currentTime * 10 <= boxes_[i].end && that.state.speaker[0] == boxes_[i].speaker) {
         var operationBoxHistory_ = that.state.operationBoxHistory;
         operationBoxHistory_.push(i);
         that.setState({boxesHistory: boxesHistory_, operationBoxHistory: operationBoxHistory_}, function(){console.log(that.state.boxesHistory[that.state.boxesHistory.length -1 ])});
@@ -184,14 +205,14 @@ export default class ComparisonArea extends Component{
           
           that.setState({canvasHeight: that.state.canvasHeight + 50, horizontalLines: horizontalLines_}, function(){that.props.updateScrollPosition(boxes_[i].y + 50);});
           for (var j = 0; j < boxes_.length; j++) {
-            if ( this.state.currentTime * 10 < boxes_[j].end && this.state.speaker[0] == boxes_[j].speaker) {
+            if ( that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
               boxes_[j].y +=50;
             }
           }
         }else{
           that.props.updateScrollPosition(boxes_[i].y + 50);
           for (var j = 0; j < boxes_.length; j++) {
-            if ( this.state.currentTime * 10 < boxes_[j].end && this.state.speaker[0] == boxes_[j].speaker) {
+            if ( that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
               boxes_[j].y +=50;
             }
           }
@@ -210,10 +231,12 @@ export default class ComparisonArea extends Component{
     var boxes_ = that.state.boxes;
 
     for (var i = boxes_.length - 1; i > boxes_.length - that.state.currentSpeakerSentenceNumber; i -- ) {
-      if ( this.state.currentTime * 10 >= boxes_[i].x) {
+      if ( that.state.currentTime * 10 >= boxes_[i].x) {
         if (that.audio.currentTime * 10 - boxes_[i].x < 5) {
+          that.props.updateScrollPosition(boxes_[i-1].y );
           that.audio.currentTime = boxes_[i - 1].x / 10;
         }else {
+          that.props.updateScrollPosition(boxes_[i].y );
           that.audio.currentTime = boxes_[i].x / 10;
         }
         
@@ -236,8 +259,9 @@ export default class ComparisonArea extends Component{
     }
 
     for (var i = boxes_.length - 2; i >= boxes_.length - that.state.currentSpeakerSentenceNumber; i --) {
-      if ( this.state.currentTime * 10 >= boxes_[i].x) {
+      if ( that.state.currentTime * 10 >= boxes_[i].x) {
         that.audio.currentTime = boxes_[i + 1].x / 10;
+        that.props.updateScrollPosition(boxes_[i+1].y );
         break;
       }
     }
@@ -249,9 +273,12 @@ export default class ComparisonArea extends Component{
       <Keyboard target='document' onEsc={()=>{this.handleKeyEscPressed()}} onSpace={()=>{this.handleKeySpacePressed()}} onUp={()=>{this.handleKeyUpPressed()}} onDown={()=>{this.handleKeyDownPressed()}} onLeft={()=>{this.handleKeyLeftPressed()}} onRight={()=>{this.handleKeyRightPressed()}}>
       <Box>
       <Stage width={1600} height={this.state.canvasHeight} >
-        <Layer >
+      
+
+
+      <Layer >
           
-           <Rect
+      <Rect
         x={0}
         y={0}
         width={1600}
@@ -259,41 +286,6 @@ export default class ComparisonArea extends Component{
         fill={'white'}
         shadowBlur={0}
       />
-       {this.state.boxes.map((box, i) => (
-
-            <Group x={box.x} y={box.y}>
-              <Rect
-                x={0}
-                y={0}
-                width={box.end-box.x}
-                height={48}
-                fill={box.speaker=='M'? (this.state.speaker == "Male"? 'blue' : 'gray'):(this.state.speaker == "Female"? 'green' : 'gray')}
-                shadowBlur={1}
-              />
-              <Text
-                width={25}
-                height={13}
-                fontSize={12}
-                text={box.index + 1}
-                stroke='white'
-                strokeWidth={1}
-                align="center"
-              />
-         </Group>
-
-           
-      ))}
-
-       <Rect
-          x={this.state.currentTime * 10}
-          y={0}
-          width={2}
-          height={this.state.canvasHeight}      
-          fill={'gray'}
-          shadowBlur={1}
-      />
-
-
       {this.state.horizontalLines.map((line, i) => (
               <Line
                 key={i}
@@ -304,17 +296,95 @@ export default class ComparisonArea extends Component{
               />
       ))}
 
-      {/*this.state.verticalLines.map((line, i) => (
+      {this.state.verticalLines.map((line, i) => (
+              <Group x={line.x} y={0}>
               <Line
                 key={i}
-                points={[line, 0, line, 400]}
+                points={[0, 0, 0, this.state.canvasHeight]}
                 stroke={'grey'}
-                strokeWidth={1}
+                strokeWidth={0.5}
                 lineCap="round"
               />
-      ))*/}
+               <Text
+                x={1}
+                y={this.state.canvasHeight-13}
+                width={60}
+                height={13}
+                fontSize={12}
+                text={line.time}
+                fill='grey'
+                strokeWidth={0.5}
+              />
+              </Group>
+      ))}
+
       
+      {this.state.boxes.map((box, i) => (
+
+              <Rect
+                x={box.x}
+                y={0}
+                width={box.end-box.x}
+                height={this.state.canvasHeight}
+                fill={(box.speaker == this.state.speaker[0] && (this.state.dimension == "Arousal"? box.highlightA:box.highlightP))?'#F8FF9580' : '#F8FF9500'}
+              />
+
+      ))}
+
+      {this.state.boxes.map((box, i) => (
+
+            <Group x={box.x} y={box.y}>
+              <Rect
+                x={0}
+                y={0}
+                width={box.end-box.x}
+                height={48}
+                fill={box.speaker=='M'? (this.state.speaker == "Male"? this.props.maleColor : '#CCCCCC'):(this.state.speaker == "Female"? this.props.femaleColor : '#CCCCCC')}
+                shadowBlur={box.speaker==this.state.speaker[0]?1:0}
+                cornerRadius={[3, 3, 3, 3]}
+              />
+              <Text
+                x={1}
+                y={18}
+                width={29}
+                height={15}
+                fontSize={14}
+                text={box.indexS + 1}
+                fill='white'
+                strokeWidth={1}
+                align="start"
+                visible={box.speaker == this.state.speaker[0]}
+              />
+         </Group>
+
+      ))}
+
+     
+
+       <Rect
+          x={this.state.currentTime * 10}
+          y={0}
+          width={2}
+          height={this.state.canvasHeight}      
+          fill={'#9A0680'}
+      />
+
+       {this.state.isPlaying?<RegularPolygon
+        x={this.state.currentTime * 10 + 10}
+        y={this.props.scrollTop + 250 - 10}
+        sides={3}
+        radius={10}
+        scaleY={1.0}
+        fill={'green'}
+        rotation={90} />:<Rect
+        x={this.state.currentTime * 10 + 5}
+        y={this.props.scrollTop + 250 - 17}
+        width={15}
+        height={15}
+        fill={'red'}  />}
+
         </Layer>
+
       </Stage>
 
       

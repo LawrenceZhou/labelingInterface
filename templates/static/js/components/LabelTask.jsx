@@ -3,6 +3,7 @@ import {Grommet, Card, CardHeader, CardBody, Text, Box, Button, Grid, Heading, I
 import { Play, Pause } from 'grommet-icons';
 import Scrollbars from "react-custom-scrollbars";
 import ComparisonArea from './ComparisonArea';
+import LeftCoordinate from './LeftCoordinate';
 
 export default class LabelTask extends Component {
 	constructor(props) {
@@ -39,28 +40,42 @@ export default class LabelTask extends Component {
 			dimensionToLabel: 'Arousal',
 			speakers: ['Male', 'Female'],
 			dimensions:['Arousal', 'Pleasure'],
+			currentTaskIndex: 0,
+			taskList:[{speaker:'Female', dimension:'Arousal'},
+						{speaker:'Female', dimension:'Pleasure'},
+						{speaker:'Male', dimension:'Arousal'},
+						{speaker:'Male', dimension:'Pleasure'}],
 			currentIndex: -1,
 			currentIndexM: -1,
 			currentIndexF: -1,
+			next:false,
 			reset: false,
+			nextConfirmOn: false,
+			resetConfirmOn: false,
+			atLeastOneRun: false,
+			currentTime: 0,
+			currentTimeText: "00:00",
+			totalTimeText:"00:00",
+			femaleColor: "#7A8CF0",
+			maleColor: "#7BE77E",
+			scrollTop: 0,
 		};
 
 		this.watchTutorial=this.watchTutorial.bind(this);
 		this.onNextTutorial=this.onNextTutorial.bind(this);
 		this.onClose=this.onClose.bind(this);
+		this.onCloseReset=this.onCloseReset.bind(this);
 		this.onOpen=this.onOpen.bind(this);
 		this.onSubmit=this.onSubmit.bind(this);
 		this.isLabeledCheck=this.isLabeledCheck.bind(this);
 		this.updateCurrentInstance=this.updateCurrentInstance.bind(this);
 		this.generateMenuItems=this.generateMenuItems.bind(this);
 		this.onInstanceMenuSelected=this.onInstanceMenuSelected.bind(this);
-		this.gotoNext=this.gotoNext.bind(this);
+		this.next=this.next.bind(this);
+		this.onNext=this.onNext.bind(this);
+		this.onCloseNext=this.onCloseNext.bind(this);
 		this.reset=this.reset.bind(this);
-		this.finishReset=this.finishReset.bind(this);
-		this.onPleasureSelected=this.onPleasureSelected.bind(this);
-		this.onArousalSelected=this.onArousalSelected.bind(this);
-		this.onDominanceSelected=this.onDominanceSelected.bind(this);
-		this.onInconsistanceChecked=this.onInconsistanceChecked.bind(this);
+		this.onReset=this.onReset.bind(this);
 		this.sendResult = this.sendResult.bind(this);
 		this.getInstanceList = this.getInstanceList.bind(this);	
 		this.togglePlay = this.togglePlay.bind(this);	
@@ -69,6 +84,8 @@ export default class LabelTask extends Component {
 		this.updateScrollPosition = this.updateScrollPosition.bind(this);	
 		this.setSpeaker = this.setSpeaker.bind(this);	
 		this.setDimension = this.setDimension.bind(this);	
+		this.str_pad_left = this.str_pad_left.bind(this);	
+
 
 	}
 
@@ -104,41 +121,46 @@ export default class LabelTask extends Component {
 
 		
 
-		var boxes_ = [{index: 0, x: 67, y: 101, speaker: 'F', end: 106, transcript:"Why did he invite her here?"}, 
-					{index: 1, x: 100, y: 101, speaker: 'M', end: 135, transcript:"Why does that bother you?"},
-					{index: 2, x: 127, y: 101, speaker: 'F', end: 173, transcript:"She's been in New York three and an half years, why all of a sudden?"},
-					{index: 3, x: 166, y: 101, speaker: 'M', end: 217, transcript:"Well maybe...maybe he just wanted to see her."},
-					{index: 4, x: 212, y: 101, speaker: 'F', end: 265, transcript:"Nobody comes seven hundred miles just to see."},
-					{index: 5, x: 257, y: 101, speaker: 'M', end: 331, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
-					{index: 6, x: 336, y: 101, speaker: 'M', end: 406, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
-					{index: 7, x: 399, y: 101, speaker: 'F', end: 430, transcript:"He's not going to marry her."},
-					{index: 8, x: 424, y: 101, speaker: 'M', end: 453, transcript:"How do you know he's even thinking about it?"},
-					{index: 9, x: 443, y: 101, speaker: 'F', end: 463, transcript:"It's got that about it."},
-					{index: 10, x: 458, y: 101, speaker: 'M', end: 476, transcript:"Oh.  So what."},
-					{index: 11, x: 471, y: 101, speaker: 'F', end: 509, transcript:"What is going on here, Joe?"},
-					{index: 12, x: 506, y: 101, speaker: 'M', end: 526, transcript:"Now listen."},
-					{index: 13, x: 520, y: 101, speaker: 'F', end: 565, transcript:"She is not his girl.  She knows she's not."},
-					{index: 14, x: 558, y: 101, speaker: 'M', end: 582, transcript:"You can't read her mind."},
-					{index: 15, x: 577, y: 101, speaker: 'F', end: 667, transcript:"Then why is she still single?  New York is full of men, why is she still single?  Probably a hundred people told her she's foolish, but she waited."},
-					{index: 16, x: 661, y: 101, speaker: 'M', end: 684, transcript:"How do you know why she waited?"},
-					{index: 17, x: 674, y: 101, speaker: 'F', end: 783, transcript:"Because she knows what I know, that's why.  She's faithful as a rock.  In my darkest moments, I think of her waiting and I know that I'm right."},
-					{index: 18, x: 783, y: 101, speaker: 'M', end: 827, transcript:"Hey look, it's a nice day, huh?  Why are we arguing?"},
-					{index: 19, x: 821, y: 101, speaker: 'F', end: 913, transcript:"Nobody in this house dares take away her faith, Joe.  You know strangers might, but not his father, not his brother."},
-					{index: 20, x: 906, y: 101, speaker: 'M', end: 949, transcript:"What do you want me to do? What do you want?"},
-					{index: 21, x: 923, y: 101, speaker: 'F', end: 1022, transcript:"I want you to-- I want you to act like he is coming back, both of you.  Don't think I haven't noticed you since Chris invited her here."},
-					{index: 22, x: 1022, y: 101, speaker: 'F', end: 1058, transcript:"I won't stand for any nonsense."},
-					{index: 23, x: 1066, y: 101, speaker: 'M', end: 1082, transcript:"Kate."},
-					{index: 24, x: 1082, y: 101, speaker: 'F', end: 1224, transcript:"Because if he's not coming back, I'll kill myself.  Oh laugh, laugh all you like but why does this happen the very night he comes back.  She goes to sleep in his room and his memorial breaks in pieces.  Look at it, Joe, look."},
-					{index: 25, x: 1093, y: 101, speaker: 'M', end: 1117, transcript:"[BREATHING]"},
-					{index: 26, x: 1212, y: 101, speaker: 'M', end: 1233, transcript:"Calm yourself."},
-					{index: 27, x: 1224, y: 101, speaker: 'F', end: 1327, transcript:"Just believe with me, Joe. Only last week a man came back in Detroit missing longer than Larry.  Believe with me. You, above all, have got to believe. Just believe."},
-					{index: 28, x: 1241, y: 101, speaker: 'M', end: 1264, transcript:"Okay. Calm yourself."},
-					{index: 29, x: 1265, y: 101, speaker: 'M', end: 1338, transcript:"I know. All right, all right. All right. Okay.  Calm yourself. What does that mean, me above all?"},
-					{index: 30, x: 1346, y: 101, speaker: 'M', end: 1381, transcript:"Look at you, you're shaking."},
-					{index: 31, x: 1379, y: 101, speaker: 'F', end: 1407, transcript:"I can't help it."},
-					{index: 32, x: 1409, y: 101, speaker: 'M', end: 1476, transcript:"What have I got to hide?  What the hell is the matter with you, Kate?"},
-];
-	this.setState({refs: refs_, refPositions: refPositions_, refTexts: refTexts_, boxes: boxes_});
+		var boxes_ = [{index: 0, indexS: 0, x: 67, y: 101, speaker: 'F', end: 106, highlightA:false, highlightP:false, transcript:"Why did he invite her here?"}, 
+					{index: 1, indexS: 0, x: 100, y: 101, speaker: 'M', end: 135, highlightA:false, highlightP:false, transcript:"Why does that bother you?"},
+					{index: 2, indexS: 1, x: 127, y: 101, speaker: 'F', end: 173, highlightA:true, highlightP:false, transcript:"She's been in New York three and an half years, why all of a sudden?"},
+					{index: 3, indexS: 1, x: 166, y: 101, speaker: 'M', end: 217, highlightA:true, highlightP:true, transcript:"Well maybe...maybe he just wanted to see her."},
+					{index: 4, indexS: 2, x: 212, y: 101, speaker: 'F', end: 265, highlightA:true, highlightP:false, transcript:"Nobody comes seven hundred miles just to see."},
+					{index: 5, indexS: 2, x: 257, y: 101, speaker: 'M', end: 331, highlightA:false, highlightP:false, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
+					{index: 6, indexS: 3, x: 336, y: 101, speaker: 'M', end: 406, highlightA:true, highlightP:false, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
+					{index: 7, indexS: 3, x: 399, y: 101, speaker: 'F', end: 430, highlightA:false, highlightP:true, transcript:"He's not going to marry her."},
+					{index: 8, indexS: 4, x: 424, y: 101, speaker: 'M', end: 453, highlightA:true, highlightP:true, transcript:"How do you know he's even thinking about it?"},
+					{index: 9, indexS: 4, x: 443, y: 101, speaker: 'F', end: 463, highlightA:false, highlightP:true, transcript:"It's got that about it."},
+					{index: 10, indexS: 5, x: 458, y: 101, speaker: 'M', end: 476, highlightA:true, highlightP:true, transcript:"Oh.  So what."},
+					{index: 11, indexS: 5, x: 471, y: 101, speaker: 'F', end: 509, highlightA:false, highlightP:false, transcript:"What is going on here, Joe?"},
+					{index: 12, indexS: 6, x: 506, y: 101, speaker: 'M', end: 526, highlightA:false, highlightP:true, transcript:"Now listen."},
+					{index: 13, indexS: 6, x: 520, y: 101, speaker: 'F', end: 565, highlightA:true, highlightP:false, highlightA:false, highlightP:false, transcript:"She is not his girl.  She knows she's not."},
+					{index: 14, indexS: 7, x: 558, y: 101, speaker: 'M', end: 582, highlightA:false, highlightP:false, transcript:"You can't read her mind."},
+					{index: 15, indexS: 7, x: 577, y: 101, speaker: 'F', end: 667, highlightA:true, highlightP:false, transcript:"Then why is she still single?  New York is full of men, why is she still single?  Probably a hundred people told her she's foolish, but she waited."},
+					{index: 16, indexS: 8, x: 661, y: 101, speaker: 'M', end: 684, highlightA:false, highlightP:true, transcript:"How do you know why she waited?"},
+					{index: 17, indexS: 8, x: 674, y: 101, speaker: 'F', end: 783, highlightA:false, highlightP:false, transcript:"Because she knows what I know, that's why.  She's faithful as a rock.  In my darkest moments, I think of her waiting and I know that I'm right."},
+					{index: 18, indexS: 9, x: 783, y: 101, speaker: 'M', end: 827, highlightA:true, highlightP:true, transcript:"Hey look, it's a nice day, huh?  Why are we arguing?"},
+					{index: 19, indexS: 9, x: 821, y: 101, speaker: 'F', end: 913, highlightA:false, highlightP:false, transcript:"Nobody in this house dares take away her faith, Joe.  You know strangers might, but not his father, not his brother."},
+					{index: 20, indexS: 10, x: 906, y: 101, speaker: 'M', end: 949, highlightA:true, highlightP:false, transcript:"What do you want me to do? What do you want?"},
+					{index: 21, indexS: 10, x: 923, y: 101, speaker: 'F', end: 1022, highlightA:false, highlightP:false, transcript:"I want you to-- I want you to act like he is coming back, both of you.  Don't think I haven't noticed you since Chris invited her here."},
+					{index: 22, indexS: 11, x: 1022, y: 101, speaker: 'F', end: 1058, highlightA:false, highlightP:false, transcript:"I won't stand for any nonsense."},
+					{index: 23, indexS: 11, x: 1066, y: 101, speaker: 'M', end: 1082, highlightA:true, highlightP:false, transcript:"Kate."},
+					{index: 24, indexS: 12, x: 1082, y: 101, speaker: 'F', end: 1224, highlightA:false, highlightP:false, transcript:"Because if he's not coming back, I'll kill myself.  Oh laugh, laugh all you like but why does this happen the very night he comes back.  She goes to sleep in his room and his memorial breaks in pieces.  Look at it, Joe, look."},
+					{index: 25, indexS: 12, x: 1093, y: 101, speaker: 'M', end: 1117, highlightA:false, highlightP:true, transcript:"[BREATHING]"},
+					{index: 26, indexS: 13, x: 1212, y: 101, speaker: 'M', end: 1233, highlightA:true, highlightP:true, transcript:"Calm yourself."},
+					{index: 27, indexS: 13, x: 1224, y: 101, speaker: 'F', end: 1327, highlightA:false, highlightP:true, transcript:"Just believe with me, Joe. Only last week a man came back in Detroit missing longer than Larry.  Believe with me. You, above all, have got to believe. Just believe."},
+					{index: 28, indexS: 14, x: 1241, y: 101, speaker: 'M', end: 1264, highlightA:true, highlightP:true, transcript:"Okay. Calm yourself."},
+					{index: 29, indexS: 15, x: 1265, y: 101, speaker: 'M', end: 1338, highlightA:false, highlightP:true, transcript:"I know. All right, all right. All right. Okay.  Calm yourself. What does that mean, me above all?"},
+					{index: 30, indexS: 16, x: 1346, y: 101, speaker: 'M', end: 1381, highlightA:true, highlightP:false, transcript:"Look at you, you're shaking."},
+					{index: 31, indexS: 14, x: 1379, y: 101, speaker: 'F', end: 1407, highlightA:false, highlightP:false, transcript:"I can't help it."},
+					{index: 32, indexS: 17, x: 1409, y: 101, speaker: 'M', end: 1476, highlightA:true, highlightP:false, transcript:"What have I got to hide?  What the hell is the matter with you, Kate?"},
+		];
+
+		var minutes = Math.floor(boxes_[boxes_.length - 1].end / 600);
+  		var seconds = Math.floor(boxes_[boxes_.length - 1].end / 10 - minutes * 60);
+
+  		var totalTime = this.str_pad_left(minutes,'0',2)+':'+this.str_pad_left(seconds,'0',2);	
+	this.setState({refs: refs_, refPositions: refPositions_, refTexts: refTexts_, boxes: boxes_, totalTimeText: totalTime});
 	}
 
 
@@ -161,9 +183,28 @@ export default class LabelTask extends Component {
 	onClose() {
 		var that = this;
 		if(!that.state.confirmed) {
-			that.setState({open: false});
+			that.setState({open: false, resetConfirmOn:false});
 		}else {
 			that.props.finish();
+		}
+	}
+
+	onCloseReset() {
+		var that = this;
+		if(!that.state.reset) {
+			that.setState({resetConfirmOn: false});
+		}else{
+			that.setState({resetConfirmOn: false, reset: false});
+		}
+	}
+
+	onCloseNext() {
+		var that = this;
+		if(!that.state.next) {
+			that.setState({nextConfirmOn: false});
+		}else{
+			that.setState({nextConfirmOn: false, next: false});
+			//next task to implement
 		}
 	}
 
@@ -245,89 +286,29 @@ export default class LabelTask extends Component {
 	}
 
 
-	gotoNext() {
+	next() {
 		var that= this;
-		if(that.state.currentInstanceIndex + 1 < that.state.instanceList.length){
-			that.updateCurrentInstance(that.state.currentInstanceIndex + 1);
-		}
+		that.stopPlay();
+		that.setState({next: true, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false, currentTaskIndex: that.state.currentTaskIndex + 1, speakerToLabel:that.state.taskList[that.state.currentTaskIndex + 1].speaker, dimensionToLabel: that.state.taskList[that.state.currentTaskIndex + 1].dimension});
+		//next task to implement
+	}
+
+	onNext() {
+		var that= this;
+		that.setState({nextConfirmOn: true});
 	}
 
 
 	reset() {
 		var that = this;
 		that.stopPlay();
-		that.setState({reset: true});
+		that.setState({reset: true, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false});
 	}
 
-	finishReset() {
+	onReset() {
 		var that = this;
-		that.setState({reset: false});
+		that.setState({resetConfirmOn: true});
 	}
-
-
-	onPleasureSelected(e) {
-		var that = this;
-		console.log("the select pleasure val", e.target.attributes['name'].nodeValue);
-
-		const newInstanceList = that.state.instanceList.slice(); //copy the array
-		var selectValueP = parseInt(e.target.attributes['name'].nodeValue);
-		
-		if (newInstanceList[that.state.currentInstanceIndex].selectedPleasure != selectValueP || 
-			newInstanceList[that.state.currentInstanceIndex].clickCountPleasure == 0) {
-			newInstanceList[that.state.currentInstanceIndex].clickCountPleasure = newInstanceList[that.state.currentInstanceIndex].clickCountPleasure + 1; //execute the manipulations
-		}
-		
-		newInstanceList[that.state.currentInstanceIndex].selectedPleasure = selectValueP;
-
-		that.setState({instanceList: newInstanceList}) //set the new state
-	}
-
-
-	onArousalSelected(e) {
-		var that = this;
-		console.log("the select arousal val", e.target.attributes['name'].nodeValue);
-
-		const newInstanceList = that.state.instanceList.slice(); //copy the array
-		var selectValueA = parseInt(e.target.attributes['name'].nodeValue);
-
-		if (newInstanceList[that.state.currentInstanceIndex].selectedArousal != selectValueA || 
-			newInstanceList[that.state.currentInstanceIndex].clickCountArousal == 0) {
-			newInstanceList[that.state.currentInstanceIndex].clickCountArousal = newInstanceList[that.state.currentInstanceIndex].clickCountArousal + 1; //execute the manipulations
-		}
-
-		newInstanceList[that.state.currentInstanceIndex].selectedArousal = selectValueA; //execute the manipulations
-
-		that.setState({instanceList: newInstanceList}) //set the new state
-	}
-
-
-	onDominanceSelected(e) {
-		var that = this;
-		console.log("the select dominance val", e.target.attributes['name'].nodeValue);
-
-		const newInstanceList = that.state.instanceList.slice(); //copy the array
-		var selectValueD = parseInt(e.target.attributes['name'].nodeValue);
-
-		if (newInstanceList[that.state.currentInstanceIndex].selectedDominance != selectValueD || 
-			newInstanceList[that.state.currentInstanceIndex].clickCountDominance == 0) {
-			newInstanceList[that.state.currentInstanceIndex].clickCountDominance = newInstanceList[that.state.currentInstanceIndex].clickCountDominance + 1; //execute the manipulations
-		}
-
-		newInstanceList[that.state.currentInstanceIndex].selectedDominance = selectValueD; //execute the manipulations
-
-		that.setState({instanceList: newInstanceList}) //set the new state
-	}
-
-
-	onInconsistanceChecked(e) {
-		var that = this;
-		console.log("the check val", e.target.checked);
-
-		const newInstanceList = that.state.instanceList.slice(); //copy the array
-		newInstanceList[that.state.currentInstanceIndex].isInconsistent = e.target.checked; //execute the manipulations
-
-		that.setState({instanceList: newInstanceList},function(){ console.log("state inconsist: ", that.state.instanceList[that.state.currentInstanceIndex].isInconsistent) });
-	} 
 
 
 	sendResult(instance){
@@ -416,9 +397,23 @@ export default class LabelTask extends Component {
     	that.setState({isPlaying: false});
   	}
 
+  	str_pad_left(string,pad,length) {
+    	return (new Array(length+1).join(pad)+string).slice(-length);
+	}
 
   	updateCurrentTime(time) {
   		var that = this;
+  		
+  		that.setState({currentTime: time});
+  		var minutes = Math.floor(time / 60);
+  		var seconds = Math.floor(time - minutes * 60);
+
+  		var finalTime = that.str_pad_left(minutes,'0',2)+':'+that.str_pad_left(seconds,'0',2)+" / " + that.state.totalTimeText;
+  		that.setState({currentTimeText: finalTime});
+
+  		if (time * 10 > that.state.boxes[that.state.boxes.length - 1].end) {
+  			that.stopPlay();
+  		}
 
   		if (time * 10 >= 400) {
   			that.refs.scrollbars.scrollLeft(time*10 - 400);
@@ -426,17 +421,21 @@ export default class LabelTask extends Component {
   			that.refs.scrollbars.scrollLeft(0);
   		}
 
+  		if (time * 10 >= that.state.boxes[that.state.boxes.length - 1].end && !that.state.atLeastOneRun){
+  			console.log("over", time);
+  			that.setState({atLeastOneRun: true});
+  		}
+
   		if(that.state.currentIndex == -1 || time * 10 < that.state.boxes[that.state.currentIndex].x || (that.state.currentIndex < that.state.boxes.length - 1 && time * 10 >= that.state.boxes[that.state.currentIndex + 1].x)) {
   			for (var i = 0; i < that.state.boxes.length; i++){
   				if ( time * 10 > that.state.boxes[i].x && time * 10 <= that.state.boxes[i].end) {
 
-  					if (that.state.boxes[i].speaker == 'M' && that.state.boxes[i].transcript!= that.state.currentTranscriptM) {
+  					if (that.state.boxes[i].speaker == 'M' && that.state.boxes[i].transcript != that.state.currentTranscriptM) {
   						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
   					}
-  					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript!= that.state.currentTranscriptF) {
+  					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript != that.state.currentTranscriptF) {
   						that.setState({currentIndex: i,  currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
   					}
-  					break;
   				}
   			}
   		}
@@ -448,12 +447,15 @@ export default class LabelTask extends Component {
   		console.log(that.refs.scrollbars.getScrollTop(), positionY);
   		if (that.refs.scrollbars.getScrollTop() - positionY + 1 >= 0) {
   			that.refs.scrollbars.scrollTop(positionY - 1);
+  			that.setState({scrollTop: that.refs.scrollbars.getScrollTop()});
   			return;
   		}
 
   		if (that.refs.scrollbars.getScrollTop() + 250 - positionY + 1 <= 0) {
   			console.log(that.refs.scrollbars.getScrollTop(), positionY, that.refs.scrollbars.getScrollHeight(), that.refs.scrollbars.getClientHeight());
   			that.refs.scrollbars.scrollTop(positionY - 1 - 200 );
+  			that.setState({scrollTop: that.refs.scrollbars.getScrollTop()});
+
   			console.log(that.refs.scrollbars.getScrollTop(), positionY, that.refs.scrollbars.getScrollHeight(), that.refs.scrollbars.getClientHeight());
   			return;
   		}
@@ -478,14 +480,32 @@ export default class LabelTask extends Component {
 		return(
 			<Box pad="xsmall" direction="column" background="#EEEEEE" gap="xsmall">
 				
-				<Box width="small" background="#EEEEEE">
+				<Box direction="row">
 
-					<Button label="Watch Tips" onClick={() => {this.watchTutorial()}} color="dark-3" />
+					<Box width="small" pad="xsmall">
+						<Button label="Watch Tips" onClick={() => {this.watchTutorial()}} />
+					</Box>
+
+					<Box pad="xsmall">		
+						<Button label="Reset" onClick={() => {this.onReset()}} />					
+					</Box>
+
+					<Box pad="xsmall">
+						<Button label={this.state.currentTaskIndex!=this.state.taskList.length - 1?"Next":"Submit"} color={this.state.atLeastOneRun?"status-ok":"status-disabled"} disabled={this.state.atLeastOneRun?false:true} onClick={() => {this.state.currentTaskIndex!=this.state.taskList.length-1? this.onNext(): this.onOpen()}} />
+					</Box>
+
+					<Box justify="center" align="center" direction="row" pad="xsmall" gap="small">
+        			<Meter type="bar" color="brand" background="status-disabled" value={(this.state.currentTaskIndex + 1) / this.state.taskList.length * 100} size="small" thickness="small" />
+        			<Text>{this.state.currentTaskIndex + 1} / {this.state.taskList.length}</Text>				
+				</Box>
+				
 
 				</Box> 
 
-				
-				<Box direction="row">
+				<Box>
+				<Text>In this task, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
+				</Box>
+				{/*<Box direction="row">
 					<Select
       					options={this.state.speakers}
      	 				value={this.state.speakerToLabel}
@@ -497,27 +517,42 @@ export default class LabelTask extends Component {
      	 				value={this.state.dimensionToLabel}
       					onChange={({ option }) => this.setDimension(option)}
     				/>
-				</Box>
+				</Box>*/}
 
-				<Text>High {this.state.dimensionToLabel}</Text>
+				<Box justify="center" align="center" direction="row">
 
-				<Box justify="center" align="center">
+					<LeftCoordinate style={{ width: "5%", height: "250px", display: "inline-block"}} dimension={this.state.dimensionToLabel}/>
 
-					<Scrollbars ref="scrollbars" style={{ width: "100%", height: "250px", display: "inline-block"}} >
+					<Scrollbars ref="scrollbars" style={{ width: "95%", height: "250px", display: "inline-block"}} 
+						renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>}
+          				renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
 			
-						<ComparisonArea boxesPassed={this.state.boxes} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} finishReset={this.finishReset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition}/>
+						<ComparisonArea boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition}/>
 
 					</Scrollbars>
 
 				</Box>
-
-				<Text>Low {this.state.dimensionToLabel}</Text>
-
-				<Box justify="center" align="center">
-					{this.state.isPlaying?<Pause color='brand' onClick={() => {this.togglePlay()}} />:<Play color='brand' onClick={() => {this.togglePlay()}} />}
+					
+				<Box justify="center" align="center" >
+					<Text>{this.state.currentTimeText}</Text>
+				</Box>
+				
+				<Box direction="row" justify="center" align="center">
+					<Box pad="small" background={this.state.speakerToLabel=="Female"?this.state.femaleColor:"status-disabled"}/> <Text size="small"> Female Speaker</Text> <Box margin={{left:"small"}} pad="small" background={this.state.speakerToLabel=="Male"?this.state.maleColor:"status-disabled"} /> <Text size="small"> Male Speaker</Text>
 				</Box>
 
-				<Card pad="xsmall" gap="xsmall" background="light-2" ref={this.state.refs["synthesisRef"]}>
+				{/*<Box pad="none" gap="none">
+    				<Box align="start" >
+      					<Button onClick={() => {this.togglePlay()}} color={this.state.isPlaying?"status-critical":"status-ok"} primary>
+        					<Box pad="small" direction="row" align="center" gap="xxsmall" width="xsmall">
+          						{this.state.isPlaying?<Pause color="white" />:<Play color="white" />}
+          						<Text color="white">{this.state.isPlaying?"Pause":"Play"}</Text>
+        					</Box>
+      					</Button>
+    				</Box>
+  				</Box>*/}
+
+				<Card pad="xsmall" gap="xsmall" background="white" ref={this.state.refs["synthesisRef"]}>
 						
 					<CardHeader pad="xxsmall" justify="start">Transcript</CardHeader>
 									
@@ -531,8 +566,8 @@ export default class LabelTask extends Component {
     							{ name: 'right', start: [1, 0], end: [1, 0] },
   							]}
 						>
-  							<Box gridArea="left" background={this.state.speakerToLabel=="Female"?"green":"light-1"} align="center" ><Text><strong>Female Speaker</strong></Text></Box>
-							<Box gridArea="right" background={this.state.speakerToLabel=="Male"?"brand":"light-1"} align="center"><Text><strong>Male Speaker</strong></Text></Box>
+  							<Box gridArea="left" background={this.state.speakerToLabel=="Female"?this.state.femaleColor:"status-disabled"} align="center" ><Text><strong>Female Speaker</strong></Text></Box>
+							<Box gridArea="right" background={this.state.speakerToLabel=="Male"?this.state.maleColor:"status-disabled"} align="center"><Text><strong>Male Speaker</strong></Text></Box>
 
 						</Grid>
 						<Grid
@@ -546,60 +581,107 @@ export default class LabelTask extends Component {
     							{ name: 'right-down', start: [1, 1], end: [1, 1] },
   							]}
 						>
-  							<Box gridArea="left-up" border={{ color: 'dark-3', size: 'xsmall' }}><Box direction="row"><Text size="xsmall">last sentence</Text></Box><Text size="small">{this.state.lastTranscriptF}</Text></Box>
-							<Box gridArea="right-up" border={{ color: 'dark-3', size: 'xsmall' }}><Box direction="row"><Text size="xsmall">last sentence</Text></Box><Text size="small">{this.state.lastTranscriptM}</Text></Box>
-							<Box gridArea="left-down" border={{ color: 'dark-3', size: 'xsmall' }}><Box direction="row"><Text size="small">current sentence: </Text><Box background={this.state.speakerToLabel=="Female"?"green":"dark-3"} width="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexF==-1? "" : this.state.boxes[this.state.currentIndexF].index + 1}</Text></Box></Box><Text>{this.state.currentTranscriptF}</Text></Box>
-							<Box gridArea="right-down" border={{ color: 'dark-3', size: 'xsmall' }}><Box direction="row"><Text size="small">current sentence: </Text><Box background={this.state.speakerToLabel=="Male"?"brand":"dark-3"} width="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexM==-1? "" : this.state.boxes[this.state.currentIndexM].index + 1}</Text></Box></Box><Text>{this.state.currentTranscriptM}</Text></Box>
+  							<Box gridArea="left-up" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="xsmall">last sentence</Text></Box><Text size="small">{this.state.lastTranscriptF}</Text></Box>
+							<Box gridArea="right-up" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="xsmall">last sentence</Text></Box><Text size="small">{this.state.lastTranscriptM}</Text></Box>
+							<Box gridArea="left-down" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="small">current sentence: </Text>{this.state.speakerToLabel=="Female" && <Box background={this.state.femaleColor} width="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexF==-1? "" : this.state.boxes[this.state.currentIndexF].indexS + 1}</Text></Box>}</Box><Text>{this.state.currentTranscriptF}</Text></Box>
+							<Box gridArea="right-down" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="small">current sentence: </Text>{this.state.speakerToLabel=="Male" && <Box background={this.state.maleColor} width="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexM==-1? "" : this.state.boxes[this.state.currentIndexM].indexS + 1}</Text></Box>}</Box><Text>{this.state.currentTranscriptM}</Text></Box>
 						</Grid>
 					</CardBody>
 								
 				</Card>
 
-
-				<Box justify="center" align="center">
-							
-					<Meter type="bar" color="brand" background="status-unknown" value={(this.state.currentInstanceIndex + 1) / this.state.instanceNumber * 100} />
-							
-					<Text>{this.state.currentInstanceIndex + 1} / {this.state.instanceNumber}</Text>
-					
-				</Box>
-
-				<Box justify="center" align="center" direction="row">
-
-					<Box align="center" pad="medium" ref={this.state.refs["previousNextRef"]}>
-							
-						<Button label="Reset" color="status-critical" onClick={() => {this.reset()}} />
-						
-					</Box>
-
-					<Box align="center" pad="medium">
-
-						<Button label="Next" onClick={() => {this.gotoNext()}} />
-						
-					</Box>
-
-				</Box>
-
-				{this.state.currentInstanceIndex == this.state.instanceList.length - 1 || this.state.tutorialOn &&
-				<Box align="center" pad="medium" ref={this.state.refs["submitRef"]}>
-
-					<Button label="Submit" size="large" disabled = {this.state.tutorialOn} onClick={() => {this.onOpen()}} />
-					
-				</Box>
-				}
 				
+				<Grommet>
+
+				 	{this.state.resetConfirmOn && (
+				 	<Layer
+						id="resetConfirmation"
+						position="center"
+						onClickOutside={() => {this.onCloseReset()}}>
+
+						<Box pad="medium" gap="small" width="medium">
+						
+							<Heading level={3} margin="none">Reset</Heading>
+
+							<Text>{this.state.reset ? "This task has been reset." : "Are you sure to reset this task?"}</Text>
+							
+							<Box
+								as="footer"
+								gap="small"
+								direction="row"
+								align="center"
+								justify="end"
+								pad={{ top: 'medium', bottom: 'small' }}>
+
+								{!this.state.reset && <Button label="Cancel" onClick={() => {this.onCloseReset()}} color="dark-3" />}
+							
+								<Button
+									label={<Text color="white"><strong>{this.state.reset ? "Close" : "Reset"}</strong></Text>}
+									onClick={() => {this.state.reset ? this.onCloseReset():this.reset()}}
+									primary
+									color="status-critical"
+								/>
+
+							</Box>
+
+						</Box>
+
+					</Layer>
+					)}
+
+				</Grommet>
+
+				<Grommet>
+
+				 	{this.state.nextConfirmOn && (
+				 	<Layer
+						id="nextConfirmation"
+						position="center"
+						onClickOutside={() => {this.onCloseNext()}}>
+
+						<Box pad="medium" gap="small" width="medium">
+						
+							<Heading level={3} margin="none">Next</Heading>
+
+							<Text>{this.state.next ? "Your results have been recorded. Please go to the next task." : "Are you sure to go to the next task? You cannot go back."}</Text>
+							
+							<Box
+								as="footer"
+								gap="small"
+								direction="row"
+								align="center"
+								justify="end"
+								pad={{ top: 'medium', bottom: 'small' }}>
+
+								{!this.state.next && <Button label="Cancel" onClick={() => {this.onCloseNext()}} color="dark-3" />}
+							
+								<Button
+									label={<Text color="white"><strong>{this.state.next ? "Close" : "Next"}</strong></Text>}
+									onClick={() => {this.state.next ? this.onCloseNext():this.next()}}
+									primary
+									color="status-ok"
+								/>
+
+							</Box>
+
+						</Box>
+
+					</Layer>
+					)}
+
+				</Grommet>
+
 				<Grommet>
 
 				 	{this.state.open && (
 				 	<Layer
 						id="submitConfirmation"
 						position="center"
-						onClickOutside={() => {this.onClose()}}
-						onEsc={() => {this.onClose()}}>
+						onClickOutside={() => {this.onClose()}}>
 
 						<Box pad="medium" gap="small" width="medium">
 						
-							<Heading level={3} margin="none">Confirm</Heading>
+							<Heading level={3} margin="none">Submit</Heading>
 
 							<Text>{this.state.confirmed ? "Thank you! Your results have been recorded." : "Are you sure you want to submit your results?"}</Text>
 							
