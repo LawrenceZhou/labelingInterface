@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { Stage, Layer, Rect, Text, Line, Group, RegularPolygon } from 'react-konva';
 import Konva from 'konva';
 import { Box, Keyboard } from 'grommet';
@@ -58,7 +58,7 @@ export default class ComparisonArea extends Component{
         var boxes_btm = boxes_.filter(box => box.speaker != nextProps.speaker[0]);
         var _boxes = boxes_btm.concat(boxes_top);
         console.log(_boxes);
-        this.setState({boxes: _boxes, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
+        this.setState({boxes: _boxes, canvasHeight: 250, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
         console.log(nextProps.speaker, this.props.speaker, this.state.speaker);
         this.audio.currentTime = 0;
     }
@@ -71,7 +71,7 @@ export default class ComparisonArea extends Component{
         var boxes_btm = boxes_.filter(box => box.speaker != nextProps.speaker[0]);
         var _boxes = boxes_btm.concat(boxes_top);
         console.log(_boxes);
-        this.setState({boxes: _boxes, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
+        this.setState({boxes: _boxes, canvasHeight: 250, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
         console.log(nextProps.dimension, this.props.dimension, this.state.dimension);
         this.audio.currentTime = 0;
     }
@@ -79,7 +79,11 @@ export default class ComparisonArea extends Component{
     if(nextProps.isPlaying !== this.state.isPlaying){
       console.log(nextProps.isPlaying, this.state.isPlaying);
       if(nextProps.isPlaying){
-        this.audio.play();
+        if(this.audio.readyState >= 2){
+          this.audio.play();
+        }else{
+          alert("audio file not loaded completely. Please wait.");
+        }
       }
       else{
         this.audio.pause();
@@ -94,6 +98,7 @@ export default class ComparisonArea extends Component{
 }
 
   componentDidMount(){
+    var that = this;
     this.timerId = setInterval(this.tickingTimer, 30);
     var boxes_ = this.props.boxesPassed;
     var boxes_top = boxes_.filter(box => box.speaker == this.state.speaker[0]);
@@ -106,6 +111,8 @@ export default class ComparisonArea extends Component{
 
   componentWillUnmount() {
     clearInterval(this.timerId);
+    this.audio.pause();
+    this.audio.currentTime = 0;
   }
 
   tickingTimer() {
@@ -117,7 +124,7 @@ export default class ComparisonArea extends Component{
 
   handleKeyEscPressed(){
     var that = this;
-    
+    if(that.props.condition != 'slider'){
     var boxesHistory_  = that.state.boxesHistory;
     var operationBoxHistory_  = that.state.operationBoxHistory;
 
@@ -132,6 +139,7 @@ export default class ComparisonArea extends Component{
       that.setState({boxes: boxesState, boxesHistory: boxesHistory_, operationBoxHistory: operationBoxHistory_});
       that.audio.currentTime = boxesState[lastIndex].x / 10;
     }
+  }
     
   }
 
@@ -145,6 +153,9 @@ export default class ComparisonArea extends Component{
   handleKeyUpPressed() {
     console.log("up pressed.");
     var that = this;
+    if(that.props.condition != 'slider'){
+
+
     var boxes_ = that.state.boxes;
     var boxes__ = JSON.parse(JSON.stringify(that.state.boxes));
     var boxesHistory_ = that.state.boxesHistory;
@@ -181,6 +192,7 @@ export default class ComparisonArea extends Component{
     }
 
     that.setState({boxes: boxes_});
+    }
 
   }
 
@@ -188,6 +200,7 @@ export default class ComparisonArea extends Component{
   handleKeyDownPressed() {
     console.log("down pressed.");
     var that = this;
+    if(that.props.condition != 'slider'){
     var boxes_ = that.state.boxes;
     var boxes__ = JSON.parse(JSON.stringify(that.state.boxes));
     var boxesHistory_ = that.state.boxesHistory;
@@ -222,6 +235,7 @@ export default class ComparisonArea extends Component{
     }
 
     that.setState({boxes: boxes_});
+  }
   }
 
 
@@ -319,7 +333,7 @@ export default class ComparisonArea extends Component{
       ))}
 
       
-      {this.state.boxes.map((box, i) => (
+      {this.props.condition=='withHighlight' && this.state.boxes.map((box, i) => (
 
               <Rect
                 x={box.x}

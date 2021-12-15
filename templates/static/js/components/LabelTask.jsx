@@ -1,9 +1,24 @@
 import React, { Component } from 'react';
-import {Grommet, Card, CardHeader, CardBody, Text, Box, Button, Grid, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select, Avatar } from 'grommet';
+import {grommet, Grommet, Card, RangeInput, CardHeader, CardBody, Text, Box, Button, Grid, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select, Avatar } from 'grommet';
 import { Play, Pause } from 'grommet-icons';
+import { deepMerge } from 'grommet/utils';
 import Scrollbars from "react-custom-scrollbars";
 import ComparisonArea from './ComparisonArea';
 import LeftCoordinate from './LeftCoordinate';
+
+const customFocus = deepMerge(grommet, {
+  global: {
+    focus: {
+    	border: {
+    		color: '#0000ffff',
+    	},
+    	shadow: {
+    		color: '#0000ffff',
+    		size: '0px',
+    	}
+    },
+  },
+});
 
 export default class LabelTask extends Component {
 	constructor(props) {
@@ -45,6 +60,8 @@ export default class LabelTask extends Component {
 						{speaker:'Female', dimension:'Pleasure'},
 						{speaker:'Male', dimension:'Arousal'},
 						{speaker:'Male', dimension:'Pleasure'}],
+			conditionList: ['withHighlight','withoutHighlight','slider'],
+			condition: 'withHighlight',
 			currentIndex: -1,
 			currentIndexM: -1,
 			currentIndexF: -1,
@@ -84,7 +101,8 @@ export default class LabelTask extends Component {
 		this.updateScrollPosition = this.updateScrollPosition.bind(this);	
 		this.setSpeaker = this.setSpeaker.bind(this);	
 		this.setDimension = this.setDimension.bind(this);	
-		this.str_pad_left = this.str_pad_left.bind(this);	
+		this.str_pad_left = this.str_pad_left.bind(this);
+		this.getSliderValue = this.getSliderValue.bind(this);	
 
 
 	}
@@ -473,6 +491,11 @@ export default class LabelTask extends Component {
   		that.setState({dimensionToLabel: option});
   	}
 
+  	getSliderValue(value) {
+  		var that = this;
+  		console.log(that.state.currentTime, "slider: ", value);
+  	}
+
 
 
 	render() {
@@ -486,9 +509,9 @@ export default class LabelTask extends Component {
 						<Button label="Watch Tips" onClick={() => {this.watchTutorial()}} />
 					</Box>
 
-					<Box pad="xsmall">		
+					{this.state.condition!='slider' && <Box pad="xsmall">		
 						<Button label="Reset" onClick={() => {this.onReset()}} />					
-					</Box>
+					</Box>}
 
 					<Box pad="xsmall">
 						<Button label={this.state.currentTaskIndex!=this.state.taskList.length - 1?"Next":"Submit"} color={this.state.atLeastOneRun?"status-ok":"status-disabled"} disabled={this.state.atLeastOneRun?false:true} onClick={() => {this.state.currentTaskIndex!=this.state.taskList.length-1? this.onNext(): this.onOpen()}} />
@@ -521,13 +544,13 @@ export default class LabelTask extends Component {
 
 				<Box justify="center" align="center" direction="row">
 
-					<LeftCoordinate style={{ width: "5%", height: "250px", display: "inline-block"}} dimension={this.state.dimensionToLabel}/>
+					{this.state.condition!='slider'&&<LeftCoordinate style={{ width: "5%", height: "250px", display: "inline-block"}} dimension={this.state.dimensionToLabel}/>}
 
 					<Scrollbars ref="scrollbars" style={{ width: "95%", height: "250px", display: "inline-block"}} 
 						renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>}
           				renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
 			
-						<ComparisonArea boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition}/>
+						<ComparisonArea condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition}/>
 
 					</Scrollbars>
 
@@ -541,16 +564,14 @@ export default class LabelTask extends Component {
 					<Box pad="small" background={this.state.speakerToLabel=="Female"?this.state.femaleColor:"status-disabled"}/> <Text size="small"> Female Speaker</Text> <Box margin={{left:"small"}} pad="small" background={this.state.speakerToLabel=="Male"?this.state.maleColor:"status-disabled"} /> <Text size="small"> Male Speaker</Text>
 				</Box>
 
-				{/*<Box pad="none" gap="none">
-    				<Box align="start" >
-      					<Button onClick={() => {this.togglePlay()}} color={this.state.isPlaying?"status-critical":"status-ok"} primary>
-        					<Box pad="small" direction="row" align="center" gap="xxsmall" width="xsmall">
-          						{this.state.isPlaying?<Pause color="white" />:<Play color="white" />}
-          						<Text color="white">{this.state.isPlaying?"Pause":"Play"}</Text>
-        					</Box>
-      					</Button>
-    				</Box>
-  				</Box>*/}
+				{this.state.condition=='slider'&&
+				 <Grommet theme={customFocus}>
+				<Box justify="center" align="center" direction="row" gap="small" pad="small" background="#EEEEEE">
+					<Box><Text>Low {this.state.dimensionToLabel}</Text></Box>
+					<Box align="center" width="medium" ><RangeInput min={1} max={5} step={0.5} onChange={event => this.getSliderValue(event.target.value)}/></Box>
+					<Box><Text>High {this.state.dimensionToLabel}</Text></Box>
+				</Box>
+				</Grommet>}
 
 				<Card pad="xsmall" gap="xsmall" background="white" ref={this.state.refs["synthesisRef"]}>
 						
