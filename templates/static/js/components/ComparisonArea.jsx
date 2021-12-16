@@ -33,6 +33,7 @@ export default class ComparisonArea extends Component{
 
     this.audio = new Audio(this.state.audioPath);
     this.tickingTimer = this.tickingTimer.bind(this);
+    this.handleKeyPressed = this.handleKeyPressed.bind(this);
     this.handleKeyEscPressed = this.handleKeyEscPressed.bind(this);
     this.handleKeySpacePressed = this.handleKeySpacePressed.bind(this);
     this.handleKeyUpPressed = this.handleKeyUpPressed.bind(this);
@@ -98,7 +99,7 @@ export default class ComparisonArea extends Component{
 }
 
   componentDidMount(){
-    var that = this;
+    document.addEventListener("keydown", this.handleKeyPressed, false);
     this.timerId = setInterval(this.tickingTimer, 30);
     var boxes_ = this.props.boxesPassed;
     var boxes_top = boxes_.filter(box => box.speaker == this.state.speaker[0]);
@@ -110,6 +111,7 @@ export default class ComparisonArea extends Component{
   }
 
   componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleKeyPressed, false);
     clearInterval(this.timerId);
     this.audio.pause();
     this.audio.currentTime = 0;
@@ -119,6 +121,151 @@ export default class ComparisonArea extends Component{
     var that = this;
     that.setState({currentTime: that.audio.currentTime});
     that.props.getCurrentTime(that.audio.currentTime);
+  }
+
+
+  handleKeyPressed(event) {
+    var that = this;
+    if(event.keyCode === 27) {
+      //Do whatever when esc is pressed
+
+    }
+
+    if(event.keyCode === 32) {
+      //Do whatever when space is pressed
+      
+    }
+
+    if(event.keyCode === 38) {
+      //Do whatever when up is pressed
+      console.log("up pressed.");
+    if(that.props.condition != 'slider'){
+
+
+    var boxes_ = that.state.boxes;
+    var boxes__ = JSON.parse(JSON.stringify(that.state.boxes));
+    var boxesHistory_ = that.state.boxesHistory;
+    boxesHistory_.push(boxes__);
+    //original
+    for (var i = 0; i < boxes_.length; i++) {
+      if ( that.state.currentTime * 10 >= boxes_[i].x && that.state.currentTime * 10 <= boxes_[i].end && that.state.speaker[0] == boxes_[i].speaker) {
+        var operationBoxHistory_ = that.state.operationBoxHistory;
+        operationBoxHistory_.push(i);
+        that.setState({boxesHistory: boxesHistory_, operationBoxHistory: operationBoxHistory_}, function(){console.log(that.state.boxesHistory[that.state.boxesHistory.length -1 ])});
+
+        if (boxes_[i].y < 50) {
+          var horizontalLines_ = that.state.horizontalLines;
+          horizontalLines_.push(horizontalLines_[horizontalLines_.length - 1] + 50);
+          
+          that.setState({canvasHeight: that.state.canvasHeight + 50, horizontalLines: horizontalLines_}, function(){that.props.updateScrollPosition(boxes_[i].y);});
+          for (var j = 0; j < boxes_.length; j++) {
+            if ( that.state.currentTime * 10 > boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
+              boxes_[j].y += 50;
+            }else if (that.state.speaker[0] != boxes_[j].speaker) {
+              boxes_[j].y += 50;
+            }
+          }
+        }else{
+          that.props.updateScrollPosition(boxes_[i].y - 50);
+          for (var j = 0; j < boxes_.length; j++) {
+            if ( that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
+              boxes_[j].y -= 50;
+            }
+          }
+        }
+        break;
+      }
+    }
+
+    that.setState({boxes: boxes_});
+    }
+
+    }
+
+    if(event.keyCode === 40) {
+      //Do whatever when down is pressed
+      console.log("down pressed.");
+    var that = this;
+    if(that.props.condition != 'slider'){
+    var boxes_ = that.state.boxes;
+    var boxes__ = JSON.parse(JSON.stringify(that.state.boxes));
+    var boxesHistory_ = that.state.boxesHistory;
+    boxesHistory_.push(boxes__);
+
+    for (var i = 0; i < boxes_.length; i++) {
+      if ( that.state.currentTime * 10 >= boxes_[i].x && that.state.currentTime * 10 <= boxes_[i].end && that.state.speaker[0] == boxes_[i].speaker) {
+        var operationBoxHistory_ = that.state.operationBoxHistory;
+        operationBoxHistory_.push(i);
+        that.setState({boxesHistory: boxesHistory_, operationBoxHistory: operationBoxHistory_}, function(){console.log(that.state.boxesHistory[that.state.boxesHistory.length -1 ])});
+
+        if (boxes_[i].y > that.state.canvasHeight - 50) {
+          var horizontalLines_ = that.state.horizontalLines;
+          horizontalLines_.push(horizontalLines_[horizontalLines_.length - 1] + 50);
+          
+          that.setState({canvasHeight: that.state.canvasHeight + 50, horizontalLines: horizontalLines_}, function(){that.props.updateScrollPosition(boxes_[i].y + 50);});
+          for (var j = 0; j < boxes_.length; j++) {
+            if ( that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
+              boxes_[j].y +=50;
+            }
+          }
+        }else{
+          that.props.updateScrollPosition(boxes_[i].y + 50);
+          for (var j = 0; j < boxes_.length; j++) {
+            if ( that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
+              boxes_[j].y +=50;
+            }
+          }
+        }
+        break;
+      }
+    }
+
+    that.setState({boxes: boxes_});
+  }
+    }
+
+    if(event.keyCode === 37) {
+      //Do whatever when left is pressed
+      console.log("left pressed.");
+    var boxes_ = that.state.boxes;
+
+    for (var i = boxes_.length - 1; i > boxes_.length - that.state.currentSpeakerSentenceNumber; i -- ) {
+      if ( that.state.currentTime * 10 >= boxes_[i].x) {
+        if (that.audio.currentTime * 10 - boxes_[i].x < 5) {
+          that.props.updateScrollPosition(boxes_[i-1].y );
+          that.audio.currentTime = boxes_[i - 1].x / 10;
+        }else {
+          that.props.updateScrollPosition(boxes_[i].y );
+          that.audio.currentTime = boxes_[i].x / 10;
+        }
+        
+        break;
+      }
+    }
+    }
+
+    if(event.keyCode === 39) {
+      //Do whatever when right is pressed
+      console.log("right pressed.");
+    var that = this;
+    var boxes_ = that.state.boxes;
+
+    if (that.audio.currentTime * 10 < that.state.boxesTimeOrder[0].x) {
+      that.audio.currentTime = that.state.boxesTimeOrder[0].x / 10;
+      return;
+    }else if (that.audio.currentTime * 10 < boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x) {
+      that.audio.currentTime = boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x / 10;
+      return;
+    }
+
+    for (var i = boxes_.length - 2; i >= boxes_.length - that.state.currentSpeakerSentenceNumber; i --) {
+      if ( that.state.currentTime * 10 >= boxes_[i].x) {
+        that.audio.currentTime = boxes_[i + 1].x / 10;
+        that.props.updateScrollPosition(boxes_[i+1].y );
+        break;
+      }
+    }
+    }
   }
 
 
@@ -284,7 +431,6 @@ export default class ComparisonArea extends Component{
 
   render() {
     return (
-      <Keyboard target='document' onEsc={()=>{this.handleKeyEscPressed()}} onSpace={()=>{this.handleKeySpacePressed()}} onUp={()=>{this.handleKeyUpPressed()}} onDown={()=>{this.handleKeyDownPressed()}} onLeft={()=>{this.handleKeyLeftPressed()}} onRight={()=>{this.handleKeyRightPressed()}}>
       <Box>
       <Stage width={1600} height={this.state.canvasHeight} >
       
@@ -403,7 +549,6 @@ export default class ComparisonArea extends Component{
 
       
       </Box>
-      </Keyboard>
     );
   }
 }

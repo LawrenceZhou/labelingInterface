@@ -76,6 +76,7 @@ export default class LabelTask extends Component {
 			femaleColor: "#7A8CF0",
 			maleColor: "#7BE77E",
 			scrollTop: 0,
+			isStarted: false,
 		};
 
 		this.watchTutorial=this.watchTutorial.bind(this);
@@ -95,6 +96,7 @@ export default class LabelTask extends Component {
 		this.onReset=this.onReset.bind(this);
 		this.sendResult = this.sendResult.bind(this);
 		this.getInstanceList = this.getInstanceList.bind(this);	
+		this.startTask = this.startTask.bind(this);	
 		this.togglePlay = this.togglePlay.bind(this);	
 		this.stopPlay = this.stopPlay.bind(this);	
 		this.updateCurrentTime = this.updateCurrentTime.bind(this);	
@@ -404,11 +406,16 @@ export default class LabelTask extends Component {
 	}
 
 	
-	togglePlay(){
+	startTask(){
+    	var that = this;
+    	that.setState({isPlaying: true, isStarted: true});
+  	}
+
+
+  	togglePlay(){
     	var that = this;
     	that.setState({isPlaying: !that.state.isPlaying});
   	}
-
 
   	stopPlay(){
     	var that = this;
@@ -563,6 +570,11 @@ export default class LabelTask extends Component {
 				<Box direction="row" justify="center" align="center">
 					<Box pad="small" background={this.state.speakerToLabel=="Female"?this.state.femaleColor:"status-disabled"}/> <Text size="small"> Female Speaker</Text> <Box margin={{left:"small"}} pad="small" background={this.state.speakerToLabel=="Male"?this.state.maleColor:"status-disabled"} /> <Text size="small"> Male Speaker</Text>
 				</Box>
+
+				<Box justify="center" align="center" >
+					<Button icon={<Play />} label="Start" color={!this.state.isStarted?'status-ok':'status-disabled'} disabled={this.state.isStarted} onClick={() => {this.startTask()}} />
+				</Box>	
+
 
 				{this.state.condition=='slider'&&
 				 <Grommet theme={customFocus}>
