@@ -533,23 +533,23 @@ export default class LabelTask extends Component {
 		return(
 			<Box pad="xsmall" direction="column" background="#EEEEEE" gap="xsmall">
 				
-				<Box direction="row" justify="center" align="center">
+				<Box  direction="row" justify="center" align="center">
 
 					<Box pad="xsmall">
 					
-						<Button label="Watch Tips" onClick={() => {this.watchTutorial()}} />
+						<Button color="dark-3" label="Watch Tips" onClick={() => {this.watchTutorial()}} />
 					
 					</Box>
 
 					<Box pad="xsmall">
 
-						<Button label="Reset" ref={this.state.refs['resetRef']} onClick={() => {this.onReset()}} />
+						<Button label="Reset" color="status-critical" ref={this.state.refs['resetRef']} onClick={() => {this.onReset()}} />
 
 					</Box>
 
 					<Box pad="xsmall">
 
-						<Button label="Start" ref={this.state.refs['startButtonRef']} icon={<Play />} disabled={this.state.isStarted} 
+						<Button label="Start" ref={this.state.refs['startButtonRef']} icon={<Play color="status-ok" />} disabled={this.state.isStarted} 
 							color={!this.state.isStarted? 'status-ok' : 'status-disabled'} onClick={() => {this.startTask()}} />
 
 					</Box>
@@ -557,7 +557,7 @@ export default class LabelTask extends Component {
 					<Box pad="xsmall">
 
 						<Button label={this.state.currentTaskIndex != this.state.taskList.length - 1? "Next" : "Submit"} disabled={!this.state.atLeastOneRun}
-							color={this.state.atLeastOneRun? "status-ok" : "status-disabled"}  onClick={() => {this.state.currentTaskIndex != this.state.taskList.length - 1? this.onNext() : this.onOpen()}} />
+							color={this.state.atLeastOneRun? "brand" : "status-disabled"}  onClick={() => {this.state.currentTaskIndex != this.state.taskList.length - 1? this.onNext() : this.onOpen()}} />
 					
 					</Box>
 
