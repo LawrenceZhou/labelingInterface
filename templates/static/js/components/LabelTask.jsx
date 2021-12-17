@@ -1,58 +1,62 @@
 import React, { Component } from 'react';
-import {grommet, Grommet, Card, RangeInput, CardHeader, CardBody, Text, Box, Button, Grid, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select, Avatar } from 'grommet';
-import { Play, Pause, Volume } from 'grommet-icons';
+import {grommet, Grommet, Card, RangeInput, CardHeader, CardBody, Text, Box, Button, Grid, Heading, Meter, Layer, Drop, Select } from 'grommet';
+import { Play, Volume } from 'grommet-icons';
 import { deepMerge } from 'grommet/utils';
 import { ThemeType } from 'grommet/themes';
 import Scrollbars from "react-custom-scrollbars";
 import ComparisonArea from './ComparisonArea';
 import LeftCoordinate from './LeftCoordinate';
 
+
 const customFocus = deepMerge(grommet, {
-  global: {
-    focus: {
-    	border: {
-    		color: '#0000ffff',
+  	global: {
+    	focus: {
+    		border: {
+    			color: '#0000ffff',
+    		},
+    		shadow: {
+    			color: '#0000ffff',
+    			size: '0px',
+    		}
     	},
-    	shadow: {
-    		color: '#0000ffff',
-    		size: '0px',
-    	}
-    },
-  },
+  	},
 });
 
 const customThemeRangeInput: ThemeType = {
-  global: {
-    spacing: '12px',
-    focus: {
-    	border: {
-    		color: '#0000ffff',
+  	global: {
+    	spacing: '12px',
+    	focus: {
+    		border: {
+    			color: '#0000ffff',
+    		},
+    		shadow: {
+    			color: '#0000ffff',
+    			size: '0px',
+    		}
     	},
-    	shadow: {
-    		color: '#0000ffff',
-    		size: '0px',
-    	}
-    },
-  },
-  rangeInput: {
-    track: {
-      color: 'accent-2',
-      height: '12px',
-      extend: () => `border-radius: 10px`,
-      lower: {
-        color: 'brand',
-        opacity: 0.7,
-      },
-      upper: {
-        color: 'dark-4',
-        opacity: 0.3,
-      },
-    },
-    thumb: {
-      color: 'brand',
-    },
-  },
+  	},
+  	
+  	rangeInput: {
+    	track: {
+      		color: 'accent-2',
+      		height: '12px',
+      		extend: () => `border-radius: 10px`,
+      		lower: {
+        		color: 'brand',
+        		opacity: 0.7,
+      		},
+      		upper: {
+        		color: 'dark-4',
+        		opacity: 0.3,
+      		},
+    	},
+    
+    	thumb: {
+      		color: 'brand',
+    	},
+  	},
 };
+
 
 export default class LabelTask extends Component {
 	constructor(props) {
@@ -61,14 +65,6 @@ export default class LabelTask extends Component {
 			timeStamp: "",
 			timeUsage: 0,
 			userName: this.props.userName,
-			instanceID: "loading...",
-			instanceFilePath: "",
-			instanceSynthesisPath: "",
-			instanceList: [{},],
-			currentInstanceIndex: 0,
-			menuItems:[],
-			menuText: "Loading...",
-			instanceNumber: 0,
 			open: false,
 			tutorialOn: false,
 			currentRef: 0,
@@ -120,17 +116,13 @@ export default class LabelTask extends Component {
 		this.onCloseReset=this.onCloseReset.bind(this);
 		this.onOpen=this.onOpen.bind(this);
 		this.onSubmit=this.onSubmit.bind(this);
-		this.isLabeledCheck=this.isLabeledCheck.bind(this);
-		this.updateCurrentInstance=this.updateCurrentInstance.bind(this);
-		this.generateMenuItems=this.generateMenuItems.bind(this);
-		this.onInstanceMenuSelected=this.onInstanceMenuSelected.bind(this);
 		this.next=this.next.bind(this);
 		this.onNext=this.onNext.bind(this);
 		this.onCloseNext=this.onCloseNext.bind(this);
 		this.reset=this.reset.bind(this);
 		this.onReset=this.onReset.bind(this);
 		this.sendResult = this.sendResult.bind(this);
-		this.getInstanceList = this.getInstanceList.bind(this);	
+		this.getTasks = this.getTasks.bind(this);	
 		this.startTask = this.startTask.bind(this);	
 		this.togglePlay = this.togglePlay.bind(this);	
 		this.stopPlay = this.stopPlay.bind(this);	
@@ -138,11 +130,9 @@ export default class LabelTask extends Component {
 		this.updateScrollPosition = this.updateScrollPosition.bind(this);	
 		this.setSpeaker = this.setSpeaker.bind(this);	
 		this.setDimension = this.setDimension.bind(this);	
-		this.str_pad_left = this.str_pad_left.bind(this);
+		this.strPadLeft = this.strPadLeft.bind(this);
 		this.getSliderValue = this.getSliderValue.bind(this);	
 		this.setVolume = this.setVolume.bind(this);	
-
-
 	}
 
 
@@ -151,7 +141,8 @@ export default class LabelTask extends Component {
 		var timeStamp = d.toString();
 		var timeUsage = Date.now();
 		this.setState({timeStamp: timeStamp, timeUsage: timeUsage },function(){ console.log("timestamp: ", this.state.timeStamp, "time usage: ", this.state.timeUsage)});
-		this.getInstanceList();
+		//to implement
+		//this.getTasks();
 			
 		var refs_ = {};
 		var refPositions_ = {};
@@ -173,7 +164,7 @@ export default class LabelTask extends Component {
 		}
 
 		refPositions_["descriptionRef"] = {bottom:"top", right: "left"};
-		refPositions_["startButtonRef"] = {top:"top", right: "left"};
+		refPositions_["startButtonRef"] = {top:"top", left: "left"};
 		if(this.state.condition != "slider"){
 			refPositions_["labelRef"] = {top:"top", right: "left"};
 		}
@@ -201,8 +192,6 @@ export default class LabelTask extends Component {
 		refTexts_["resetRef"] = "Click 'Reset' button to reset your operations in this task. Just use it when it's really necessary";
 		refTexts_["transcriptRef"] = "Speakers' trasncripts are here. The speaker to label is colored. Above the transcripts of current sentences, transcripts of the previous setences by the speaker are shown for reference.";
 		refTexts_["progressNextRef"] = "When the audio ends, the task is finished and 'Next' button will be enabled. Click it to navigate to the next task. In the last task, the button will change to 'Submit'. click it to submit all your results of all tasks. The progress of tasks is shown on the right." ;
-
-		
 
 		var boxes_ = [{index: 0, indexS: 0, x: 67, y: 101, speaker: 'F', end: 106, highlightA:false, highlightP:false, transcript:"Why did he invite her here?"}, 
 					{index: 1, indexS: 0, x: 100, y: 101, speaker: 'M', end: 135, highlightA:false, highlightP:false, transcript:"Why does that bother you?"},
@@ -242,8 +231,8 @@ export default class LabelTask extends Component {
 		var minutes = Math.floor(boxes_[boxes_.length - 1].end / 600);
   		var seconds = Math.floor(boxes_[boxes_.length - 1].end / 10 - minutes * 60);
 
-  		var totalTime = this.str_pad_left(minutes,'0',2)+':'+this.str_pad_left(seconds,'0',2);	
-	this.setState({refNames: JSON.parse(JSON.stringify(refNames_)), refs: refs_, refPositions: refPositions_, refTexts: refTexts_, boxes: boxes_, totalTimeText: totalTime});
+  		var totalTime = this.strPadLeft(minutes, '0', 2) + ':' + this.strPadLeft(seconds, '0', 2);	
+		this.setState({refNames: JSON.parse(JSON.stringify(refNames_)), refs: refs_, refPositions: refPositions_, refTexts: refTexts_, boxes: boxes_, totalTimeText: totalTime});
 	}
 
 
@@ -272,6 +261,7 @@ export default class LabelTask extends Component {
 		}
 	}
 
+
 	onCloseReset() {
 		var that = this;
 		if(!that.state.reset) {
@@ -281,13 +271,13 @@ export default class LabelTask extends Component {
 		}
 	}
 
+
 	onCloseNext() {
 		var that = this;
 		if(!that.state.next) {
 			that.setState({nextConfirmOn: false});
 		}else{
 			that.setState({nextConfirmOn: false, next: false});
-			//next task to implement
 		}
 	}
 
@@ -301,6 +291,10 @@ export default class LabelTask extends Component {
 	onSubmit() {
 		var that = this;
 		if(!that.state.confirmed) {
+			var d = new Date();
+			var timeStamp = d.toString();
+			var timeUsage = Date.now();
+			that.setState({timeStamp: timeStamp, timeUsage: timeUsage - that.state.timeUsage },function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
 			that.setState({confirmed: true});
 		}else {
 			that.setState({open: false});
@@ -309,72 +303,17 @@ export default class LabelTask extends Component {
 	}
 
 
-	isLabeledCheck () {
-		var that = this;
-		var checked = false;
-
-		//copy the array
-		const newInstanceList = that.state.instanceList.slice(); 
-		if(newInstanceList[that.state.currentInstanceIndex].clickCountPleasure == 0 && 
-			newInstanceList[that.state.currentInstanceIndex].clickCountArousal == 0 && 
-			newInstanceList[that.state.currentInstanceIndex].clickCountDominance == 0) {
-				newInstanceList[that.state.currentInstanceIndex].isLabeled = false;
-		}else {
-			var timeUsage = Date.now();
-			newInstanceList[that.state.currentInstanceIndex].timeStamp = that.state.timeStamp;
-			newInstanceList[that.state.currentInstanceIndex].timeUsage = timeUsage - that.state.timeUsage;
-			
-			if(!newInstanceList[that.state.currentInstanceIndex].isLabeled){
-				that.sendResult(newInstanceList[that.state.currentInstanceIndex]);
-			}
-
-			newInstanceList[that.state.currentInstanceIndex].isLabeled = true;
-			checked = true;
-			that.setState({instanceList: newInstanceList});
-			var mI = that.state.menuItems;
-			mI[that.state.currentInstanceIndex] = <Box gap="xxsmall"><Text>No.{that.state.instanceList[that.state.currentInstanceIndex].ID}</Text> <Text size="xsmall" color="brand" >Finished</Text></Box>;
-			that.setState({menuItems: mI});
-
-		}
-		
-		return checked;
-	}
-
-
-	updateCurrentInstance(nextIndex) {
-		var that= this;
-		that.isLabeledCheck();
-
-		var d = new Date();
-		var timeStamp = d.toString();
-		var timeUsage = Date.now();
-
-		that.setState({timeStamp: timeStamp, timeUsage: timeUsage, currentInstanceIndex: nextIndex, instanceID: that.state.instanceList[nextIndex].ID, instanceFilePath: that.state.instanceList[nextIndex].FilePath, instanceSynthesisPath: that.state.instanceList[nextIndex].SynthesisPath});
-	}
-
-
-	onInstanceMenuSelected(e) {
-		var that= this;
-		that.updateCurrentInstance(e.selected);
-	}
-
-
-	generateMenuItems () {
-		var that = this;
-		var mI=[];
-		for(var i = 0; i< that.state.instanceList.length; i++){
-			mI.push(<Box ap="xxsmall"><Text>No.{that.state.instanceList[i].ID}</Text> <Text size="xsmall" color="status-unknown" >Unfinished</Text></Box>);
-		}
-		that.setState({menuText: "All Utterances", menuItems: mI});
-	}
-
-
 	next() {
 		var that= this;
 		that.stopPlay();
+		var d = new Date();
+		var timeStamp = d.toString();
+		var timeUsage = Date.now();
+		that.setState({timeStamp: timeStamp, timeUsage: timeUsage - that.state.timeUsage },function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
 		that.setState({isStarted:false, next: true, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false, currentTaskIndex: that.state.currentTaskIndex + 1, speakerToLabel:that.state.taskList[that.state.currentTaskIndex + 1].speaker, dimensionToLabel: that.state.taskList[that.state.currentTaskIndex + 1].dimension});
 		//next task to implement
 	}
+
 
 	onNext() {
 		var that= this;
@@ -384,9 +323,14 @@ export default class LabelTask extends Component {
 
 	reset() {
 		var that = this;
+		var d = new Date();
+		var timeStamp = d.toString();
+		var timeUsage = Date.now();
+		that.setState({timeStamp: timeStamp, timeUsage: timeUsage},function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
 		that.stopPlay();
 		that.setState({isStarted:false, reset: true, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false});
 	}
+
 
 	onReset() {
 		var that = this;
@@ -395,10 +339,11 @@ export default class LabelTask extends Component {
 
 
 	sendResult(instance){
+		//to changed to tasks
 		var that = this;
 
 		var http = new XMLHttpRequest();
-		var url = 'http://localhost:8080/api/v1/save_label';
+		var url = 'http://localhost:8080/api/v1/save_label_comparison';
 		var data = new FormData();
 
 		Object.keys(instance).forEach(key => data.append(key, instance[key]));
@@ -422,11 +367,12 @@ export default class LabelTask extends Component {
 	}
 
 
-	getInstanceList(){
+	getTasks(){
+		//to change to task
 		var that = this;
 
 		var http = new XMLHttpRequest();
-		var url = 'http://localhost:8080/api/v1/get_list';
+		var url = 'http://localhost:8080/api/v1/get_tasks';
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);
@@ -456,7 +402,7 @@ export default class LabelTask extends Component {
 						}
 					}
 				
-					that.setState({ instanceList : instance_list_}, function(){ console.log( "instance list in state: ", that.state.instanceList); that.updateCurrentInstance(0); that.generateMenuItems();});
+					that.setState({ instanceList : instance_list_}, function(){ console.log( "instance list in state: ", that.state.instanceList); that.updateCurrentInstance(0); });
 				}else {
 					alert('There is a problem with getting the speech. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
 					that.props.finish();
@@ -471,6 +417,10 @@ export default class LabelTask extends Component {
 	
 	startTask(){
     	var that = this;
+    	var d = new Date();
+		var timeStamp = d.toString();
+		var timeUsage = Date.now();
+		that.setState({timeStamp: timeStamp, timeUsage: timeUsage},function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
     	that.setState({isPlaying: true, isStarted: true});
     	document.activeElement.blur();
   	}
@@ -481,14 +431,17 @@ export default class LabelTask extends Component {
     	that.setState({isPlaying: !that.state.isPlaying});
   	}
 
+
   	stopPlay(){
     	var that = this;
     	that.setState({isPlaying: false});
   	}
 
-  	str_pad_left(string,pad,length) {
-    	return (new Array(length+1).join(pad)+string).slice(-length);
+
+  	strPadLeft(string, pad, length) {
+    	return (new Array(length + 1).join(pad) + string).slice(-length);
 	}
+
 
   	updateCurrentTime(time) {
   		var that = this;
@@ -497,7 +450,7 @@ export default class LabelTask extends Component {
   		var minutes = Math.floor(time / 60);
   		var seconds = Math.floor(time - minutes * 60);
 
-  		var finalTime = that.str_pad_left(minutes,'0',2)+':'+that.str_pad_left(seconds,'0',2)+" / " + that.state.totalTimeText;
+  		var finalTime = that.strPadLeft(minutes, '0', 2) + ':' + that.strPadLeft(seconds, '0', 2) + " / " + that.state.totalTimeText;
   		that.setState({currentTimeText: finalTime});
 
   		if (time * 10 > that.state.boxes[that.state.boxes.length - 1].end) {
@@ -551,16 +504,17 @@ export default class LabelTask extends Component {
   	}
 
 
-
   	setSpeaker(option) {
   		var that = this;
   		that.setState({speakerToLabel: option});
   	}
 
+
   	setDimension(option) {
   		var that = this;
   		that.setState({dimensionToLabel: option});
   	}
+
 
   	getSliderValue(value) {
   		var that = this;
@@ -575,128 +529,162 @@ export default class LabelTask extends Component {
   	}
 
 
-
 	render() {
-
 		return(
 			<Box pad="xsmall" direction="column" background="#EEEEEE" gap="xsmall">
 				
-				<Box direction="row">
+				<Box direction="row" justify="center" align="center">
 
-					<Box width="small" pad="xsmall">
+					<Box pad="xsmall">
+					
 						<Button label="Watch Tips" onClick={() => {this.watchTutorial()}} />
-					</Box>
-
-					<Box pad="xsmall">		
-						<Button label="Reset" ref={this.state.refs['resetRef']} onClick={() => {this.onReset()}} />					
+					
 					</Box>
 
 					<Box pad="xsmall">
-						<Button label={this.state.currentTaskIndex!=this.state.taskList.length - 1?"Next":"Submit"} color={this.state.atLeastOneRun?"status-ok":"status-disabled"} disabled={this.state.atLeastOneRun?false:true} onClick={() => {this.state.currentTaskIndex!=this.state.taskList.length-1? this.onNext(): this.onOpen()}} />
+
+						<Button label="Reset" ref={this.state.refs['resetRef']} onClick={() => {this.onReset()}} />
+
 					</Box>
 
-					<Box justify="center" align="center" direction="row" pad="xsmall" gap="small" ref={this.state.refs['progressNextRef']}>
-        			<Meter type="bar" color="brand" background="status-disabled" value={(this.state.currentTaskIndex + 1) / this.state.taskList.length * 100} size="small" thickness="small" />
-        			<Text>{this.state.currentTaskIndex + 1} / {this.state.taskList.length}</Text>				
-				</Box>
-				
+					<Box pad="xsmall">
 
+						<Button label="Start" ref={this.state.refs['startButtonRef']} icon={<Play />} disabled={this.state.isStarted} 
+							color={!this.state.isStarted? 'status-ok' : 'status-disabled'} onClick={() => {this.startTask()}} />
+
+					</Box>
+
+					<Box pad="xsmall">
+
+						<Button label={this.state.currentTaskIndex != this.state.taskList.length - 1? "Next" : "Submit"} disabled={!this.state.atLeastOneRun}
+							color={this.state.atLeastOneRun? "status-ok" : "status-disabled"}  onClick={() => {this.state.currentTaskIndex != this.state.taskList.length - 1? this.onNext() : this.onOpen()}} />
+					
+					</Box>
+
+					<Box justify="center" align="center" direction="row" gap="small" ref={this.state.refs['progressNextRef']}>
+        				
+        				<Meter type="bar" color="brand" background="status-disabled" value={(this.state.currentTaskIndex + 1) / this.state.taskList.length * 100} size="small" thickness="small" />
+        				
+        				<Text>{this.state.currentTaskIndex + 1} / {this.state.taskList.length}</Text>				
+					
+					</Box>
+				
 				</Box> 
 
-				<Box ref={this.state.refs['descriptionRef']}>
-				<Text>In this task, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
-				</Box>
-				{/*<Box direction="row">
-					<Select
-      					options={this.state.speakers}
-     	 				value={this.state.speakerToLabel}
-      					onChange={({ option }) => this.setSpeaker(option)}
-    				/>
-
-    				<Select
-      					options={this.state.dimensions}
-     	 				value={this.state.dimensionToLabel}
-      					onChange={({ option }) => this.setDimension(option)}
-    				/>
-				</Box>*/}
-
-				<Box justify="center" align="center" direction="row" ref={this.state.refs['labelRef']}>
-
-					{this.state.condition!='slider'&&<LeftCoordinate style={{ width: "5%", height: "250px", display: "inline-block"}} dimension={this.state.dimensionToLabel}/>}
-					<Box ref={this.state.refs['highlightRef']}   style={{ width: "95%", height: "250px", display: "inline-block"}} >
-					<Scrollbars ref="scrollbars"
-						renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>}
-          				renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
+				<Card pad="xsmall" gap="xsmall" background="light-1">
 						
-						<ComparisonArea volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition}/>
+					<CardHeader pad="xxsmall" justify="start">
 						
-					</Scrollbars>
-					</Box>
-
-				</Box>
+						<Box ref={this.state.refs['descriptionRef']}>
+							
+							<Text>In this task, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
+						
+						</Box>
 					
-				<Box justify="center" align="center" >
-					<Text>{this.state.currentTimeText}</Text>
-				</Box>
+					</CardHeader>
+									
+					<CardBody pad="xxsmall">
+
+						<Box justify="center" align="center" direction="row" ref={this.state.refs['labelRef']}>
+
+							{this.state.condition != 'slider' && 
+								<LeftCoordinate style={{ width: "5%", height: "250px", display: "inline-block"}} dimension={this.state.dimensionToLabel} />
+							}
+						
+							<Box ref={this.state.refs['highlightRef']} style={{ width: "95%", height: "250px", display: "inline-block"}} >
+							
+								<Scrollbars ref="scrollbars" renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>} renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
+						
+									<ComparisonArea volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} />
+						
+								</Scrollbars>
+
+							</Box>
+
+						</Box>
+					
+						<Box justify="center" align="center" >
+						
+							<Text>{this.state.currentTimeText}</Text>
+					
+						</Box>
 				
-				<Box direction="row" justify="center" align="center" >
-				<Box direction="row" >
-					<Box pad="small" background={this.state.speakerToLabel=="Female"?this.state.femaleColor:"status-disabled"}/> <Text size="small"> Female Speaker</Text> <Box margin={{left:"small"}} pad="small" background={this.state.speakerToLabel=="Male"?this.state.maleColor:"status-disabled"} /> <Text size="small"> Male Speaker</Text>
-				</Box>
-				<Box  margin={{left:'auto'}}>
-					<Grommet theme={customThemeRangeInput}>
-      					<Box direction="row" align="center" gap="small" background="#EEEEEE">
-        					<Volume color="brand" />
-        					<Box align="center" width="small">
-          						<RangeInput
-            					min={0.1}
-            					max={1}
-            					step={0.1}
-            					value={this.state.volume}
-            					 onChange={event => this.setVolume(event.target.value)}
-          						/>
-        					</Box>
-      					</Box>
-    				</Grommet>
-				</Box>
-				</Box>
+						<Box direction="row" justify="center" align="center" >
+					
+							<Box direction="row" >
+						
+								<Box pad="small" background={this.state.speakerToLabel == "Female"? this.state.femaleColor : "status-disabled"}/> 
 
-				<Box justify="center" align="center" >
-					<Button ref = {this.state.refs['startButtonRef']} icon={<Play />} label="Start" color={!this.state.isStarted?'status-ok':'status-disabled'} disabled={this.state.isStarted} onClick={() => {this.startTask()}} />
-				</Box>	
+								<Text size="small"> Female Speaker</Text> 
 
+								<Box margin={{left:"small"}} pad="small" background={this.state.speakerToLabel == "Male"? this.state.maleColor : "status-disabled"} /> 
 
-				{this.state.condition=='slider'&&
-				 <Grommet theme={customFocus}>
-				<Box justify="center" align="center" direction="row" gap="small" pad="small" background="#EEEEEE" ref={this.state.refs["sliderRef"]}>
-					<Box><Text>Low {this.state.dimensionToLabel}</Text></Box>
-					<Box align="center" width="medium" ><RangeInput min={1} max={5} step={0.5} onChange={event => this.getSliderValue(event.target.value)}/></Box>
-					<Box><Text>High {this.state.dimensionToLabel}</Text></Box>
-				</Box>
-				</Grommet>}
+								<Text size="small"> Male Speaker</Text>
+						
+							</Box>
+						
+							<Box  margin={{left:'auto'}}>
+						
+								<Grommet theme={customThemeRangeInput}>
+      							
+      								<Box direction="row" align="center" gap="small" background="light-1">
+        						
+        								<Volume color="brand" />
+        						
+        								<Box align="center" width="small">
 
-				<Card pad="xsmall" gap="xsmall" background="white" ref={this.state.refs["transcriptRef"]}>
+	          								<RangeInput min={0.1} max={1} step={0.1} value={this.state.volume} onChange={event => this.setVolume(event.target.value)} />
+    	    					
+        								</Box>
+      						
+      								</Box>
+    				
+    							</Grommet>
+						
+							</Box>
+				
+						</Box>
+	
+						{this.state.condition == 'slider' &&
+				 			<Grommet theme={customFocus}>
+						
+								<Box justify="center" align="center" direction="row" gap="small" pad="small" background="light-1" ref={this.state.refs["sliderRef"]}>
+					
+									<Box><Text>Low {this.state.dimensionToLabel}</Text></Box>
+					
+									<Box align="center" width="medium" ><RangeInput min={1} max={5} step={0.5} onChange={event => this.getSliderValue(event.target.value)}/></Box>
+								
+									<Box><Text>High {this.state.dimensionToLabel}</Text></Box>
+				
+								</Box>
+						
+							</Grommet>
+						}
+
+					</CardBody>
+
+				</Card>
+
+				<Card pad="xsmall" gap="xsmall" background="light-1" ref={this.state.refs["transcriptRef"]}>
 						
 					<CardHeader pad="xxsmall" justify="start">Transcript</CardHeader>
 									
 					<CardBody pad="xxsmall">
-						<Grid
-  							rows={['auto']}
-  							columns={['1/2', '1/2']}
-  							gap="none"
+						
+						<Grid rows={['auto']} columns={['1/2', '1/2']} gap="none"
   							areas={[
     							{ name: 'left', start: [0, 0], end: [0, 0] },
     							{ name: 'right', start: [1, 0], end: [1, 0] },
   							]}
 						>
-  							<Box gridArea="left" background={this.state.speakerToLabel=="Female"?this.state.femaleColor:"status-disabled"} align="center" ><Text><strong>Female Speaker</strong></Text></Box>
-							<Box gridArea="right" background={this.state.speakerToLabel=="Male"?this.state.maleColor:"status-disabled"} align="center"><Text><strong>Male Speaker</strong></Text></Box>
+  							
+  							<Box gridArea="left" background={this.state.speakerToLabel == "Female"? this.state.femaleColor : "status-disabled"} align="center" ><Text><strong>Female Speaker</strong></Text></Box>
+							
+							<Box gridArea="right" background={this.state.speakerToLabel == "Male"? this.state.maleColor : "status-disabled"} align="center"><Text><strong>Male Speaker</strong></Text></Box>
 
 						</Grid>
-						<Grid
-  							rows={['auto','auto']}
-  							columns={['1/2', '1/2']}
-  							gap="none"
+						
+						<Grid rows={['auto','auto']} columns={['1/2', '1/2']} gap="none"
   							areas={[
     							{ name: 'left-up', start: [0, 0], end: [0, 0] },
     							{ name: 'right-up', start: [1, 0], end: [1, 0] },
@@ -704,11 +692,64 @@ export default class LabelTask extends Component {
     							{ name: 'right-down', start: [1, 1], end: [1, 1] },
   							]}
 						>
-  							<Box gridArea="left-up" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Text size="xsmall">last sentence</Text><Text size="small">{this.state.lastTranscriptF}</Text></Box>
-							<Box gridArea="right-up" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Text size="xsmall">last sentence</Text><Text size="small">{this.state.lastTranscriptM}</Text></Box>
-							<Box gridArea="left-down" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="small">current sentence </Text>{this.state.speakerToLabel=="Female" && <Box background={this.state.femaleColor} width="20px" height="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexF==-1? "" : this.state.boxes[this.state.currentIndexF].indexS + 1}</Text></Box>}</Box><Text>{this.state.currentTranscriptF}</Text></Box>
-							<Box gridArea="right-down" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="small">current sentence </Text>{this.state.speakerToLabel=="Male" && <Box background={this.state.maleColor} width="20px" height="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexM==-1? "" : this.state.boxes[this.state.currentIndexM].indexS + 1}</Text></Box>}</Box><Text>{this.state.currentTranscriptM}</Text></Box>
+  							
+  							<Box gridArea="left-up" border={{color: 'dark-3', size: 'xsmall'}} pad="xsmall">
+
+  								<Text size="xsmall">last sentence</Text>
+
+  								<Text size="small">{this.state.lastTranscriptF}</Text>
+
+  							</Box>
+							
+							<Box gridArea="right-up" border={{color: 'dark-3', size: 'xsmall'}} pad="xsmall">
+								
+								<Text size="xsmall">last sentence</Text>
+
+								<Text size="small">{this.state.lastTranscriptM}</Text>
+
+							</Box>
+							
+							<Box gridArea="left-down" border={{color: 'dark-3', size: 'xsmall'}} pad="xsmall">
+
+								<Box direction="row">
+
+									<Text size="small">current sentence </Text>
+
+									{this.state.speakerToLabel == "Female" && 
+										<Box background={this.state.femaleColor} width="20px" height="20px" round="xsmall" align="center">
+
+											<Text size="small" color="light-1">{this.state.currentIndexF== -1? "" : this.state.boxes[this.state.currentIndexF].indexS + 1}</Text>
+
+										</Box>
+									}
+
+								</Box>
+
+								<Text>{this.state.currentTranscriptF}</Text>
+
+							</Box>
+
+							<Box gridArea="right-down" border={{color: 'dark-3', size: 'xsmall'}} pad="xsmall">
+
+								<Box direction="row">
+
+									<Text size="small">current sentence </Text>
+
+									{this.state.speakerToLabel == "Male" && 
+										<Box background={this.state.maleColor} width="20px" height="20px" round="xsmall" align="center">
+
+											<Text size="small" color="light-1">{this.state.currentIndexM == -1? "" : this.state.boxes[this.state.currentIndexM].indexS + 1}</Text>
+
+										</Box>
+									}
+								</Box>
+
+								<Text>{this.state.currentTranscriptM}</Text>
+
+							</Box>
+						
 						</Grid>
+					
 					</CardBody>
 								
 				</Card>
@@ -716,7 +757,7 @@ export default class LabelTask extends Component {
 				
 				<Grommet>
 
-				 	{this.state.resetConfirmOn && (
+				 	{this.state.resetConfirmOn && 
 				 	<Layer
 						id="resetConfirmation"
 						position="center"
@@ -750,101 +791,70 @@ export default class LabelTask extends Component {
 						</Box>
 
 					</Layer>
-					)}
+					}
 
 				</Grommet>
 
 				<Grommet>
 
-				 	{this.state.nextConfirmOn && (
-				 	<Layer
-						id="nextConfirmation"
-						position="center"
-						onClickOutside={() => {this.onCloseNext()}}>
+				 	{this.state.nextConfirmOn && 
+				 	<Layer id="nextConfirmation" position="center" onClickOutside={() => {this.onCloseNext()}}>
 
 						<Box pad="medium" gap="small" width="medium">
 						
 							<Heading level={3} margin="none">Next</Heading>
 
-							<Text>{this.state.next ? "Your results have been recorded. Please go to the next task." : "Are you sure to go to the next task? You cannot go back."}</Text>
+							<Text>{this.state.next? "Your results have been recorded. Please go to the next task." : "Are you sure to go to the next task? You cannot go back."}</Text>
 							
-							<Box
-								as="footer"
-								gap="small"
-								direction="row"
-								align="center"
-								justify="end"
-								pad={{ top: 'medium', bottom: 'small' }}>
+							<Box as="footer" gap="small" direction="row" align="center" justify="end"pad={{top: 'medium', bottom: 'small'}}>
 
 								{!this.state.next && <Button label="Cancel" onClick={() => {this.onCloseNext()}} color="dark-3" />}
 							
-								<Button
-									label={<Text color="white"><strong>{this.state.next ? "Close" : "Next"}</strong></Text>}
-									onClick={() => {this.state.next ? this.onCloseNext():this.next()}}
-									primary
-									color="status-ok"
-								/>
+								<Button label={<Text color="white"><strong>{this.state.next? "Close" : "Next"}</strong></Text>}
+										onClick={() => {this.state.next? this.onCloseNext():this.next()}} primary color="status-ok" />
 
 							</Box>
 
 						</Box>
 
 					</Layer>
-					)}
+					}
 
 				</Grommet>
 
 				<Grommet>
 
-				 	{this.state.open && (
-				 	<Layer
-						id="submitConfirmation"
-						position="center"
-						onClickOutside={() => {this.onClose()}}>
+				 	{this.state.open && 
+				 	<Layer id="submitConfirmation" position="center" onClickOutside={() => {this.onClose()}}>
 
 						<Box pad="medium" gap="small" width="medium">
 						
 							<Heading level={3} margin="none">Submit</Heading>
 
-							<Text>{this.state.confirmed ? "Thank you! Your results have been recorded." : "Are you sure you want to submit your results?"}</Text>
+							<Text>{this.state.confirmed? "Thank you! Your results have been recorded." : "Are you sure you want to submit your results?"}</Text>
 							
-							<Box
-								as="footer"
-								gap="small"
-								direction="row"
-								align="center"
-								justify="end"
-								pad={{ top: 'medium', bottom: 'small' }}>
+							<Box as="footer" gap="small" direction="row" align="center" justify="end" pad={{top: 'medium', bottom: 'small'}}>
 
 								{!this.state.confirmed && <Button label="Cancel" onClick={() => {this.onClose()}} color="dark-3" />}
 							
 								<Button
-									label={<Text color="white"><strong>{this.state.confirmed ? "Close" : "Submit"}</strong></Text>}
-									onClick={() => {this.onSubmit()}}
-									primary
-									color="status-critical"
-								/>
+									label={<Text color="white"><strong>{this.state.confirmed? "Close" : "Submit"}</strong></Text>}
+									onClick={() => {this.onSubmit()}} primary color="status-critical" />
 
 							</Box>
 
 						</Box>
 
 					</Layer>
-					)}
+					}
 
 				</Grommet>
 
 				<Grommet >
 				 	
-				 	{this.state.tutorialOn && (
-				 	<Drop
-						id="tutorialLayer"
-						modal={false}
-						stretch={false}
-						round="small"
-						elevation="small"
-						background="light-1"
-						align={this.state.refPositions[this.state.refNames[this.state.currentRef]]}
+				 	{this.state.tutorialOn && 
+				 	<Drop id="tutorialLayer" modal={false} stretch={false} round="small" elevation="small" background="light-2"
+						align={this.state.refPositions[this.state.refNames[this.state.currentRef]]} 
 						target={this.state.refs[this.state.refNames[this.state.currentRef]].current}>
 					
 						<Box width="medium" pad="small">
@@ -853,13 +863,7 @@ export default class LabelTask extends Component {
 
 							<Text>{this.state.refTexts[this.state.refNames[this.state.currentRef]]}</Text>
 						
-							<Box
-								as="footer"
-								gap="small"
-								direction="row"
-								align="center"
-								justify="end"
-								pad ="small">
+							<Box as="footer" gap="small" direction="row" align="center" justify="end" pad ="small">
 							
 								<Button label={this.state.currentRef == this.state.refNames.length - 1 ? "Close Tips" : "Next"} onClick={() => {this.onNextTutorial()}} color="dark-3" />
 						
@@ -868,7 +872,7 @@ export default class LabelTask extends Component {
 						</Box>
 
 					</Drop>
-					)}
+					}
 
 				</Grommet>
 
