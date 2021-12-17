@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {grommet, Grommet, Card, RangeInput, CardHeader, CardBody, Text, Box, Button, Grid, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select, Avatar } from 'grommet';
-import { Play, Pause } from 'grommet-icons';
+import { Play, Pause, Volume } from 'grommet-icons';
 import { deepMerge } from 'grommet/utils';
+import { ThemeType } from 'grommet/themes';
 import Scrollbars from "react-custom-scrollbars";
 import ComparisonArea from './ComparisonArea';
 import LeftCoordinate from './LeftCoordinate';
@@ -19,6 +20,39 @@ const customFocus = deepMerge(grommet, {
     },
   },
 });
+
+const customThemeRangeInput: ThemeType = {
+  global: {
+    spacing: '12px',
+    focus: {
+    	border: {
+    		color: '#0000ffff',
+    	},
+    	shadow: {
+    		color: '#0000ffff',
+    		size: '0px',
+    	}
+    },
+  },
+  rangeInput: {
+    track: {
+      color: 'accent-2',
+      height: '12px',
+      extend: () => `border-radius: 10px`,
+      lower: {
+        color: 'brand',
+        opacity: 0.7,
+      },
+      upper: {
+        color: 'dark-4',
+        opacity: 0.3,
+      },
+    },
+    thumb: {
+      color: 'brand',
+    },
+  },
+};
 
 export default class LabelTask extends Component {
 	constructor(props) {
@@ -41,7 +75,7 @@ export default class LabelTask extends Component {
 			refs:{},
 			refPositions: {},
 			refTexts: {},
-			refNames: ["navigationRef", "labelRef", "synthesisRef", "previousNextRef", "selectRef", "submitRef"],
+			refNames: ["descriptionRef", "startButtonRef", "labelRef", "highlightRef", "sliderRef", "resetRef", "transcriptRef", "progressNextRef"],
 			confirmed: false,
 			color:'green',
 			boxes: [],
@@ -77,6 +111,7 @@ export default class LabelTask extends Component {
 			maleColor: "#7BE77E",
 			scrollTop: 0,
 			isStarted: false,
+			volume: 0.7,
 		};
 
 		this.watchTutorial=this.watchTutorial.bind(this);
@@ -105,6 +140,7 @@ export default class LabelTask extends Component {
 		this.setDimension = this.setDimension.bind(this);	
 		this.str_pad_left = this.str_pad_left.bind(this);
 		this.getSliderValue = this.getSliderValue.bind(this);	
+		this.setVolume = this.setVolume.bind(this);	
 
 
 	}
@@ -120,24 +156,51 @@ export default class LabelTask extends Component {
 		var refs_ = {};
 		var refPositions_ = {};
 		var refTexts_ = {};
+		var refNames_ =this.state.refNames;
 
-		for (var i = 0; i < this.state.refNames.length; i++) {
-			refs_[this.state.refNames[i]] = React.createRef();
+		if (this.state.condition == 'withHighlight'){
+			refNames_ = refNames_.filter(name => name != 'sliderRef');
+		}else if (this.state.condition == 'withoutHighlight') {
+			refNames_ = refNames_.filter(name => name != 'sliderRef');
+			refNames_ = refNames_.filter(name => name != 'highlightRef');
+		}else {
+			refNames_ = refNames_.filter(name => name != 'labelRef');
+			refNames_ = refNames_.filter(name => name != 'highlightRef');
 		}
 
-		refPositions_["navigationRef"] = {top:"top", right: "left"};
-		refPositions_["labelRef"] = {top:"top", right: "left"};
-		refPositions_["synthesisRef"] = {top:"top", right: "left"};
-		refPositions_["previousNextRef"] = {top:"top", right: "left"};
-		refPositions_["selectRef"] = {top:"top", left: "right"};
-		refPositions_["submitRef"] = {top:"bottom", left: "right"};
+		for (var i = 0; i < refNames_.length; i++) {
+			refs_[refNames_[i]] = React.createRef();
+		}
 
-		refTexts_["navigationRef"] = "Time usage and instance ID will show here.";
-		refTexts_["labelRef"] = "Select values of Pleasure, Arousal, and Dominance to give your labels.";
-		refTexts_["synthesisRef"] = "Click the play button to hear the synthesized sample based on your selection.";
-		refTexts_["previousNextRef"] = "Click \"Previous\" and \"Next\" button to navigate through utterances.";
-		refTexts_["selectRef"] = "You can also go to the utterance using this menu. It shows whether each utterance labeling task is finished.";
-		refTexts_["submitRef"] = "Click the \"Submit\" buttion to submit your results after you finish all the utterance labeling tasks." ;
+		refPositions_["descriptionRef"] = {bottom:"top", right: "left"};
+		refPositions_["startButtonRef"] = {top:"top", right: "left"};
+		if(this.state.condition != "slider"){
+			refPositions_["labelRef"] = {top:"top", right: "left"};
+		}
+		if(this.state.condition == "withHighlight"){
+			refPositions_["highlightRef"] = {top:"top", left: "left"};
+		}
+		if(this.state.condition == "slider"){
+			refPositions_["sliderRef"] = {top:"bottom", right: "right"};
+		}
+		refPositions_["resetRef"] = {top:"bottom", left: "left"};
+		refPositions_["transcriptRef"] = {top:"top", right: "left"};
+		refPositions_["progressNextRef"] = {top:"bottom", left: "left"};
+
+		refTexts_["descriptionRef"] = "Task desription is here. It shows the speaker and the emotion dimension to label.";
+		refTexts_["startButtonRef"] = "Click the 'Start' button to start your task. Please note that you cannot stop the task when it's started.";
+		if(this.state.condition != "slider"){
+			refTexts_["labelRef"] = "Use 'Up'and 'Down' keys on your keyboard to label the emtion dimension of the playing sentence, compared with the previous sentence by this speaker. Use 'Left' and 'Right' key to play previous senentence or next sentence.";
+		}
+		if(this.state.condition == "withHighlight"){
+			refTexts_["highlightRef"] = "We predict the sentences of small changes in emotion dimension compared to the previous sentence of the same speaker. They are highlighted. The other sentences are not highlighted, means whether they have no changes or have large and detectable changes. Please give your label according to your mind.";
+		}
+		if(this.state.condition == "slider"){
+			refTexts_["sliderRef"] = "Slide left or right to give label of the emotion dimension to the current sentences.";
+		}
+		refTexts_["resetRef"] = "Click 'Reset' button to reset your operations in this task. Just use it when it's really necessary";
+		refTexts_["transcriptRef"] = "Speakers' trasncripts are here. The speaker to label is colored. Above the transcripts of current sentences, transcripts of the previous setences by the speaker are shown for reference.";
+		refTexts_["progressNextRef"] = "When the audio ends, the task is finished and 'Next' button will be enabled. Click it to navigate to the next task. In the last task, the button will change to 'Submit'. click it to submit all your results of all tasks. The progress of tasks is shown on the right." ;
 
 		
 
@@ -180,7 +243,7 @@ export default class LabelTask extends Component {
   		var seconds = Math.floor(boxes_[boxes_.length - 1].end / 10 - minutes * 60);
 
   		var totalTime = this.str_pad_left(minutes,'0',2)+':'+this.str_pad_left(seconds,'0',2);	
-	this.setState({refs: refs_, refPositions: refPositions_, refTexts: refTexts_, boxes: boxes_, totalTimeText: totalTime});
+	this.setState({refNames: JSON.parse(JSON.stringify(refNames_)), refs: refs_, refPositions: refPositions_, refTexts: refTexts_, boxes: boxes_, totalTimeText: totalTime});
 	}
 
 
@@ -309,7 +372,7 @@ export default class LabelTask extends Component {
 	next() {
 		var that= this;
 		that.stopPlay();
-		that.setState({next: true, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false, currentTaskIndex: that.state.currentTaskIndex + 1, speakerToLabel:that.state.taskList[that.state.currentTaskIndex + 1].speaker, dimensionToLabel: that.state.taskList[that.state.currentTaskIndex + 1].dimension});
+		that.setState({isStarted:false, next: true, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false, currentTaskIndex: that.state.currentTaskIndex + 1, speakerToLabel:that.state.taskList[that.state.currentTaskIndex + 1].speaker, dimensionToLabel: that.state.taskList[that.state.currentTaskIndex + 1].dimension});
 		//next task to implement
 	}
 
@@ -322,7 +385,7 @@ export default class LabelTask extends Component {
 	reset() {
 		var that = this;
 		that.stopPlay();
-		that.setState({reset: true, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false});
+		that.setState({isStarted:false, reset: true, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false});
 	}
 
 	onReset() {
@@ -409,6 +472,7 @@ export default class LabelTask extends Component {
 	startTask(){
     	var that = this;
     	that.setState({isPlaying: true, isStarted: true});
+    	document.activeElement.blur();
   	}
 
 
@@ -504,6 +568,13 @@ export default class LabelTask extends Component {
   	}
 
 
+  	setVolume(value) {
+  		var that = this;
+  		that.setState({volume: Math.max(value, 0.2)});
+  		console.log("volume: ", value);
+  	}
+
+
 
 	render() {
 
@@ -516,15 +587,15 @@ export default class LabelTask extends Component {
 						<Button label="Watch Tips" onClick={() => {this.watchTutorial()}} />
 					</Box>
 
-					{this.state.condition!='slider' && <Box pad="xsmall">		
-						<Button label="Reset" onClick={() => {this.onReset()}} />					
-					</Box>}
+					<Box pad="xsmall">		
+						<Button label="Reset" ref={this.state.refs['resetRef']} onClick={() => {this.onReset()}} />					
+					</Box>
 
 					<Box pad="xsmall">
 						<Button label={this.state.currentTaskIndex!=this.state.taskList.length - 1?"Next":"Submit"} color={this.state.atLeastOneRun?"status-ok":"status-disabled"} disabled={this.state.atLeastOneRun?false:true} onClick={() => {this.state.currentTaskIndex!=this.state.taskList.length-1? this.onNext(): this.onOpen()}} />
 					</Box>
 
-					<Box justify="center" align="center" direction="row" pad="xsmall" gap="small">
+					<Box justify="center" align="center" direction="row" pad="xsmall" gap="small" ref={this.state.refs['progressNextRef']}>
         			<Meter type="bar" color="brand" background="status-disabled" value={(this.state.currentTaskIndex + 1) / this.state.taskList.length * 100} size="small" thickness="small" />
         			<Text>{this.state.currentTaskIndex + 1} / {this.state.taskList.length}</Text>				
 				</Box>
@@ -532,7 +603,7 @@ export default class LabelTask extends Component {
 
 				</Box> 
 
-				<Box>
+				<Box ref={this.state.refs['descriptionRef']}>
 				<Text>In this task, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
 				</Box>
 				{/*<Box direction="row">
@@ -549,17 +620,18 @@ export default class LabelTask extends Component {
     				/>
 				</Box>*/}
 
-				<Box justify="center" align="center" direction="row">
+				<Box justify="center" align="center" direction="row" ref={this.state.refs['labelRef']}>
 
 					{this.state.condition!='slider'&&<LeftCoordinate style={{ width: "5%", height: "250px", display: "inline-block"}} dimension={this.state.dimensionToLabel}/>}
-
-					<Scrollbars ref="scrollbars" style={{ width: "95%", height: "250px", display: "inline-block"}} 
+					<Box ref={this.state.refs['highlightRef']}   style={{ width: "95%", height: "250px", display: "inline-block"}} >
+					<Scrollbars ref="scrollbars"
 						renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>}
           				renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
-			
-						<ComparisonArea condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition}/>
-
+						
+						<ComparisonArea volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition}/>
+						
 					</Scrollbars>
+					</Box>
 
 				</Box>
 					
@@ -567,25 +639,43 @@ export default class LabelTask extends Component {
 					<Text>{this.state.currentTimeText}</Text>
 				</Box>
 				
-				<Box direction="row" justify="center" align="center">
+				<Box direction="row" justify="center" align="center" >
+				<Box direction="row" >
 					<Box pad="small" background={this.state.speakerToLabel=="Female"?this.state.femaleColor:"status-disabled"}/> <Text size="small"> Female Speaker</Text> <Box margin={{left:"small"}} pad="small" background={this.state.speakerToLabel=="Male"?this.state.maleColor:"status-disabled"} /> <Text size="small"> Male Speaker</Text>
+				</Box>
+				<Box  margin={{left:'auto'}}>
+					<Grommet theme={customThemeRangeInput}>
+      					<Box direction="row" align="center" gap="small" background="#EEEEEE">
+        					<Volume color="brand" />
+        					<Box align="center" width="small">
+          						<RangeInput
+            					min={0.1}
+            					max={1}
+            					step={0.1}
+            					value={this.state.volume}
+            					 onChange={event => this.setVolume(event.target.value)}
+          						/>
+        					</Box>
+      					</Box>
+    				</Grommet>
+				</Box>
 				</Box>
 
 				<Box justify="center" align="center" >
-					<Button icon={<Play />} label="Start" color={!this.state.isStarted?'status-ok':'status-disabled'} disabled={this.state.isStarted} onClick={() => {this.startTask()}} />
+					<Button ref = {this.state.refs['startButtonRef']} icon={<Play />} label="Start" color={!this.state.isStarted?'status-ok':'status-disabled'} disabled={this.state.isStarted} onClick={() => {this.startTask()}} />
 				</Box>	
 
 
 				{this.state.condition=='slider'&&
 				 <Grommet theme={customFocus}>
-				<Box justify="center" align="center" direction="row" gap="small" pad="small" background="#EEEEEE">
+				<Box justify="center" align="center" direction="row" gap="small" pad="small" background="#EEEEEE" ref={this.state.refs["sliderRef"]}>
 					<Box><Text>Low {this.state.dimensionToLabel}</Text></Box>
 					<Box align="center" width="medium" ><RangeInput min={1} max={5} step={0.5} onChange={event => this.getSliderValue(event.target.value)}/></Box>
 					<Box><Text>High {this.state.dimensionToLabel}</Text></Box>
 				</Box>
 				</Grommet>}
 
-				<Card pad="xsmall" gap="xsmall" background="white" ref={this.state.refs["synthesisRef"]}>
+				<Card pad="xsmall" gap="xsmall" background="white" ref={this.state.refs["transcriptRef"]}>
 						
 					<CardHeader pad="xxsmall" justify="start">Transcript</CardHeader>
 									
@@ -604,7 +694,7 @@ export default class LabelTask extends Component {
 
 						</Grid>
 						<Grid
-  							rows={['1/3', '2/3']}
+  							rows={['auto','auto']}
   							columns={['1/2', '1/2']}
   							gap="none"
   							areas={[
@@ -614,10 +704,10 @@ export default class LabelTask extends Component {
     							{ name: 'right-down', start: [1, 1], end: [1, 1] },
   							]}
 						>
-  							<Box gridArea="left-up" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="xsmall">last sentence</Text></Box><Text size="small">{this.state.lastTranscriptF}</Text></Box>
-							<Box gridArea="right-up" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="xsmall">last sentence</Text></Box><Text size="small">{this.state.lastTranscriptM}</Text></Box>
-							<Box gridArea="left-down" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="small">current sentence: </Text>{this.state.speakerToLabel=="Female" && <Box background={this.state.femaleColor} width="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexF==-1? "" : this.state.boxes[this.state.currentIndexF].indexS + 1}</Text></Box>}</Box><Text>{this.state.currentTranscriptF}</Text></Box>
-							<Box gridArea="right-down" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="small">current sentence: </Text>{this.state.speakerToLabel=="Male" && <Box background={this.state.maleColor} width="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexM==-1? "" : this.state.boxes[this.state.currentIndexM].indexS + 1}</Text></Box>}</Box><Text>{this.state.currentTranscriptM}</Text></Box>
+  							<Box gridArea="left-up" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Text size="xsmall">last sentence</Text><Text size="small">{this.state.lastTranscriptF}</Text></Box>
+							<Box gridArea="right-up" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Text size="xsmall">last sentence</Text><Text size="small">{this.state.lastTranscriptM}</Text></Box>
+							<Box gridArea="left-down" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="small">current sentence </Text>{this.state.speakerToLabel=="Female" && <Box background={this.state.femaleColor} width="20px" height="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexF==-1? "" : this.state.boxes[this.state.currentIndexF].indexS + 1}</Text></Box>}</Box><Text>{this.state.currentTranscriptF}</Text></Box>
+							<Box gridArea="right-down" border={{ color: 'dark-3', size: 'xsmall' }} pad="xsmall"><Box direction="row"><Text size="small">current sentence </Text>{this.state.speakerToLabel=="Male" && <Box background={this.state.maleColor} width="20px" height="20px" round="xsmall" align="center"><Text size="small" color="light-1">{this.state.currentIndexM==-1? "" : this.state.boxes[this.state.currentIndexM].indexS + 1}</Text></Box>}</Box><Text>{this.state.currentTranscriptM}</Text></Box>
 						</Grid>
 					</CardBody>
 								
@@ -753,11 +843,11 @@ export default class LabelTask extends Component {
 						stretch={false}
 						round="small"
 						elevation="small"
-						background="background-contrast"
+						background="light-1"
 						align={this.state.refPositions[this.state.refNames[this.state.currentRef]]}
 						target={this.state.refs[this.state.refNames[this.state.currentRef]].current}>
 					
-						<Box width="medium">
+						<Box width="medium" pad="small">
 						
 							<Heading level={4} margin="none">{this.state.currentRef + 1}</Heading>
 

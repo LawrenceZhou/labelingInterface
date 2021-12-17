@@ -96,6 +96,9 @@ export default class ComparisonArea extends Component{
       this.setState({boxes: JSON.parse(JSON.stringify(this.state.boxesHistory[0])), boxesHistory: [JSON.parse(JSON.stringify(this.state.boxesHistory[0]))], operationBoxHistory: []});
       this.audio.currentTime = 0;
     }
+    if(nextProps.volume !== this.props.volume){
+      this.audio.volume = this.props.volume;
+    }
 }
 
   componentDidMount(){
@@ -106,6 +109,7 @@ export default class ComparisonArea extends Component{
     var boxes_btm = boxes_.filter(box => box.speaker != this.state.speaker[0]);
     var _boxes = boxes_btm.concat(boxes_top);
     this.setState({speaker: this.props.speaker, dimension: this.props.dimension, boxes: _boxes, boxesTimeOrder: this.props.boxesPassed, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
+    this.audio.volume = this.props.volume;
     console.log(this.state.boxes);
     console.log(this.props.boxesPassed);
   }
