@@ -7,7 +7,8 @@ import { Box } from 'grommet';
 export default class ComparisonArea extends Component{
     constructor(props) {
         super(props);
-        this.state = {  
+        this.state = {
+            length: 1600,  
             horizontalLines: [50, 100, 150, 200],
             verticalLines: [{x:150, time:"00:15"},
                             {x:300, time:"00:30"},
@@ -22,7 +23,7 @@ export default class ComparisonArea extends Component{
             boxes: props.boxesPassed,
             boxesTimeOrder: props.boxesPassed,
             currentTime: 0,
-            audioPath: "static/assets/wavs/Ses01F_script01_2.wav",
+            audioPath: "http://localhost:8080/" + props.audioPath,
             isPlaying: false,
             speaker: "Male",
             dimension: "Arousal",
@@ -45,7 +46,7 @@ export default class ComparisonArea extends Component{
         var boxes_top = boxes_.filter(box => box.speaker == this.state.speaker[0]);
         var boxes_btm = boxes_.filter(box => box.speaker != this.state.speaker[0]);
         var _boxes = boxes_btm.concat(boxes_top);
-        this.setState({speaker: this.props.speaker, dimension: this.props.dimension, boxes: _boxes, boxesTimeOrder: this.props.boxesPassed, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
+        this.setState({length: this.props.length, speaker: this.props.speaker, dimension: this.props.dimension, boxes: _boxes, boxesTimeOrder: this.props.boxesPassed, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
         this.audio.volume = this.props.volume;
     }
 
@@ -59,6 +60,15 @@ export default class ComparisonArea extends Component{
 
 
     componentWillReceiveProps(nextProps){
+        if(nextProps.audioPath !== this.props.audioPath){
+            this.setState({audioPath: nextProps.audioPath});
+            this.audio = new Audio(nextProps.audioPath);
+        }
+
+        if(nextProps.length !== this.props.length){
+            this.setState({length: nextProps.length});
+        }
+
         if(nextProps.boxesPassed !== this.props.boxesPassed){
             var boxes_ = JSON.parse(JSON.stringify(nextProps.boxesPassed));
             var boxes_top = boxes_.filter(box => box.speaker == nextProps.speaker[0]);
@@ -284,14 +294,20 @@ export default class ComparisonArea extends Component{
         return (
             <Box>
                 
-                <Stage width={1600} height={this.state.canvasHeight} >
+                <Stage width={this.state.length} height={this.state.canvasHeight} >
       
                     <Layer >
           
-                        <Rect x={0} y={0} width={1600} height={this.state.canvasHeight} fill={'white'} shadowBlur={0} />
+                        <Rect x={0} y={0} width={this.state.length} height={this.state.canvasHeight} fill={'white'} shadowBlur={0} />
+
+                        {this.props.condition == 'withHighlight' && this.state.boxes.map((box, i) => (
+
+                            <Rect x={box.x} y={0} width={box.end - box.x} height={this.state.canvasHeight}
+                                fill={(box.speaker == this.state.speaker[0] && (this.state.dimension == "Arousal"? box.highlightA : box.highlightP))? '#F8FF9580' : '#F8FF9500'} />
+                        ))}
 
                         {this.state.horizontalLines.map((line, i) => (
-                            <Line key={i} points={[0, line, 1600, line]} stroke={'grey'} strokeWidth={1} lineCap="round" />
+                            <Line key={i} points={[0, line, this.state.length, line]} stroke={'grey'} strokeWidth={1} lineCap="round" />
                         ))}
 
                         {this.state.verticalLines.map((line, i) => (
@@ -302,12 +318,6 @@ export default class ComparisonArea extends Component{
                                 <Text x={1} y={this.state.canvasHeight - 13} width={60} height={13} fontSize={12} text={line.time} fill='grey' strokeWidth={0.5} />
                             
                             </Group>
-                        ))}
-
-                        {this.props.condition == 'withHighlight' && this.state.boxes.map((box, i) => (
-
-                            <Rect x={box.x} y={0} width={box.end - box.x} height={this.state.canvasHeight}
-                                fill={(box.speaker == this.state.speaker[0] && (this.state.dimension == "Arousal"? box.highlightA : box.highlightP))? '#F8FF9580' : '#F8FF9500'} />
                         ))}
 
                         {this.state.boxes.map((box, i) => (

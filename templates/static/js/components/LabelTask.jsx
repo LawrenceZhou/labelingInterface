@@ -108,6 +108,9 @@ export default class LabelTask extends Component {
 			scrollTop: 0,
 			isStarted: false,
 			volume: 0.7,
+			audioPath: "assets/wavs/Ses01F_script01_2.wav",
+			assigmentID: 0,
+			length: 0,
 		};
 
 		this.watchTutorial=this.watchTutorial.bind(this);
@@ -142,7 +145,7 @@ export default class LabelTask extends Component {
 		var timeUsage = Date.now();
 		this.setState({timeStamp: timeStamp, timeUsage: timeUsage },function(){ console.log("timestamp: ", this.state.timeStamp, "time usage: ", this.state.timeUsage)});
 		//to implement
-		//this.getTasks();
+		this.getTasks();
 			
 		var refs_ = {};
 		var refPositions_ = {};
@@ -206,7 +209,7 @@ export default class LabelTask extends Component {
 					{index: 10, indexS: 5, x: 458, y: 101, speaker: 'M', end: 476, highlightA:true, highlightP:true, transcript:"Oh.  So what."},
 					{index: 11, indexS: 5, x: 471, y: 101, speaker: 'F', end: 509, highlightA:false, highlightP:false, transcript:"What is going on here, Joe?"},
 					{index: 12, indexS: 6, x: 506, y: 101, speaker: 'M', end: 526, highlightA:false, highlightP:true, transcript:"Now listen."},
-					{index: 13, indexS: 6, x: 520, y: 101, speaker: 'F', end: 565, highlightA:true, highlightP:false, highlightA:false, highlightP:false, transcript:"She is not his girl.  She knows she's not."},
+					{index: 13, indexS: 6, x: 520, y: 101, speaker: 'F', end: 565, highlightA:true, highlightP:false, transcript:"She is not his girl.  She knows she's not."},
 					{index: 14, indexS: 7, x: 558, y: 101, speaker: 'M', end: 582, highlightA:false, highlightP:false, transcript:"You can't read her mind."},
 					{index: 15, indexS: 7, x: 577, y: 101, speaker: 'F', end: 667, highlightA:true, highlightP:false, transcript:"Then why is she still single?  New York is full of men, why is she still single?  Probably a hundred people told her she's foolish, but she waited."},
 					{index: 16, indexS: 8, x: 661, y: 101, speaker: 'M', end: 684, highlightA:false, highlightP:true, transcript:"How do you know why she waited?"},
@@ -381,28 +384,26 @@ export default class LabelTask extends Component {
 		http.addEventListener("readystatechange", function() {
 			if(this.readyState === 4 ) {
 				if(this.status == 200) {
-					console.log("Instance list received!", this.responseText);
+					console.log("Task received!", this.responseText);
 					var obj = JSON.parse(http.responseText);
 					console.log(obj);
 					//add front-end key-value: selectedP, selectedA, selectedD, clickCountP, clickCountA, clickCountD, timeUsage, timeStamp, isLabeled, isInconsistent
-					var instance_list_ = obj.instance_list;
-					if (obj.instance_list != null) {
-						that.setState({instanceNumber: instance_list_.length});
-						for(var i = 0; i < instance_list_.length; i++){
-							instance_list_[i].selectedPleasure = instance_list_[i].DefaultValueP;
-							instance_list_[i].selectedArousal = instance_list_[i].DefaultValueA;
-							instance_list_[i].selectedDominance = instance_list_[i].DefaultValueD;
-							instance_list_[i].clickCountPleasure = 0;
-							instance_list_[i].clickCountArousal = 0;
-							instance_list_[i].clickCountDominance = 0;
-							instance_list_[i].timeUsage = 0;
-							instance_list_[i].timeStamp = "";
-							instance_list_[i].isLabeled = false;
-							instance_list_[i].isInconsistent = false;
-						}
+					var condition_ = obj.condition;
+					var assigmentID_ = obj.assignment_id;
+					var audioPath_ = obj.dialogue_path;
+					var sentences = obj.sentences;
+					var boxes_ = [];
+					for (var i = 0; i < sentences.length; i++) {
+						boxes_.push({index: sentences[i].Index, indexS: sentences[i].IndexS, x: sentences[i].StartTime, y: 101, speaker: sentences[i].Speaker, end: sentences[i].EndTime, highlightA: sentences[i].HighlightA == 1, highlightP: sentences[i].HighlightP == 1, transcript: sentences[i].Transcript});
 					}
-				
-					that.setState({ instanceList : instance_list_}, function(){ console.log( "instance list in state: ", that.state.instanceList); that.updateCurrentInstance(0); });
+					var length_ = Math.ceil(boxes_[boxes_.length - 1].end / 100) * 100;
+
+					var minutes = Math.floor(boxes_[boxes_.length - 1].end / 600);
+  					var seconds = Math.floor(boxes_[boxes_.length - 1].end / 10 - minutes * 60);
+
+  					var totalTime = that.strPadLeft(minutes, '0', 2) + ':' + that.strPadLeft(seconds, '0', 2);
+					
+					that.setState({ length: length_, totalTimeText: totalTime, boxes: boxes_, condition : condition_, assigmentID: assigmentID_, audioPath: audioPath_}, function(){ console.log( "task in state: ", that.state.boxes, that.state.condition, that.state.assigmentID, that.state.audioPath)});
 				}else {
 					alert('There is a problem with getting the speech. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
 					that.props.finish();
@@ -561,7 +562,7 @@ export default class LabelTask extends Component {
 					
 					</Box>
 
-					<Box justify="center" align="center" direction="row" gap="small" ref={this.state.refs['progressNextRef']}>
+					<Box pad="xsmall" justify="center" align="center" direction="row" gap="small" ref={this.state.refs['progressNextRef']}>
         				
         				<Meter type="bar" color="brand" background="status-disabled" value={(this.state.currentTaskIndex + 1) / this.state.taskList.length * 100} size="small" thickness="small" />
         				
@@ -595,7 +596,7 @@ export default class LabelTask extends Component {
 							
 								<Scrollbars ref="scrollbars" renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>} renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
 						
-									<ComparisonArea volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} />
+									<ComparisonArea length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} />
 						
 								</Scrollbars>
 
@@ -611,15 +612,23 @@ export default class LabelTask extends Component {
 				
 						<Box direction="row" justify="center" align="center" >
 					
-							<Box direction="row" >
-						
-								<Box pad="small" background={this.state.speakerToLabel == "Female"? this.state.femaleColor : "status-disabled"}/> 
+							<Box direction="row" gap="small" >
+							
+								<Box direction="row" gap="xsmall" >
+									
+									<Box pad="small" background={this.state.speakerToLabel == "Female"? this.state.femaleColor : "status-disabled"} round="xsmall"/> 
 
-								<Text size="small"> Female Speaker</Text> 
+									<Text size="small">Female Speaker</Text>
 
-								<Box margin={{left:"small"}} pad="small" background={this.state.speakerToLabel == "Male"? this.state.maleColor : "status-disabled"} /> 
+								</Box>
 
-								<Text size="small"> Male Speaker</Text>
+								<Box direction="row" gap="xsmall" > 
+
+									<Box pad="small" background={this.state.speakerToLabel == "Male"? this.state.maleColor : "status-disabled"} round="xsmall"/> 
+
+									<Text size="small">Male Speaker</Text>
+
+								</Box>
 						
 							</Box>
 						
@@ -633,7 +642,7 @@ export default class LabelTask extends Component {
         						
         								<Box align="center" width="small">
 
-	          								<RangeInput min={0.1} max={1} step={0.1} value={this.state.volume} onChange={event => this.setVolume(event.target.value)} />
+	          								<RangeInput min={1} max={10} step={1} value={this.state.volume} onChange={event => this.setVolume(event.target.value)} />
     	    					
         								</Box>
       						
@@ -711,7 +720,7 @@ export default class LabelTask extends Component {
 							
 							<Box gridArea="left-down" border={{color: 'dark-3', size: 'xsmall'}} pad="xsmall">
 
-								<Box direction="row">
+								<Box direction="row" gap="xsmall">
 
 									<Text size="small">current sentence </Text>
 
@@ -731,7 +740,7 @@ export default class LabelTask extends Component {
 
 							<Box gridArea="right-down" border={{color: 'dark-3', size: 'xsmall'}} pad="xsmall">
 
-								<Box direction="row">
+								<Box direction="row" gap="xsmall">
 
 									<Text size="small">current sentence </Text>
 

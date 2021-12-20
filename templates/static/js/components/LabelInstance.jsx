@@ -2,19 +2,19 @@ import React, { Component } from 'react';
 import {Grommet, Card, Text, Box, Button, Heading, Image, CheckBox, RadioButton, Video, Clock, Menu, Meter, Layer, Stack, Drop, Select } from 'grommet'; 
 import ReactAudioPlayer from 'react-audio-player';
 
-import p1 from '../../assets/images/11.png';
-import p2 from '../../assets/images/12.png';
-import p3 from '../../assets/images/13.png';
-import p4 from '../../assets/images/14.png';
-import p5 from '../../assets/images/15.png';
-import a1 from '../../assets/images/21.png';
-import a2 from '../../assets/images/22.png';
-import a3 from '../../assets/images/23.png';
-import a4 from '../../assets/images/24.png';
-import a5 from '../../assets/images/25.png';
-import d1 from '../../assets/images/31.png';
-import d2 from '../../assets/images/32.png';
-import d3 from '../../assets/images/33.png';
+const p1 = 'http://localhost:8080/assets/images/11.png';
+const p2 = 'http://localhost:8080/assets/images/12.png';
+const p3 = 'http://localhost:8080/assets/images/13.png';
+const p4 = 'http://localhost:8080/assets/images/14.png';
+const p5 = 'http://localhost:8080/assets/images/15.png';
+const a1 = 'http://localhost:8080/assets/images/21.png';
+const a2 = 'http://localhost:8080/assets/images/22.png';
+const a3 = 'http://localhost:8080/assets/images/23.png';
+const a4 = 'http://localhost:8080/assets/images/24.png';
+const a5 = 'http://localhost:8080/assets/images/25.png';
+const d1 = 'http://localhost:8080/assets/images/31.png';
+const d2 = 'http://localhost:8080/assets/images/32.png';
+const d3 = 'http://localhost:8080/assets/images/33.png';
 
 
 export default class LabelInstance extends Component {

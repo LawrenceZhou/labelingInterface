@@ -6,21 +6,122 @@ import (
     _ "github.com/jinzhu/gorm/dialects/mysql"
     "fmt"
     "github.com/pkg/errors"
+    "os"
+    "path/filepath"
+    "encoding/csv"
+    "strconv"
 )
 
 
 func initDatabase(ip string, name string, user string, password string) {
-    //createDatabase(ip, name, user, password)
-    connectDatabase(ip, name, user, password)
-    createTables()
+    createAndConnectDatabase(ip, name, user, password)
+    createTablesDialogues()
+    initDialogues("../assets/files")
+    initSentences("../assets/files")
 
     //insert instance example
-    for i := 0; i < 100; i++ {
+    /*for i := 0; i < 100; i++ {
         // perform a db.Query insert
         instance := Instances{FilePath: "../../assets/FOY0303JOY1.wav", SynthesisPath: "../../assets/FOY0303JOY3.wav", DefaultValueP: 5, DefaultValueA: 5, DefaultValueD: 5}
         success := insertInstance(instance)
         if !success {
             fmt.Println("Instance insertion failed.")
+        }
+    }*/
+
+    
+}
+
+
+func initDialogues(root string) {
+    //insert dialogues
+    var files []string
+
+    err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+        if filepath.Ext(path) == ".csv" {
+            files = append(files, path)
+        }
+        return nil
+    })
+    if err != nil {
+        panic(err)
+    }
+
+    root_wav := "assets/wavs/"
+    for _, file := range files {
+        fmt.Println(root_wav + file[16 : len(file) - 3] + "wav")
+        dialogue := Dialogues{FilePath: root_wav + file[16 : len(file) - 3] + "wav"}
+        success := insertDialogue(dialogue)
+        if !success {
+            fmt.Println("Dialogue insertion failed.")
+        }   
+    }  
+}
+
+
+func readCsvFile(filePath string) [][]string {
+    f, err := os.Open(filePath)
+    if err != nil {
+        fmt.Println("Unable to read input file " + filePath, err)
+    }
+    defer f.Close()
+
+    csvReader := csv.NewReader(f)
+    records, err := csvReader.ReadAll()
+    if err != nil {
+        fmt.Println("Unable to parse file as CSV for " + filePath, err)
+    }
+
+    return records
+}
+
+
+func initSentences(root string) {
+    //insert sentences
+    var files []string
+
+    err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+        if filepath.Ext(path) == ".csv" {
+            files = append(files, path)
+        }
+        return nil
+    })
+    if err != nil {
+        panic(err)
+    }
+
+    root_wav := "assets/wavs/"
+
+    for _, file := range files {
+        records := readCsvFile(file)
+        var dialogue Dialogues
+        result := getDialogueByPath(root_wav + file[16 : len(file) - 3] + "wav", &dialogue)
+
+        if result.RowsAffected > 1 {
+            fmt.Println(result.RowsAffected, "More than 1 dialogue returned! Please scrutinize the database.")
+            return
+        }else if result.RowsAffected < 1 {
+            fmt.Println(result.RowsAffected, "No dialogue returned! Please scrutinize the database.")
+            return
+        }else {
+            //create new sentence
+            for i, record := range records {
+            if i != 0 {
+                fmt.Println(record[0]) 
+                index, _ := strconv.Atoi(record[1])
+                indexS, _ := strconv.Atoi(record[2])
+                startTime, _ := strconv.Atoi(record[3])
+                endTime, _ := strconv.Atoi(record[4])
+                highlightP, _ := strconv.Atoi(record[6])
+                highlightA, _ := strconv.Atoi(record[7])
+                speaker := record[0][len(record[0]) - 4:len(record[0]) - 3]
+                sentence := Sentences{DialogueID: dialogue.ID, Index: index, IndexS:indexS, StartTime: startTime, EndTime: endTime, Transcript: record[5], HighlightP: highlightP, HighlightA: highlightA, Speaker: speaker}
+                insertSentence(sentence)
+                fmt.Println(record[1])       
+            }
+        }
+        //fmt.Println(records) 
+        
         }
     }  
 }
@@ -56,8 +157,40 @@ func createDatabase(ip string, name string, user string, password string) {
 }
 
 
+func createAndConnectDatabase(ip string, name string, user string, password string) {
+
+    db_sql, err_sql := sql.Open("mysql", user+":"+password+"@"+ip+"/")
+    if err_sql != nil {
+        panic(err_sql)
+    }
+    defer db_sql.Close()
+
+    _, err_sql = db_sql.Exec("CREATE DATABASE IF NOT EXISTS "+ name)
+    if err_sql != nil {
+        panic(err_sql)
+    }
+
+    _, err_sql = db_sql.Exec("USE "+ name)
+    if err_sql != nil {
+        panic(err_sql)
+    }
+
+    //open a db connection when initiated
+    var err error
+    db, err = gorm.Open("mysql", user+":"+password+"@"+ip+"/"+name+"?charset=utf8&parseTime=True&loc=Local")
+    if err != nil {
+        panic(errors.Wrap(err, "Failed to connect database"))
+    }
+}
+
+
 func createTables() {
     db.AutoMigrate(&Users{}, &Assignments{}, &Labels{}, &Instances{}, &Assignments{}, &Surveys{}, &Questionnaires{})
+}
+
+
+func createTablesDialogues() {
+    db.AutoMigrate(&Users{}, &Dialogues{}, &Sentences{}, &DialogueAssignments{}, &DialogueAnnotations{}, &SentenceAnnotations{}, &Surveys{}, &Questionnaires{})
 }
 
 
@@ -94,6 +227,38 @@ func getAssignments(userName string, assignmentsPtr *[]Assignments) bool {
 }
 
 
+func getSentences(dialogueID int, sentencesPtr *[]Sentences) bool {
+    db.AutoMigrate(&Sentences{})
+
+    result := db.Where("dialogue_id=?", dialogueID).Find(sentencesPtr)
+    if result.Error != nil {
+        fmt.Println("assignments query error：", result.Error)
+        return false
+    }
+    return true
+}
+
+
+func getDialogueAssignment(userName string, dialogueAssignmentPtr *DialogueAssignments) bool {
+    var user Users
+    result := getUser(userName, &user)
+
+    if result.Error != nil {
+        fmt.Println("user found error：", result.Error)
+        return false
+    }
+
+    db.AutoMigrate(&DialogueAssignments{})
+
+    result = db.Where("user_id=?", user.ID).Find(dialogueAssignmentPtr)
+    if result.Error != nil {
+        fmt.Println("dialogue assignment query error：", result.Error)
+        return false
+    }
+    return true
+}
+
+
 func getInstance(instanceID int, instancePtr *Instances) bool {
     
     db.AutoMigrate(&Instances{})
@@ -101,6 +266,25 @@ func getInstance(instanceID int, instancePtr *Instances) bool {
     result := db.First(instancePtr, instanceID)
     if result.Error != nil {
         fmt.Println("instance query error：", result.Error)
+        return false
+    }
+    return true
+}
+
+
+func getDialogueByPath(filePath string, dialoguePtr *Dialogues) (*gorm.DB) {
+    db.AutoMigrate(&Dialogues{})
+    result := db.Where("file_path = ?", filePath).First(dialoguePtr)
+
+    return result
+}
+
+
+func getDialogue(dialogueID int, dialoguePtr *Dialogues) bool {
+    db.AutoMigrate(&Dialogues{})
+    result := db.First(dialoguePtr, dialogueID)
+    if result.Error != nil {
+        fmt.Println("dialogue query error：", result.Error)
         return false
     }
     return true
@@ -132,6 +316,28 @@ func insertInstance(instance Instances) bool {
 
     if result.Error != nil {
         fmt.Println("user creation error：", result.Error)
+        return false
+    }
+    return true
+}
+
+
+func insertDialogue(dialogue Dialogues) bool {
+    result := db.Create(&dialogue) // pass pointer of data to Create
+
+    if result.Error != nil {
+        fmt.Println("dialogue creation error：", result.Error)
+        return false
+    }
+    return true
+}
+
+
+func insertSentence(sentence Sentences) bool {
+    result := db.Create(&sentence) // pass pointer of data to Create
+
+    if result.Error != nil {
+        fmt.Println("sentence creation error：", result.Error)
         return false
     }
     return true
@@ -174,6 +380,56 @@ func assignUser(userName string, number int) bool {
                 return false
             }
         }
+    }
+
+    return true
+}
+
+
+func insertAssignmentDialogue(userID int) bool {
+
+    db.AutoMigrate(&DialogueAssignments{})
+    assignmentDialogue := DialogueAssignments{UserID: userID, DialogueID: dialogue_id_list[dialogue_index], Condition: condition_list[condition_index]}
+    result := db.Create(&assignmentDialogue) // pass pointer of data to Create
+
+    if result.Error != nil {
+        fmt.Println("dialogue assignment insertion error：", result.Error)
+        return false
+    }
+
+    condition_index += 1
+    if len(condition_list) == condition_index {
+        condition_index = 0
+        dialogue_index += 1
+        if len(dialogue_id_list) == dialogue_index {
+            dialogue_index = 0
+        }
+    }
+
+    return true
+}
+
+
+func assignUserDialogue(userName string) bool {
+    var user Users
+    result := getUser(userName, &user)
+
+    if result.RowsAffected > 1 {
+            fmt.Println(result.RowsAffected, "More than 1 user returned! Please scrutinize the database.")
+            return false
+    }else if result.RowsAffected < 1 {
+        fmt.Println(result.RowsAffected, "No user returned! Please scrutinize the database.")
+        return false
+    }else {
+        //create new assignment by the algorithm selected
+        fmt.Println(dialogue_id_list)
+        
+        success := insertAssignmentDialogue(user.ID)
+
+        if !success {
+            return false
+        }
+            
     }
 
     return true

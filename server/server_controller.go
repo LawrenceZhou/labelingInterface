@@ -17,6 +17,8 @@ func webServer(ip string, name string, user string, password string) {
 
 	r.Use(static.Serve("/",static.LocalFile("../templates", true)))
 
+	r.Static("/assets", "../assets")
+
 	api := r.Group("/api/v1")
 	{
 		//login checking
@@ -27,6 +29,8 @@ func webServer(ip string, name string, user string, password string) {
 		api.POST("/save_label", saveLabelHandler) 
 		//get instance list
 		api.POST("/get_list", getListHandler)
+		//get tasks
+		api.POST("/get_tasks", getTasksHandler)
 		//save survey
 		api.POST("/save_survey", saveSurveyHandler)
 		//save questionnaire
@@ -73,7 +77,9 @@ func loginHandler(c *gin.Context) {
 
 
 		//generate assignment
-		success = assignUser(userName, assignmentNumber)
+		//success = assignUser(userName, assignmentNumber)
+		//generate dialogue assignment
+		success = assignUserDialogue(userName)
     	if !completed && !success {
 			//assignment failed	
 			c.JSON(http.StatusNotFound, gin.H {
@@ -385,6 +391,72 @@ func getListHandler(c *gin.Context) {
 	if !completed {
 		c.JSON(http.StatusOK, gin.H {
 			"instance_list": instance_to_return,
+		})
+	}
+}
+
+
+func getTasksHandler(c *gin.Context) {
+		
+	completed := false
+
+	userName:= c.PostForm("userName")
+	fmt.Println("UserName:", userName)
+
+	var user Users
+	result := getUser(userName, &user)
+
+	if result.Error != nil {
+		//username not found
+		errors.Wrap(result.Error, "User unauthorized")
+		fmt.Println("error：", errors.Wrap(result.Error, "open foo.txt failed"))
+		c.JSON(http.StatusNotFound, gin.H {
+			"message": "User Unauthorized!",
+		})
+		completed = true
+	}
+	
+	fmt.Printf("user: %#v\n", user)
+	fmt.Printf("userID: %d\n", user.ID)
+
+	var dialogueAssignment DialogueAssignments
+		
+	success := getDialogueAssignment(userName, &dialogueAssignment)
+
+	if !completed && !success {
+		c.JSON(http.StatusNotFound, gin.H {
+			"message": "Dialogue Assignments not found!",
+		})
+		completed = true
+	}
+
+	var dialogue Dialogues
+	success = getDialogue(dialogueAssignment.DialogueID, &dialogue)
+
+	if !completed && !success {
+		c.JSON(http.StatusNotFound, gin.H {
+			"message": "Dialogue not found!",
+		})
+		completed = true
+	}
+
+	var sentences []Sentences
+	success = getSentences(dialogueAssignment.DialogueID, &sentences)
+
+	if !completed && !success {
+		c.JSON(http.StatusNotFound, gin.H {
+			"message": "Sentences not found!",
+		})
+		completed = true
+	}
+
+	if !completed {
+		c.JSON(http.StatusOK, gin.H {
+			"message": "Task Retrived!",
+			"dialogue_path": dialogue.FilePath,
+			"condition": dialogueAssignment.Condition,
+			"assignment_id": dialogueAssignment.ID,
+			"sentences": sentences,
 		})
 	}
 }

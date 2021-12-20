@@ -9,10 +9,14 @@ import (
 
 var db *gorm.DB
 var assignmentNumber int
+var dialogue_id_list = [3]int{9, 10, 35}
+var condition_list = [3]string{"withHighlight", "withoutHighlight", "slider"}
+var dialogue_index = 0
+var condition_index = 0
 
 func main (){
 	modePtr := flag.String("mode", "server", "select the mode, 'server' or 'init_database'")
-	databaseNamePtr := flag.String("database_name", "trial", "indicate the database name")
+	databaseNamePtr := flag.String("database_name", "label_dialogue", "indicate the database name")
 	databaseIPPtr := flag.String("database_ip", "", "indicate the database ip address")
 	databaseUserPtr := flag.String("database_user", "lawrence", "indicate the database user")
 	databasePasswordPtr := flag.String("database_password", "123456", "indicate the database user's password")
@@ -28,6 +32,8 @@ func main (){
     assignmentNumber = *numPtr
 
     if *modePtr == "server" {
+    	//dialogue_id_list = [9, 10, 35]
+    	//condition_list = ["withHighlight", "withoutHighlight", "slider"]
     	fmt.Println("Starting the web server...")
     	webServer(*databaseIPPtr, *databaseNamePtr, *databaseUserPtr, *databasePasswordPtr)
     }
