@@ -322,6 +322,18 @@ func insertInstance(instance Instances) bool {
 }
 
 
+func insertDialogueAnnotation(dialogueAnnotationPtr *DialogueAnnotations) bool {
+    result := db.Create(&dialogueAnnotationPtr) // pass pointer of data to Create
+
+    if result.Error != nil {
+        fmt.Println("dialogue annotation insert error：", result.Error)
+        return false
+    }
+    return true
+}
+
+
+
 func insertDialogue(dialogue Dialogues) bool {
     result := db.Create(&dialogue) // pass pointer of data to Create
 
@@ -338,6 +350,17 @@ func insertSentence(sentence Sentences) bool {
 
     if result.Error != nil {
         fmt.Println("sentence creation error：", result.Error)
+        return false
+    }
+    return true
+}
+
+
+func insertSentenceAnnotation(sentenceAnnotation SentenceAnnotations) bool {
+    result := db.Create(&sentenceAnnotation) // pass pointer of data to Create
+
+    if result.Error != nil {
+        fmt.Println("sentence annotation creation error：", result.Error)
         return false
     }
     return true

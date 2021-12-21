@@ -10,7 +10,8 @@ export default class ComparisonArea extends Component{
         this.state = {
             length: 1600,  
             horizontalLines: [50, 100, 150, 200],
-            verticalLines: [{x:150, time:"00:15"},
+            verticalLines: [{x:0, time:"00:00"},
+                            {x:150, time:"00:15"},
                             {x:300, time:"00:30"},
                             {x:450, time:"00:45"},
                             {x:600, time:"01:00"},
@@ -25,6 +26,7 @@ export default class ComparisonArea extends Component{
             currentTime: 0,
             audioPath: "http://localhost:8080/" + props.audioPath,
             isPlaying: false,
+            isStarted: false,
             speaker: "Male",
             dimension: "Arousal",
             canvasHeight: 250,
@@ -36,6 +38,7 @@ export default class ComparisonArea extends Component{
         this.audio = new Audio(this.state.audioPath);
         this.tickingTimer = this.tickingTimer.bind(this);
         this.handleKeyPressed = this.handleKeyPressed.bind(this);
+        this.strPadLeft = this.strPadLeft.bind(this);
     }
 
 
@@ -65,8 +68,18 @@ export default class ComparisonArea extends Component{
             this.audio = new Audio(nextProps.audioPath);
         }
 
+        if(nextProps.isStarted !== this.props.isStarted){
+            this.setState({isStarted: nextProps.isStarted});
+        }
+
         if(nextProps.length !== this.props.length){
-            this.setState({length: nextProps.length});
+            var verticalLines_ = [];
+            for (var x_ = 0; x_ < nextProps.length ; x_ += 150) {
+                var minutes = Math.floor(x_ / 10 / 60);
+                var seconds = Math.floor(x_ / 10 - minutes * 60);
+                verticalLines_.push({x: x_, time: this.strPadLeft(minutes, '0', 2) + ':' + this.strPadLeft(seconds, '0', 2)})
+            }
+            this.setState({length: nextProps.length, verticalLines: verticalLines_});
         }
 
         if(nextProps.boxesPassed !== this.props.boxesPassed){
@@ -130,7 +143,7 @@ export default class ComparisonArea extends Component{
 
     handleKeyPressed(event) {
         var that = this;
-        if(event.keyCode === 27) {
+        if(event.keyCode === 27 && that.state.isStarted) {
         //Do whatever when esc is pressed
         /*
             if(that.props.condition != 'slider'){
@@ -152,14 +165,14 @@ export default class ComparisonArea extends Component{
         */
         }
 
-        if(event.keyCode === 32) {
+        if(event.keyCode === 32 && that.state.isStarted) {
         //Do whatever when space is pressed
         /*
             that.props.togglePlay();
         */
         }
 
-        if(event.keyCode === 38) {
+        if(event.keyCode === 38 && that.state.isStarted) {
         //Do whatever when up is pressed
             console.log("up pressed.");
             if(that.props.condition != 'slider'){
@@ -204,7 +217,7 @@ export default class ComparisonArea extends Component{
             }
         }
 
-        if(event.keyCode === 40) {
+        if(event.keyCode === 40 && that.state.isStarted) {
         //Do whatever when down is pressed
             console.log("down pressed.");
             if(that.props.condition != 'slider'){
@@ -246,7 +259,7 @@ export default class ComparisonArea extends Component{
             }
         }
 
-        if(event.keyCode === 37) {
+        if(event.keyCode === 37 && that.state.isStarted) {
         //Do whatever when left is pressed
             console.log("left pressed.");
             var boxes_ = that.state.boxes;
@@ -266,7 +279,7 @@ export default class ComparisonArea extends Component{
             }
         }
 
-        if(event.keyCode === 39) {
+        if(event.keyCode === 39 && that.state.isStarted) {
         //Do whatever when right is pressed
             console.log("right pressed.");
             var boxes_ = that.state.boxes;
@@ -287,6 +300,11 @@ export default class ComparisonArea extends Component{
                 }
             }
         }
+    }
+
+
+    strPadLeft(string, pad, length) {
+        return (new Array(length + 1).join(pad) + string).slice(-length);
     }
 
 

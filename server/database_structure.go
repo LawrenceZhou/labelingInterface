@@ -100,7 +100,7 @@ type (
         ID     int `gorm:"AUTO_INCREMENT"` //`json:"id"`
         Dimension string            `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`                     //`json:"dimension"`
         Speaker string            `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`                     //`json:"speaker"`
-        DialogueAnnotationID int                     //`json:"dialogue_annotation_id"`
+        DialogueAssignmentID int                     //`json:"dialogue_assignment_id"`
         Timestamp string            `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`       //`json:"timestamp"`
         TimeUsage int                      //`json:"time_usage"`
     }

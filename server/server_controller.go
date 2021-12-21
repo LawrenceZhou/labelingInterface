@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"strconv"
 	"net/http"
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,8 @@ func webServer(ip string, name string, user string, password string) {
 		api.POST("/get_status", getStatusHandler) 
 		//save label
 		api.POST("/save_label", saveLabelHandler) 
+		//save comparison label
+		api.POST("/save_label_comparison", saveLabelComparisonHandler) 
 		//get instance list
 		api.POST("/get_list", getListHandler)
 		//get tasks
@@ -199,6 +202,95 @@ func saveLabelHandler(c *gin.Context) {
 			"message": "Insertion Failed!",
 		})
 		completed = true      
+	}
+
+	if !completed {
+		c.JSON(http.StatusOK, gin.H {
+			"message": "Insertion Succeeded!",
+		})
+	}
+}
+
+
+func saveLabelComparisonHandler(c *gin.Context) {
+
+	completed:= false
+	
+	userName := c.PostForm("userName")
+	fmt.Printf("userName: %s \n", userName)
+	dialogueAssignmentID, _ := strconv.Atoi(c.PostForm("dialogueAssignmentID"))
+	fmt.Printf("dialogueAssignmentID: %d \n", dialogueAssignmentID)
+	typeSubmit := c.PostForm("typeSubmit")
+	fmt.Printf("typeSubmit: %s \n", typeSubmit)
+	dimension := c.PostForm("dimension")
+	fmt.Printf("dimension: %s \n", dimension)
+	speaker := c.PostForm("speaker")
+	fmt.Printf("speaker: %s \n", speaker)
+	timeUsage, _ := strconv.Atoi(c.PostForm("timeUsage"))
+	fmt.Printf("timeUsage: %d \n", timeUsage)
+	timeStamp := c.PostForm("timeStamp")
+	fmt.Printf("timeStamp: %s \n", timeStamp)
+	sentenceIDs_ := c.PostFormArray("sentenceIDs")
+	sentenceIDs := strings.Split(sentenceIDs_[0], ",")
+	fmt.Println("sentenceIDs: ", sentenceIDs, len(sentenceIDs))
+	results_ := c.PostFormArray("results")
+	results := strings.Split(results_[0], ",")
+	fmt.Println("results: ", results, len(results))
+
+	/////////////////////
+    	
+    dialogueAnnotation := DialogueAnnotations{DialogueAssignmentID: dialogueAssignmentID, Speaker: speaker, Dimension: dimension, Timestamp: timeStamp, TimeUsage: timeUsage}
+	success := insertDialogueAnnotation(&dialogueAnnotation)
+
+	if !completed && !success {
+		c.JSON(http.StatusNotFound, gin.H {
+			"message": "Dialogue Annotation Insertion Failed!",
+		})
+		completed = true      
+	}
+	fmt.Printf("dialogueAnnotation id: %d \n", dialogueAnnotation.ID)
+	fmt.Println(len(sentenceIDs), len(results))
+
+	for i := 0; i < len(sentenceIDs); i++ {
+		sentenceID, _ := strconv.Atoi(sentenceIDs[i])
+		result, _ := strconv.Atoi(results[i])
+		sentenceAnnotation := SentenceAnnotations{DialogueAnnotationID: dialogueAnnotation.ID, SentenceID: sentenceID, Result: result}
+
+		success := insertSentenceAnnotation(sentenceAnnotation)
+		if !completed && !success {
+			c.JSON(http.StatusNotFound, gin.H {
+				"message": "Sentence Annotation Insertion Failed!",
+			})
+			completed = true      
+		}
+	}
+
+	fmt.Println(typeSubmit)
+
+	if typeSubmit == "submit" {
+		fmt.Println(typeSubmit, userName)
+		var user Users
+		r := getUser(userName, &user)
+
+		if r.Error != nil {
+			//username not found
+			fmt.Println("error：", r.Error)
+			c.JSON(http.StatusNotFound, gin.H {
+				"message": "User Unauthorized!",
+			})
+		completed = true
+		}
+
+		user.IsFinished = 2
+
+		success = updateUser(user)
+		
+		if !success {
+			c.JSON(http.StatusNotFound, gin.H {
+				"message": "User Not Found!",
+			})
+		completed = true
+		}
 	}
 
 	if !completed {

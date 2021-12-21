@@ -64,6 +64,7 @@ export default class LabelTask extends Component {
 		this.state = {
 			timeStamp: "",
 			timeUsage: 0,
+			timeStart: Date.now(),
 			userName: this.props.userName,
 			open: false,
 			tutorialOn: false,
@@ -111,8 +112,11 @@ export default class LabelTask extends Component {
 			audioPath: "assets/wavs/Ses01F_script01_2.wav",
 			assigmentID: 0,
 			length: 0,
+			sliderValue: 5,
+			sliderResults: {},
 		};
 
+		this.comparisonAreaRef = React.createRef();
 		this.watchTutorial=this.watchTutorial.bind(this);
 		this.onNextTutorial=this.onNextTutorial.bind(this);
 		this.onClose=this.onClose.bind(this);
@@ -142,8 +146,8 @@ export default class LabelTask extends Component {
 	componentDidMount(){
 		var d = new Date();
 		var timeStamp = d.toString();
-		var timeUsage = Date.now();
-		this.setState({timeStamp: timeStamp, timeUsage: timeUsage },function(){ console.log("timestamp: ", this.state.timeStamp, "time usage: ", this.state.timeUsage)});
+		var timeStart = Date.now();
+		this.setState({timeStamp: timeStamp, timeStart: timeStart },function(){ console.log("timestamp: ", this.state.timeStamp, "time start: ", this.state.timeStart)});
 		//to implement
 		this.getTasks();
 			
@@ -280,7 +284,7 @@ export default class LabelTask extends Component {
 		if(!that.state.next) {
 			that.setState({nextConfirmOn: false});
 		}else{
-			that.setState({nextConfirmOn: false, next: false});
+			that.setState({nextConfirmOn: false, next: false, isStarted:false, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false, currentTaskIndex: that.state.currentTaskIndex + 1, speakerToLabel:that.state.taskList[that.state.currentTaskIndex + 1].speaker, dimensionToLabel: that.state.taskList[that.state.currentTaskIndex + 1].dimension});
 		}
 	}
 
@@ -296,8 +300,8 @@ export default class LabelTask extends Component {
 		if(!that.state.confirmed) {
 			var d = new Date();
 			var timeStamp = d.toString();
-			var timeUsage = Date.now();
-			that.setState({timeStamp: timeStamp, timeUsage: timeUsage - that.state.timeUsage },function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
+			var timeUsage = Date.now() - that.state.timeStart;
+			that.setState({timeStamp: timeStamp, timeUsage: timeUsage},function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage); that.sendResult("submit")});
 			that.setState({confirmed: true});
 		}else {
 			that.setState({open: false});
@@ -311,9 +315,8 @@ export default class LabelTask extends Component {
 		that.stopPlay();
 		var d = new Date();
 		var timeStamp = d.toString();
-		var timeUsage = Date.now();
-		that.setState({timeStamp: timeStamp, timeUsage: timeUsage - that.state.timeUsage },function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
-		that.setState({isStarted:false, next: true, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false, currentTaskIndex: that.state.currentTaskIndex + 1, speakerToLabel:that.state.taskList[that.state.currentTaskIndex + 1].speaker, dimensionToLabel: that.state.taskList[that.state.currentTaskIndex + 1].dimension});
+		var timeUsage = Date.now() - that.state.timeStart;
+		that.setState({timeStamp: timeStamp, timeUsage: timeUsage,  next: true },function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage); that.sendResult("next")});
 		//next task to implement
 	}
 
@@ -328,10 +331,10 @@ export default class LabelTask extends Component {
 		var that = this;
 		var d = new Date();
 		var timeStamp = d.toString();
-		var timeUsage = Date.now();
-		that.setState({timeStamp: timeStamp, timeUsage: timeUsage},function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
+		var timeStart = Date.now();
+		that.setState({timeStamp: timeStamp, timeStart: timeStart},function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
 		that.stopPlay();
-		that.setState({isStarted:false, reset: true, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false});
+		that.setState({isStarted:false, reset: true, lastTranscriptM: "", lastTranscriptF: "", currentTranscriptM: "", currentTranscriptF: "", currentIndexM: -1, currentIndexF: -1, atLeastOneRun: false});
 	}
 
 
@@ -341,20 +344,40 @@ export default class LabelTask extends Component {
 	}
 
 
-	sendResult(instance){
-		//to changed to tasks
+	sendResult(typeSubmit){
 		var that = this;
+
+		var childElement = this.comparisonAreaRef.current;
+		var sentenceIDs = [];
+		var results = [];
+		if (that.state.condition != "slider"){
+			for(var i = 0; i < childElement.state.boxes.length; i++) {
+				console.log("sentence id: ", childElement.state.boxes[i].sentenceID, " result: ", childElement.state.boxes[i].y - 1);
+				results.push(childElement.state.boxes[i].y - 1);
+				sentenceIDs.push(childElement.state.boxes[i].sentenceID);
+			}
+		}else{
+			for (var key in that.state.sliderResults){
+ 				 console.log( key, that.state.sliderResults[key] );
+ 				 sentenceIDs.push(key);
+ 				 results.push(that.state.sliderResults[key]);
+			}
+		}
 
 		var http = new XMLHttpRequest();
 		var url = 'http://localhost:8080/api/v1/save_label_comparison';
 		var data = new FormData();
 
-		Object.keys(instance).forEach(key => data.append(key, instance[key]));
 		data.append("userName", that.state.userName);
-		for (var pair of data.entries()) {
-			console.log(pair[0]+ ', ' + pair[1]); 
-		}
-		
+		data.append("typeSubmit", typeSubmit);
+		data.append("dimension", that.state.dimensionToLabel);
+		data.append("dialogueAssignmentID", that.state.assigmentID);
+		data.append("speaker", that.state.speakerToLabel[0]);
+		data.append("timeUsage", that.state.timeUsage);
+		data.append("timeStamp", that.state.timeStamp);
+		data.append("sentenceIDs", sentenceIDs);
+		data.append("results", results);
+
 		http.addEventListener("readystatechange", function() {
 			if(this.readyState === 4 ) {
 				if(this.status == 200){
@@ -394,7 +417,7 @@ export default class LabelTask extends Component {
 					var sentences = obj.sentences;
 					var boxes_ = [];
 					for (var i = 0; i < sentences.length; i++) {
-						boxes_.push({index: sentences[i].Index, indexS: sentences[i].IndexS, x: sentences[i].StartTime, y: 101, speaker: sentences[i].Speaker, end: sentences[i].EndTime, highlightA: sentences[i].HighlightA == 1, highlightP: sentences[i].HighlightP == 1, transcript: sentences[i].Transcript});
+						boxes_.push({sentenceID: sentences[i].ID, index: sentences[i].Index, indexS: sentences[i].IndexS, x: sentences[i].StartTime, y: 101, speaker: sentences[i].Speaker, end: sentences[i].EndTime, highlightA: sentences[i].HighlightA == 1, highlightP: sentences[i].HighlightP == 1, transcript: sentences[i].Transcript});
 					}
 					var length_ = Math.ceil(boxes_[boxes_.length - 1].end / 100) * 100;
 
@@ -420,8 +443,8 @@ export default class LabelTask extends Component {
     	var that = this;
     	var d = new Date();
 		var timeStamp = d.toString();
-		var timeUsage = Date.now();
-		that.setState({timeStamp: timeStamp, timeUsage: timeUsage},function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
+		var timeStart = Date.now();
+		that.setState({timeStamp: timeStamp, timeStart: timeStart},function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
     	that.setState({isPlaying: true, isStarted: true});
     	document.activeElement.blur();
   	}
@@ -474,9 +497,17 @@ export default class LabelTask extends Component {
   				if ( time * 10 > that.state.boxes[i].x && time * 10 <= that.state.boxes[i].end) {
 
   					if (that.state.boxes[i].speaker == 'M' && that.state.boxes[i].transcript != that.state.currentTranscriptM) {
+  						if(that.state.condition == "slider" && that.state.speakerToLabel == "Male"){
+  							var sliderResults_ = that.state.sliderResults;
+  							sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
+  						}
   						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
   					}
   					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript != that.state.currentTranscriptF) {
+  						if(that.state.condition == "slider" && that.state.speakerToLabel == "Female"){
+  							var sliderResults_ = that.state.sliderResults;
+  							sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
+  						}
   						that.setState({currentIndex: i,  currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
   					}
   				}
@@ -519,7 +550,8 @@ export default class LabelTask extends Component {
 
   	getSliderValue(value) {
   		var that = this;
-  		console.log(that.state.currentTime, "slider: ", value);
+  		that.setState({sliderValue: value});
+  		console.log(that.state.currentIndex, that.state.boxes[that.state.currentIndex].sentenceID, that.state.currentTime, "slider: ", value);
   	}
 
 
@@ -596,7 +628,7 @@ export default class LabelTask extends Component {
 							
 								<Scrollbars ref="scrollbars" renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>} renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
 						
-									<ComparisonArea length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} />
+									<ComparisonArea isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} />
 						
 								</Scrollbars>
 
@@ -642,7 +674,7 @@ export default class LabelTask extends Component {
         						
         								<Box align="center" width="small">
 
-	          								<RangeInput min={1} max={10} step={1} value={this.state.volume} onChange={event => this.setVolume(event.target.value)} />
+	          								<RangeInput min={0} max={1} step={0.1} value={this.state.volume} onChange={event => this.setVolume(event.target.value)} />
     	    					
         								</Box>
       						
@@ -661,7 +693,7 @@ export default class LabelTask extends Component {
 					
 									<Box><Text>Low {this.state.dimensionToLabel}</Text></Box>
 					
-									<Box align="center" width="medium" ><RangeInput min={1} max={5} step={0.5} onChange={event => this.getSliderValue(event.target.value)}/></Box>
+									<Box align="center" width="medium" ><RangeInput min={1} max={10} step={1} onChange={event => this.getSliderValue(event.target.value)}/></Box>
 								
 									<Box><Text>High {this.state.dimensionToLabel}</Text></Box>
 				
