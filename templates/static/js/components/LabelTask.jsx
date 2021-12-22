@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import {grommet, Grommet, Card, RangeInput, CardHeader, CardBody, Text, Box, Button, Grid, Heading, Meter, Layer, Drop, Select } from 'grommet';
-import { Play, Volume } from 'grommet-icons';
+import { Play, Volume, PlayFill, StopFill } from 'grommet-icons';
 import { deepMerge } from 'grommet/utils';
 import { ThemeType } from 'grommet/themes';
 import Scrollbars from "react-custom-scrollbars";
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
+import AudioProgress from './AudioProgress';
 import ComparisonArea from './ComparisonArea';
 import LeftCoordinate from './LeftCoordinate';
 
@@ -112,7 +115,7 @@ export default class LabelTask extends Component {
 			audioPath: "assets/wavs/Ses01F_script01_2.wav",
 			assigmentID: 0,
 			length: 0,
-			sliderValue: 5,
+			sliderValue: 3,
 			sliderResults: {},
 		};
 
@@ -139,7 +142,9 @@ export default class LabelTask extends Component {
 		this.setDimension = this.setDimension.bind(this);	
 		this.strPadLeft = this.strPadLeft.bind(this);
 		this.getSliderValue = this.getSliderValue.bind(this);	
+        this.handleKeyPressedForSlider = this.handleKeyPressedForSlider.bind(this);
 		this.setVolume = this.setVolume.bind(this);	
+		this.setRefs = this.setRefs.bind(this);	
 	}
 
 
@@ -148,57 +153,7 @@ export default class LabelTask extends Component {
 		var timeStamp = d.toString();
 		var timeStart = Date.now();
 		this.setState({timeStamp: timeStamp, timeStart: timeStart },function(){ console.log("timestamp: ", this.state.timeStamp, "time start: ", this.state.timeStart)});
-		//to implement
 		this.getTasks();
-			
-		var refs_ = {};
-		var refPositions_ = {};
-		var refTexts_ = {};
-		var refNames_ =this.state.refNames;
-
-		if (this.state.condition == 'withHighlight'){
-			refNames_ = refNames_.filter(name => name != 'sliderRef');
-		}else if (this.state.condition == 'withoutHighlight') {
-			refNames_ = refNames_.filter(name => name != 'sliderRef');
-			refNames_ = refNames_.filter(name => name != 'highlightRef');
-		}else {
-			refNames_ = refNames_.filter(name => name != 'labelRef');
-			refNames_ = refNames_.filter(name => name != 'highlightRef');
-		}
-
-		for (var i = 0; i < refNames_.length; i++) {
-			refs_[refNames_[i]] = React.createRef();
-		}
-
-		refPositions_["descriptionRef"] = {bottom:"top", right: "left"};
-		refPositions_["startButtonRef"] = {top:"top", left: "left"};
-		if(this.state.condition != "slider"){
-			refPositions_["labelRef"] = {top:"top", right: "left"};
-		}
-		if(this.state.condition == "withHighlight"){
-			refPositions_["highlightRef"] = {top:"top", left: "left"};
-		}
-		if(this.state.condition == "slider"){
-			refPositions_["sliderRef"] = {top:"bottom", right: "right"};
-		}
-		refPositions_["resetRef"] = {top:"bottom", left: "left"};
-		refPositions_["transcriptRef"] = {top:"top", right: "left"};
-		refPositions_["progressNextRef"] = {top:"bottom", left: "left"};
-
-		refTexts_["descriptionRef"] = "Task desription is here. It shows the speaker and the emotion dimension to label.";
-		refTexts_["startButtonRef"] = "Click the 'Start' button to start your task. Please note that you cannot stop the task when it's started.";
-		if(this.state.condition != "slider"){
-			refTexts_["labelRef"] = "Use 'Up'and 'Down' keys on your keyboard to label the emtion dimension of the playing sentence, compared with the previous sentence by this speaker. Use 'Left' and 'Right' key to play previous senentence or next sentence.";
-		}
-		if(this.state.condition == "withHighlight"){
-			refTexts_["highlightRef"] = "We predict the sentences of small changes in emotion dimension compared to the previous sentence of the same speaker. They are highlighted. The other sentences are not highlighted, means whether they have no changes or have large and detectable changes. Please give your label according to your mind.";
-		}
-		if(this.state.condition == "slider"){
-			refTexts_["sliderRef"] = "Slide left or right to give label of the emotion dimension to the current sentences.";
-		}
-		refTexts_["resetRef"] = "Click 'Reset' button to reset your operations in this task. Just use it when it's really necessary";
-		refTexts_["transcriptRef"] = "Speakers' trasncripts are here. The speaker to label is colored. Above the transcripts of current sentences, transcripts of the previous setences by the speaker are shown for reference.";
-		refTexts_["progressNextRef"] = "When the audio ends, the task is finished and 'Next' button will be enabled. Click it to navigate to the next task. In the last task, the button will change to 'Submit'. click it to submit all your results of all tasks. The progress of tasks is shown on the right." ;
 
 		var boxes_ = [{index: 0, indexS: 0, x: 67, y: 101, speaker: 'F', end: 106, highlightA:false, highlightP:false, transcript:"Why did he invite her here?"}, 
 					{index: 1, indexS: 0, x: 100, y: 101, speaker: 'M', end: 135, highlightA:false, highlightP:false, transcript:"Why does that bother you?"},
@@ -239,9 +194,15 @@ export default class LabelTask extends Component {
   		var seconds = Math.floor(boxes_[boxes_.length - 1].end / 10 - minutes * 60);
 
   		var totalTime = this.strPadLeft(minutes, '0', 2) + ':' + this.strPadLeft(seconds, '0', 2);	
-		this.setState({refNames: JSON.parse(JSON.stringify(refNames_)), refs: refs_, refPositions: refPositions_, refTexts: refTexts_, boxes: boxes_, totalTimeText: totalTime});
+		this.setState({boxes: boxes_, totalTimeText: totalTime});
 	}
 
+
+	componentWillUnmount() {
+		if (this.condition == "slider") {
+        	document.current.removeEventListener("keydown", this.handleKeyPressedForSlider, false);
+    	}
+	}
 
 	watchTutorial() {
 		var that = this;
@@ -412,6 +373,9 @@ export default class LabelTask extends Component {
 					console.log(obj);
 					//add front-end key-value: selectedP, selectedA, selectedD, clickCountP, clickCountA, clickCountD, timeUsage, timeStamp, isLabeled, isInconsistent
 					var condition_ = obj.condition;
+					if(condition_ == "slider") {
+						document.addEventListener("keydown", that.handleKeyPressedForSlider, false);
+					}
 					var assigmentID_ = obj.assignment_id;
 					var audioPath_ = obj.dialogue_path;
 					var sentences = obj.sentences;
@@ -425,6 +389,8 @@ export default class LabelTask extends Component {
   					var seconds = Math.floor(boxes_[boxes_.length - 1].end / 10 - minutes * 60);
 
   					var totalTime = that.strPadLeft(minutes, '0', 2) + ':' + that.strPadLeft(seconds, '0', 2);
+
+  					that.setRefs(condition_);
 					
 					that.setState({ length: length_, totalTimeText: totalTime, boxes: boxes_, condition : condition_, assigmentID: assigmentID_, audioPath: audioPath_}, function(){ console.log( "task in state: ", that.state.boxes, that.state.condition, that.state.assigmentID, that.state.audioPath)});
 				}else {
@@ -481,11 +447,14 @@ export default class LabelTask extends Component {
   			that.stopPlay();
   		}
 
-  		if (time * 10 >= 400) {
-  			that.refs.scrollbars.scrollLeft(time*10 - 400);
-  		}else {
-  			that.refs.scrollbars.scrollLeft(0);
+  		if (that.state.condition != "slider") {
+  			if (time * 10 >= 400) {
+  				that.refs.scrollbars.scrollLeft(time*10 - 400);
+  			}else {
+  				that.refs.scrollbars.scrollLeft(0);
+  			}
   		}
+  		
 
   		if (time * 10 >= that.state.boxes[that.state.boxes.length - 1].end && !that.state.atLeastOneRun){
   			console.log("over", time);
@@ -562,6 +531,92 @@ export default class LabelTask extends Component {
   	}
 
 
+  	handleKeyPressedForSlider(event) {
+        var that = this;
+        if(event.keyCode === 37 && that.state.isStarted) {
+        //Do whatever when left is pressed
+			console.log("left pressed");
+			
+        }
+
+        if(event.keyCode === 39 && that.state.isStarted) {
+        //Do whatever when right is pressed
+            console.log("right pressed");
+            
+        }
+        if(event.keyCode === 38 && that.state.isStarted) {
+        //Do whatever when up is pressed
+            console.log("up pressed.");
+            if (that.state.sliderValue < 5) {
+				that.setState({sliderValue: that.state.sliderValue + 1}, function(){console.log(that.state.currentIndex, that.state.currentTime, "slider: ", that.state.sliderValue);});
+			}
+        }
+        if(event.keyCode === 40 && that.state.isStarted) {
+        //Do whatever when down is pressed
+            console.log("down pressed.");
+            if (that.state.sliderValue > 1) {
+				that.setState({sliderValue: that.state.sliderValue - 1}, function(){console.log(that.state.currentIndex, that.state.currentTime, "slider: ", that.state.sliderValue);});
+  				
+			}
+        }
+    }
+
+
+    setRefs(condition) {
+    	var that = this;
+    	var refs_ = {};
+		var refPositions_ = {};
+		var refTexts_ = {};
+		var refNames_ = that.state.refNames;
+
+		if (condition == 'withHighlight'){
+			refNames_ = refNames_.filter(name => name != 'sliderRef');
+		}else if (condition == 'withoutHighlight') {
+			refNames_ = refNames_.filter(name => name != 'sliderRef');
+			refNames_ = refNames_.filter(name => name != 'highlightRef');
+		}else {
+			refNames_ = refNames_.filter(name => name != 'labelRef');
+			refNames_ = refNames_.filter(name => name != 'highlightRef');
+		}
+
+		for (var i = 0; i < refNames_.length; i++) {
+			refs_[refNames_[i]] = React.createRef();
+		}
+
+		refPositions_["descriptionRef"] = {top: "top", right: "left"};
+		refPositions_["startButtonRef"] = {top: "bottom", left: "left"};
+		if(condition != "slider"){
+			refPositions_["labelRef"] = {top: "top", right: "left"};
+		}
+		if(condition == "withHighlight"){
+			refPositions_["highlightRef"] = {top: "top", left: "left"};
+		}
+		if(condition == "slider"){
+			refPositions_["sliderRef"] = {top: "bottom", right: "right"};
+		}
+		refPositions_["resetRef"] = {top: "bottom", left: "left"};
+		refPositions_["transcriptRef"] = {top: "top", right: "left"};
+		refPositions_["progressNextRef"] = {top: "bottom", left: "left"};
+
+		refTexts_["descriptionRef"] = "Task desription is here. It shows the speaker and the emotion dimension to label.";
+		refTexts_["startButtonRef"] = "Click the 'Start' button to start your task. Please note that you cannot stop the task when it's started.";
+		if(condition != "slider"){
+			refTexts_["labelRef"] = "Use 'Up'and 'Down' keys on your keyboard to label the emtion dimension of the playing sentence, compared with the previous sentence by this speaker. Use 'Left' and 'Right' key to play previous senentence or next sentence.";
+		}
+		if(condition == "withHighlight"){
+			refTexts_["highlightRef"] = "We predict the sentences of small changes in emotion dimension compared to the previous sentence of the same speaker. They are highlighted. The other sentences are not highlighted, means whether they have no changes or have large and detectable changes. Please give your label according to your mind.";
+		}
+		if(condition == "slider"){
+			refTexts_["sliderRef"] = "Slide left or right to give label of the emotion dimension to the current sentences.";
+		}
+		refTexts_["resetRef"] = "Click 'Reset' button to reset your operations in this task. Just use it when it's really necessary";
+		refTexts_["transcriptRef"] = "Speakers' trasncripts are here. The speaker to label is colored. Above the transcripts of current sentences, transcripts of the previous setences by the speaker are shown for reference.";
+		refTexts_["progressNextRef"] = "When the audio ends, the task is finished and 'Next' button will be enabled. Click it to navigate to the next task. In the last task, the button will change to 'Submit'. click it to submit all your results of all tasks. The progress of tasks is shown on the right." ;
+	
+		that.setState({refNames: JSON.parse(JSON.stringify(refNames_)), refs: refs_, refPositions: refPositions_, refTexts: refTexts_});
+	}
+
+
 	render() {
 		return(
 			<Box pad="xsmall" direction="column" background="#EEEEEE" gap="xsmall">
@@ -618,11 +673,11 @@ export default class LabelTask extends Component {
 									
 					<CardBody pad="xxsmall">
 
-						<Box justify="center" align="center" direction="row" ref={this.state.refs['labelRef']}>
+						
+						{this.state.condition != 'slider' && <Box justify="center" align="center" direction="row" ref={this.state.refs['labelRef']}>
 
-							{this.state.condition != 'slider' && 
 								<LeftCoordinate style={{ width: "5%", height: "250px", display: "inline-block"}} dimension={this.state.dimensionToLabel} />
-							}
+							
 						
 							<Box ref={this.state.refs['highlightRef']} style={{ width: "95%", height: "250px", display: "inline-block"}} >
 							
@@ -634,9 +689,18 @@ export default class LabelTask extends Component {
 
 							</Box>
 
-						</Box>
+						</Box>}
+
+						{this.state.condition == 'slider' && <Box justify="center" pad="medium" gap="medium" direction="row">
+
+							{this.state.isPlaying? <PlayFill color="status-ok" /> : <StopFill color="status-critical" />}
+
+							<AudioProgress length={this.state.boxes[this.state.boxes.length - 1].end / 10} isStarted={this.state.isStarted} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} isPlaying={this.state.isPlaying} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} />
+
+						</Box>}
+
 					
-						<Box justify="center" align="center" >
+						<Box justify="center" align="center" pad="small">
 						
 							<Text>{this.state.currentTimeText}</Text>
 					
@@ -644,7 +708,7 @@ export default class LabelTask extends Component {
 				
 						<Box direction="row" justify="center" align="center" >
 					
-							<Box direction="row" gap="small" >
+							{this.state.condition != 'slider' && <Box direction="row" gap="small" >
 							
 								<Box direction="row" gap="xsmall" >
 									
@@ -662,17 +726,17 @@ export default class LabelTask extends Component {
 
 								</Box>
 						
-							</Box>
+							</Box>}
 						
-							<Box  margin={{left:'auto'}}>
+							<Box  margin={{left:'auto'}} pad={{right: "medium"}}>
 						
 								<Grommet theme={customThemeRangeInput}>
       							
       								<Box direction="row" align="center" gap="small" background="light-1">
         						
         								<Volume color="brand" />
-        						
-        								<Box align="center" width="small">
+        								
+        								<Box align="center" width="small" >
 
 	          								<RangeInput min={0} max={1} step={0.1} value={this.state.volume} onChange={event => this.setVolume(event.target.value)} />
     	    					
@@ -690,10 +754,10 @@ export default class LabelTask extends Component {
 				 			<Grommet theme={customFocus}>
 						
 								<Box justify="center" align="center" direction="row" gap="small" pad="small" background="light-1" ref={this.state.refs["sliderRef"]}>
-					
+
 									<Box><Text>Low {this.state.dimensionToLabel}</Text></Box>
-					
-									<Box align="center" width="medium" ><RangeInput min={1} max={10} step={1} onChange={event => this.getSliderValue(event.target.value)}/></Box>
+									
+        							<Box align="center" width="medium"><Slider disabled={!this.state.isStarted} dots step={1} defaultValue={3} min = {1} max = {5} value={this.state.sliderValue} railStyle={{ backgroundColor: '#DADADA'}} trackStyle={{ backgroundColor: '#DADADA'}} handleStyle={{borderColor: '#7D4CDB'}} /></Box>
 								
 									<Box><Text>High {this.state.dimensionToLabel}</Text></Box>
 				

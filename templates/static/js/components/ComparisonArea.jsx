@@ -43,7 +43,9 @@ export default class ComparisonArea extends Component{
 
 
     componentDidMount(){
-        document.addEventListener("keydown", this.handleKeyPressed, false);
+        if(this.props.condition != "slider") {
+            document.addEventListener("keydown", this.handleKeyPressed, false);
+        }
         this.timerId = setInterval(this.tickingTimer, 30);
         var boxes_ = this.props.boxesPassed;
         var boxes_top = boxes_.filter(box => box.speaker == this.state.speaker[0]);
@@ -55,7 +57,9 @@ export default class ComparisonArea extends Component{
 
     
     componentWillUnmount() {
-        document.removeEventListener("keydown", this.handleKeyPressed, false);
+        if(this.props.condition != "slider") {
+            document.removeEventListener("keydown", this.handleKeyPressed, false);
+        }
         clearInterval(this.timerId);
         this.audio.pause();
         this.audio.currentTime = 0;
@@ -262,19 +266,21 @@ export default class ComparisonArea extends Component{
         if(event.keyCode === 37 && that.state.isStarted) {
         //Do whatever when left is pressed
             console.log("left pressed.");
-            var boxes_ = that.state.boxes;
+            if(that.props.condition != 'slider'){
+                 boxes_ = that.state.boxes;
 
-            for (var i = boxes_.length - 1; i > boxes_.length - that.state.currentSpeakerSentenceNumber; i--) {
-                if (that.state.currentTime * 10 >= boxes_[i].x) {
-                    if (that.audio.currentTime * 10 - boxes_[i].x < 5) {
-                        that.props.updateScrollPosition(boxes_[i - 1].y );
-                        that.audio.currentTime = boxes_[i - 1].x / 10;
-                    }else {
-                        that.props.updateScrollPosition(boxes_[i].y );
-                        that.audio.currentTime = boxes_[i].x / 10;
-                    }
+                for (var i = boxes_.length - 1; i > boxes_.length - that.state.currentSpeakerSentenceNumber; i--) {
+                    if (that.state.currentTime * 10 >= boxes_[i].x) {
+                        if (that.audio.currentTime * 10 - boxes_[i].x < 5) {
+                            that.props.updateScrollPosition(boxes_[i - 1].y );
+                            that.audio.currentTime = boxes_[i - 1].x / 10;
+                        }else {
+                            that.props.updateScrollPosition(boxes_[i].y );
+                            that.audio.currentTime = boxes_[i].x / 10;
+                        }
         
-                    break;
+                        break;
+                    }
                 }
             }
         }
@@ -282,21 +288,23 @@ export default class ComparisonArea extends Component{
         if(event.keyCode === 39 && that.state.isStarted) {
         //Do whatever when right is pressed
             console.log("right pressed.");
-            var boxes_ = that.state.boxes;
+            if(that.props.condition != 'slider'){
+                var boxes_ = that.state.boxes;
 
-            if (that.audio.currentTime * 10 < that.state.boxesTimeOrder[0].x) {
-                that.audio.currentTime = that.state.boxesTimeOrder[0].x / 10;
-                return;
-            }else if (that.audio.currentTime * 10 < boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x) {
-                that.audio.currentTime = boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x / 10;
-                return;
-            }
+                if (that.audio.currentTime * 10 < that.state.boxesTimeOrder[0].x) {
+                    that.audio.currentTime = that.state.boxesTimeOrder[0].x / 10;
+                    return;
+                }else if (that.audio.currentTime * 10 < boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x) {
+                    that.audio.currentTime = boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x / 10;
+                    return;
+                }
 
-            for (var i = boxes_.length - 2; i >= boxes_.length - that.state.currentSpeakerSentenceNumber; i--) {
-                if (that.state.currentTime * 10 >= boxes_[i].x) {
-                    that.audio.currentTime = boxes_[i + 1].x / 10;
-                    that.props.updateScrollPosition(boxes_[i + 1].y );
-                    break;
+                for (var i = boxes_.length - 2; i >= boxes_.length - that.state.currentSpeakerSentenceNumber; i--) {
+                    if (that.state.currentTime * 10 >= boxes_[i].x) {
+                        that.audio.currentTime = boxes_[i + 1].x / 10;
+                        that.props.updateScrollPosition(boxes_[i + 1].y );
+                        break;
+                    }
                 }
             }
         }
