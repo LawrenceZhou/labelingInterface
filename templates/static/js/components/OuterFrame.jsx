@@ -9,6 +9,7 @@ import Survey from './Survey';
 import Questionnaire from './Questionnaire';
 import LabelInstance from './LabelInstance';
 import LabelTask from './LabelTask';
+import Practice from './Practice';
 
 
 export default class OuterFrame extends Component {
@@ -140,6 +141,10 @@ export default class OuterFrame extends Component {
 
 					{this.state.progress == "survey" && 
 					<Survey finish={this.finish} back={this.back} userName={this.state.userName} password={this.state.password} />
+					}
+
+					{this.state.progress == "practice" && 
+					<Practice finish={this.finish} back={this.back} userName={this.state.userName} password={this.state.password} />
 					}
 
 					{this.state.progress == "label" && 

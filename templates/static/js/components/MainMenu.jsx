@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Box, Grommet, Text } from 'grommet'; 
 import { grommet } from 'grommet/themes';
-import { ContactInfo, Notes, Tasks } from 'grommet-icons';
+import { ContactInfo, Notes, Workshop, Tasks } from 'grommet-icons';
 
 import ProgressModule from './ProgressModule';
 
@@ -11,6 +11,7 @@ export default class MainMenu extends Component {
 		super(props);
 
 		this.clickSurvey = this.clickSurvey.bind(this);
+		this.clickPractice = this.clickPractice.bind(this);
 		this.clickLabel = this.clickLabel.bind(this);
 		this.clickQuestionnaire = this.clickQuestionnaire.bind(this);
 	}
@@ -25,11 +26,10 @@ export default class MainMenu extends Component {
 		}
 	}
 
-
-	clickLabel() {
+	clickPractice() {
 		var that = this;
 		if (that.props.status == 1) {
-			that.props.selectTask("label");
+			that.props.selectTask("practice");
 		}else if (that.props.status > 1){
 			alert('You already finished this part.');
 		}else {
@@ -38,13 +38,27 @@ export default class MainMenu extends Component {
 	}
 
 
-	clickQuestionnaire() {
+	clickLabel() {
 		var that = this;
 		if (that.props.status == 2) {
+			that.props.selectTask("label");
+		}else if (that.props.status > 1){
+			alert('You already finished this part.');
+		}else {
+			alert('Please finish the Practice part first.');
+		}
+	}
+
+
+	clickQuestionnaire() {
+		var that = this;
+		if (that.props.status == 3) {
 			that.props.selectTask("questionnaire");
-		}else if (that.props.status > 2){
+		}else if (that.props.status > 3){
 			alert('You already finished this part.');
 		}else if (that.props.status == 1){
+			alert('Please finish the Practice part first.');
+		}else if (that.props.status == 2){
 			alert('Please finish the Labeling Task part first.');
 		}else {
 			alert('Please finish the Background Survey part first.');
@@ -80,14 +94,14 @@ export default class MainMenu extends Component {
 						
 						<ProgressModule 
 							statusColor={this.props.status >= 2 ? "status-disabled" : this.props.status == 1 ? "accent-1" : "brand" }
-							key="label"
-							clickModule={this.clickLabel}
+							key="practice"
+							clickModule={this.clickPractice}
 							title="Part 2"
-							subTitle="Labeling Task"
+							subTitle="Practice"
 							footer={this.props.status >= 2 ? "Finished" : "Not Finished" }
 						>
 									
-							<Tasks size="large" />
+							<Workshop size="large" />
 
 						</ProgressModule>
 
@@ -97,11 +111,28 @@ export default class MainMenu extends Component {
 						
 						<ProgressModule 
 							statusColor={this.props.status >= 3 ? "status-disabled" : this.props.status == 2 ? "accent-1" : "brand" }
+							key="label"
+							clickModule={this.clickLabel}
+							title="Part 3"
+							subTitle="Labeling Task"
+							footer={this.props.status >= 3 ? "Finished" : "Not Finished" }
+						>
+									
+							<Tasks size="large" />
+
+						</ProgressModule>
+
+					</Box>
+
+					<Box  width={this.props.status == 3 ? "large": "medium"}>
+						
+						<ProgressModule 
+							statusColor={this.props.status >= 4 ? "status-disabled" : this.props.status == 3 ? "accent-1" : "brand" }
 							key="questionnaire"
 							clickModule={this.clickQuestionnaire}
-							title="Part 3"
+							title="Part 4"
 							subTitle="Questionnaire"
-							footer={this.props.status >= 3 ? "Finished" : "Not Finished" }
+							footer={this.props.status >= 4 ? "Finished" : "Not Finished" }
 						>
 							
 							<Notes size="large" />

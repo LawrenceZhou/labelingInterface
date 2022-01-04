@@ -295,7 +295,10 @@ export default class LabelTask extends Component {
 		var timeStart = Date.now();
 		that.setState({timeStamp: timeStamp, timeStart: timeStart},function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
 		that.stopPlay();
-		that.setState({isStarted:false, reset: true, lastTranscriptM: "", lastTranscriptF: "", currentTranscriptM: "", currentTranscriptF: "", currentIndexM: -1, currentIndexF: -1, atLeastOneRun: false});
+		that.setState({isStarted: false, reset: true, lastTranscriptM: "", lastTranscriptF: "", currentTranscriptM: "", currentTranscriptF: "", currentIndexM: -1, currentIndexF: -1, atLeastOneRun: false});
+		if(that.state.condition == "slider") {
+			that.setState({sliderValue: 3});
+		}
 	}
 
 
@@ -394,7 +397,7 @@ export default class LabelTask extends Component {
 					
 					that.setState({ length: length_, totalTimeText: totalTime, boxes: boxes_, condition : condition_, assigmentID: assigmentID_, audioPath: audioPath_}, function(){ console.log( "task in state: ", that.state.boxes, that.state.condition, that.state.assigmentID, that.state.audioPath)});
 				}else {
-					alert('There is a problem with getting the speech. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
+					alert('There is a problem with retrieving the speech. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
 					that.props.finish();
 				}
 			}

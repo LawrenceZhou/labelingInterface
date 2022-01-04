@@ -38,6 +38,10 @@ func webServer(ip string, name string, user string, password string) {
 		api.POST("/save_survey", saveSurveyHandler)
 		//save questionnaire
 		api.POST("/save_questionnaire", saveQuestionnaireHandler)
+		//finish practice
+		api.POST("/finish_practice",finishPracticeHandler)
+		//fget condition
+		api.POST("/get_condition",getConditionHandler)
 	}
 
 	r.Run()
@@ -179,7 +183,7 @@ func saveLabelHandler(c *gin.Context) {
 	}
 		
 	//need to revise; just for debugging
-	user.IsFinished = 2
+	user.IsFinished = 3
 
 	success := updateUser(user)
 		
@@ -281,7 +285,7 @@ func saveLabelComparisonHandler(c *gin.Context) {
 		completed = true
 		}
 
-		user.IsFinished = 2
+		user.IsFinished = 3
 
 		success = updateUser(user)
 		
@@ -395,7 +399,7 @@ func saveQuestionnaireHandler(c *gin.Context) {
 		completed = true
 	}
 
-	user.IsFinished = 3
+	user.IsFinished = 4
 
 	success:= updateUser(user)
 
@@ -423,6 +427,45 @@ func saveQuestionnaireHandler(c *gin.Context) {
 	if !completed {
 		c.JSON(http.StatusOK, gin.H {
 			"message": "Submission Succeeded!",
+		})
+	}
+}
+
+
+func finishPracticeHandler(c *gin.Context) {
+
+	completed:= false
+
+	userName := c.PostForm("userName")
+	fmt.Printf("userName: %s \n", userName)
+
+	var user Users
+	result := getUser(userName, &user)
+
+	if result.Error != nil {
+		//username not found
+		fmt.Println("error：", result.Error)
+		c.JSON(http.StatusNotFound, gin.H {
+			"message": "User Unauthorized!",
+		})
+		completed = true
+	}
+
+	user.IsFinished = 2
+
+	success := updateUser(user)
+		
+	if !success {
+		c.JSON(http.StatusNotFound, gin.H {
+			"message": "User Not Found!",
+		})
+		completed = true
+	}
+
+
+	if !completed {
+		c.JSON(http.StatusOK, gin.H {
+			"message": "Practice Succeeded!",
 		})
 	}
 }
@@ -549,6 +592,49 @@ func getTasksHandler(c *gin.Context) {
 			"condition": dialogueAssignment.Condition,
 			"assignment_id": dialogueAssignment.ID,
 			"sentences": sentences,
+		})
+	}
+}
+
+
+func getConditionHandler(c *gin.Context) {
+		
+	completed := false
+
+	userName:= c.PostForm("userName")
+	fmt.Println("UserName:", userName)
+
+	var user Users
+	result := getUser(userName, &user)
+
+	if result.Error != nil {
+		//username not found
+		errors.Wrap(result.Error, "User unauthorized")
+		fmt.Println("error：", errors.Wrap(result.Error, "open foo.txt failed"))
+		c.JSON(http.StatusNotFound, gin.H {
+			"message": "User Unauthorized!",
+		})
+		completed = true
+	}
+	
+	fmt.Printf("user: %#v\n", user)
+	fmt.Printf("userID: %d\n", user.ID)
+
+	var dialogueAssignment DialogueAssignments
+		
+	success := getDialogueAssignment(userName, &dialogueAssignment)
+
+	if !completed && !success {
+		c.JSON(http.StatusNotFound, gin.H {
+			"message": "Dialogue Assignments not found!",
+		})
+		completed = true
+	}
+
+	if !completed {
+		c.JSON(http.StatusOK, gin.H {
+			"message": "Condition Retrived!",
+			"condition": dialogueAssignment.Condition,
 		})
 	}
 }
