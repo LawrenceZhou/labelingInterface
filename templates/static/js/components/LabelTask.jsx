@@ -117,6 +117,7 @@ export default class LabelTask extends Component {
 			length: 0,
 			sliderValue: 3,
 			sliderResults: {},
+			description: "",
 		};
 
 		this.comparisonAreaRef = React.createRef();
@@ -381,6 +382,7 @@ export default class LabelTask extends Component {
 					}
 					var assigmentID_ = obj.assignment_id;
 					var audioPath_ = obj.dialogue_path;
+					var description_ = obj.dialogue_description;
 					var sentences = obj.sentences;
 					var boxes_ = [];
 					for (var i = 0; i < sentences.length; i++) {
@@ -395,7 +397,7 @@ export default class LabelTask extends Component {
 
   					that.setRefs(condition_);
 					
-					that.setState({ length: length_, totalTimeText: totalTime, boxes: boxes_, condition : condition_, assigmentID: assigmentID_, audioPath: audioPath_}, function(){ console.log( "task in state: ", that.state.boxes, that.state.condition, that.state.assigmentID, that.state.audioPath)});
+					that.setState({ length: length_, totalTimeText: totalTime, boxes: boxes_, condition : condition_, assigmentID: assigmentID_, audioPath: audioPath_, description: description_}, function(){ console.log( "task in state: ", that.state.boxes, that.state.condition, that.state.assigmentID, that.state.audioPath)});
 				}else {
 					alert('There is a problem with retrieving the speech. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
 					that.props.finish();
@@ -670,6 +672,8 @@ export default class LabelTask extends Component {
 							
 							<Text>In this task, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
 						
+							<Text>Description: {this.state.description} </Text>
+
 						</Box>
 					
 					</CardHeader>

@@ -589,6 +589,7 @@ func getTasksHandler(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H {
 			"message": "Task Retrived!",
 			"dialogue_path": dialogue.FilePath,
+			"dialogue_description": dialogue.Description,
 			"condition": dialogueAssignment.Condition,
 			"assignment_id": dialogueAssignment.ID,
 			"sentences": sentences,

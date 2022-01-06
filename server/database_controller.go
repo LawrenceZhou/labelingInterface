@@ -10,30 +10,19 @@ import (
     "path/filepath"
     "encoding/csv"
     "strconv"
+    "io/ioutil"
 )
 
 
 func initDatabase(ip string, name string, user string, password string) {
     createAndConnectDatabase(ip, name, user, password)
     createTablesDialogues()
-    initDialogues("../assets/files")
-    initSentences("../assets/files")
-
-    //insert instance example
-    /*for i := 0; i < 100; i++ {
-        // perform a db.Query insert
-        instance := Instances{FilePath: "../../assets/FOY0303JOY1.wav", SynthesisPath: "../../assets/FOY0303JOY3.wav", DefaultValueP: 5, DefaultValueA: 5, DefaultValueD: 5}
-        success := insertInstance(instance)
-        if !success {
-            fmt.Println("Instance insertion failed.")
-        }
-    }*/
-
-    
+    initDialogues("../assets/files", "../assets/descriptions/", "assets/wavs/")
+    initSentences("../assets/files")    
 }
 
 
-func initDialogues(root string) {
+func initDialogues(root string, rootDescription string, rootWav string) {
     //insert dialogues
     var files []string
 
@@ -47,10 +36,12 @@ func initDialogues(root string) {
         panic(err)
     }
 
-    root_wav := "assets/wavs/"
     for _, file := range files {
-        fmt.Println(root_wav + file[16 : len(file) - 3] + "wav")
-        dialogue := Dialogues{FilePath: root_wav + file[16 : len(file) - 3] + "wav"}
+        bytesRead, _ := ioutil.ReadFile(rootDescription + file[16 : len(file) - 3] + "txt")
+        file_content := string(bytesRead)
+        fmt.Println(file_content)
+        fmt.Println(rootWav + file[16 : len(file) - 3] + "wav")
+        dialogue := Dialogues{FilePath: rootWav + file[16 : len(file) - 3] + "wav", Description: file_content }
         success := insertDialogue(dialogue)
         if !success {
             fmt.Println("Dialogue insertion failed.")

@@ -71,6 +71,7 @@ type (
     Dialogues struct {
         ID     int                `gorm:"AUTO_INCREMENT"` //`json:"id"`
         FilePath string           `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`           //`json:"file_path"`
+        Description string           `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`           //`json:"description"`
     }
 
     //Sentences schema in mysql

@@ -101,7 +101,6 @@ export default class AudioProgress extends Component{
 
     tickingTimer() {
         var that = this;
-        console.log(that.audio.currentTime, that.state.length, that.audio.currentTime / that.state.length);
         that.setState({currentTime: that.audio.currentTime});
         that.props.getCurrentTime(that.audio.currentTime);
     }
@@ -112,12 +111,12 @@ export default class AudioProgress extends Component{
         if(event.keyCode === 37 && that.state.isStarted) {
         //Do whatever when left is pressed
             console.log("left pressed.");
-            that.audio.currentTime = Math.max(0, that.audio.currentTime - 5);
+            that.audio.currentTime = Math.max(0, that.audio.currentTime - 10);
         }
         if(event.keyCode === 39 && that.state.isStarted) {
         //Do whatever when right is pressed
             console.log("right pressed.");
-            that.audio.currentTime = Math.min(that.state.length, that.audio.currentTime + 5);
+            that.audio.currentTime = Math.min(that.state.length, that.audio.currentTime + 10);
         }
     }
 

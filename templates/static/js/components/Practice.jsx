@@ -113,6 +113,7 @@ export default class Practice extends Component {
 			length: 0,
 			sliderValue: 3,
 			sliderResults: {},
+			description: "The female and the male are arguing about why their missing son's ex-girlfriend showed up. Furthermore, their another son wishes to propose to the girl, which irritates the female.",
 		};
 
 		this.comparisonAreaRef = React.createRef();
@@ -572,6 +573,9 @@ export default class Practice extends Component {
 						<Box ref={this.state.refs['descriptionRef']}>
 							
 							<Text>In this practice, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
+							
+							<Text>Description: {this.state.description} </Text>
+							
 						
 						</Box>
 					
