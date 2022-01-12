@@ -192,17 +192,18 @@ export default class ComparisonArea extends Component{
                         that.setState({boxesHistory: boxesHistory_, operationBoxHistory: operationBoxHistory_});
 
                         if (boxes_[i].y < 50) {
-                            var horizontalLines_ = that.state.horizontalLines;
-                            horizontalLines_.push(horizontalLines_[horizontalLines_.length - 1] + 50);
-                            that.setState({canvasHeight: that.state.canvasHeight + 50, horizontalLines: horizontalLines_});
+                            //flex slot number
+                            //var horizontalLines_ = that.state.horizontalLines;
+                            //horizontalLines_.push(horizontalLines_[horizontalLines_.length - 1] + 50);
+                            //that.setState({canvasHeight: that.state.canvasHeight + 50, horizontalLines: horizontalLines_});
                     
-                            for (var j = 0; j < boxes_.length; j++) {
-                                if (that.state.currentTime * 10 > boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
-                                    boxes_[j].y += 50;
-                                }else if (that.state.speaker[0] != boxes_[j].speaker) {
-                                    boxes_[j].y += 50;
-                                }
-                            }
+                            //for (var j = 0; j < boxes_.length; j++) {
+                            //    if (that.state.currentTime * 10 > boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
+                            //        boxes_[j].y += 50;
+                            //    }else if (that.state.speaker[0] != boxes_[j].speaker) {
+                            //        boxes_[j].y += 50;
+                            //    }
+                            //}
 
                         }else{
                             that.props.updateScrollPosition(boxes_[i].y - 50);
@@ -237,15 +238,16 @@ export default class ComparisonArea extends Component{
                         that.setState({boxesHistory: boxesHistory_, operationBoxHistory: operationBoxHistory_});
 
                         if (boxes_[i].y > that.state.canvasHeight - 50) {
-                            var horizontalLines_ = that.state.horizontalLines;
-                            horizontalLines_.push(horizontalLines_[horizontalLines_.length - 1] + 50);
+                            //flex slot number
+                            //var horizontalLines_ = that.state.horizontalLines;
+                            //horizontalLines_.push(horizontalLines_[horizontalLines_.length - 1] + 50);
           
-                            that.setState({canvasHeight: that.state.canvasHeight + 50, horizontalLines: horizontalLines_});
-                            for (var j = 0; j < boxes_.length; j++) {
-                                if ( that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
-                                    boxes_[j].y += 50;
-                                }
-                            }
+                            //that.setState({canvasHeight: that.state.canvasHeight + 50, horizontalLines: horizontalLines_});
+                            //for (var j = 0; j < boxes_.length; j++) {
+                            //    if ( that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
+                            //        boxes_[j].y += 50;
+                            //    }
+                            //}
                         }else{
                             that.props.updateScrollPosition(boxes_[i].y + 50);
                             for (var j = 0; j < boxes_.length; j++) {

@@ -51,8 +51,11 @@ type (
         Gender string         `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`             //`json:"gender"`
         Ethnicity string       `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`            //`json:"ethnicity"`
         Nationality string     `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`            //`json:"nationality"`
-        EducationLevel string   `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`           //`json:"education_level"`
-        IncomeLevel string     `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`            //`json:"income_level"`
+        Education string   `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`           //`json:"education"`
+        Income string     `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`            //`json:"income"`
+        Religion string     `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`            //`json:"religion"`
+        Comprehension string     `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`            //`json:"comprehension"`
+        ComprehensionLevel string     `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`            //`json:"comprehension_level"`
     }
 
     //Questionnaires schema in mysql

@@ -827,7 +827,7 @@ export default class LabelTask extends Component {
 
 									<Text size="small">current sentence </Text>
 
-									{this.state.speakerToLabel == "Female" && 
+									{(this.state.condition != "slider" && this.state.speakerToLabel == "Female") && 
 										<Box background={this.state.femaleColor} width="20px" height="20px" round="xsmall" align="center">
 
 											<Text size="small" color="light-1">{this.state.currentIndexF== -1? "" : this.state.boxes[this.state.currentIndexF].indexS + 1}</Text>
@@ -847,7 +847,7 @@ export default class LabelTask extends Component {
 
 									<Text size="small">current sentence </Text>
 
-									{this.state.speakerToLabel == "Male" && 
+									{(this.state.condition != "slider" && this.state.speakerToLabel == "Male") && 
 										<Box background={this.state.maleColor} width="20px" height="20px" round="xsmall" align="center">
 
 											<Text size="small" color="light-1">{this.state.currentIndexM == -1? "" : this.state.boxes[this.state.currentIndexM].indexS + 1}</Text>

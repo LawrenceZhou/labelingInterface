@@ -319,10 +319,16 @@ func saveSurveyHandler(c *gin.Context) {
 	fmt.Printf("ethnicity: %s \n", ethnicity)
 	nationality := c.PostForm("nationality")
 	fmt.Printf("nationality: %s \n", nationality)
-	educationLevel := c.PostForm("educationLevel")
-	fmt.Printf("educationLevel: %s \n", educationLevel)
-	incomeLevel := c.PostForm("incomeLevel")
-	fmt.Printf("incomeLevel: %s \n", incomeLevel)
+	education := c.PostForm("education")
+	fmt.Printf("education: %s \n", education)
+	income := c.PostForm("income")
+	fmt.Printf("income: %s \n", income)
+	religion := c.PostForm("religion")
+	fmt.Printf("religion: %s \n", religion)
+	comprehension := c.PostForm("comprehension")
+	fmt.Printf("comprehension: %s \n", comprehension)
+	comprehensionLevel := c.PostForm("comprehensionLevel")
+	fmt.Printf("comprehensionLevel: %s \n", comprehensionLevel)
 
 	var user Users
 	result := getUser(userName, &user)
@@ -350,7 +356,7 @@ func saveSurveyHandler(c *gin.Context) {
 	fmt.Printf("user: %#v\n", user)
 	fmt.Printf("userID: %d\n", user.ID)
 		
-	survey := Surveys{UserID: user.ID, Age: age, Gender: gender, Ethnicity: ethnicity, Nationality:nationality, EducationLevel: educationLevel, IncomeLevel: incomeLevel}
+	survey := Surveys{UserID: user.ID, Age: age, Gender: gender, Ethnicity: ethnicity, Nationality:nationality, Education: education, Income: income, Religion: religion, Comprehension: comprehension, ComprehensionLevel: comprehensionLevel}
 	success = insertSurvey(survey)
 
 	if !completed && !success {

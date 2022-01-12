@@ -8,13 +8,27 @@ export default class Survey extends Component {
 		super(props);
 		this.state = {
 			open: false,
-			ageOptions: [],
-			age:"under 12",
-			gender: "female",
-			ethnicity: "asian",
-			nationality: "Japan",
-			education: "graduate",
-			income: "low",
+			ageOptions: ["Under 15", "16-20", "21-25", "26-30", "31-35", "36-40", "41-45", "46-50",
+							"51-55", "56-60", "61-65", "over 65", "Prefer not to answer"],
+			genderOptions: ["Female", "Male", "Prefer not to answer", "Other (Specify below)"],
+			ethnicityOptions: ["African-American", "Asian - Eastern", "Asian - Indian", "Caucasian/White", "Hispanic", 
+							"Native-American", "Mixed race", "Prefer not to answer", "Other (Specify below)"],
+			educationOptions: ["Middle School or lower", "High School", "Bachelor's Degree", "Master's Degree", 
+								"Ph.D. or higher", "Prefer not to answer"],
+			incomeOptions: ["Less than 10,000 USD", "10,001 USD - 25,000 USD", "25,001 USD - 50,000 USD",
+							"50,001 USD - 100,000 USD", "100,001 USD - 200,000 USD", "More than 200,000 USD", "Prefer not to answer"],
+			religionOptions: ["No Religion", "Buddhism", "Catholicism/Christianity", "Hinduism", "Islam", "Judaism", "Prefer not to answer", "Other (Specify below)"], 
+			comprehensionOptions: ["No", "Yes"],
+			comprehensionLevelOptions: ["Excellent", "Average", "Poor"],
+			age:"Prefer not to answer",
+			gender: "Prefer not to answer",
+			ethnicity: "Prefer not to answer",
+			nationality: "N/A",
+			education: "Prefer not to answer",
+			income: "Prefer not to answer",
+			religion: "Prefer not to answer",
+			comprehension: "No",
+			comprehensionLevel: "N/A",
 		};
 
 		this.onClose=this.onClose.bind(this);
@@ -24,15 +38,7 @@ export default class Survey extends Component {
 
 
 	componentDidMount(){
-		var ageOptions_ = ["under 12"];
 
-		for(var i = 12; i < 76; i++){
-			ageOptions_.push(i.toString());
-		}
-
-		ageOptions_.push("over 75");
-
-		this.setState({ageOptions: ageOptions_});
 	}
 
 
@@ -45,7 +51,52 @@ export default class Survey extends Component {
 	onSubmit(value) {
 		var that = this;
 		console.log(value);
-		that.setState({open:true, age:value.age, gender: value.gender, ethnicity: value.ethnicity, nationality:value.nationality, education:value.education, income:value.income});
+		
+		if (value.gender == "Other (Specify below)") {
+			if(value.genderOther === undefined){
+				alert("Please specify your gender.");
+				return;
+			}else {
+				that.setState({gender: value.genderOther});
+			}
+		}else{
+			that.setState({gender: value.gender});
+		}
+
+		if (value.ethnicity == "Other (Specify below)") {
+			if(value.ethnicityOther === undefined){
+				alert("Please specify your ethnicity.");
+				return;
+			}else {
+				that.setState({ethnicity: value.ethnicityOther});
+			}
+		}else{
+			that.setState({ethnicity: value.ethnicity});
+		}
+
+		if (value.religion == "Other (Specify below)") {
+			if(value.religionOther === undefined){
+				alert("Please specify your religion.");
+				return;
+			}else {
+				that.setState({religion: value.religionOther});
+			}
+		}else{
+			that.setState({religion: value.religion});
+		}
+
+
+		if (value.comprehension == "Yes") {
+			if(value.comprehensionLevel === undefined){
+				alert("Please specify your emotion comprehension level.");
+				return;
+			}else {
+				that.setState({comprehensionLevel: value.comprehensionLevel});
+			}
+		}
+
+		that.setState({open: true, age: value.age, nationality: value.nationality, education: value.education, income: value.income, comprehension: value.comprehension});
+
 	}
 
 
@@ -62,8 +113,11 @@ export default class Survey extends Component {
 		data.append("gender", that.state.gender);
 		data.append("ethnicity", that.state.ethnicity);
 		data.append("nationality", that.state.nationality);
-		data.append("educationLevel", that.state.education);
-		data.append("incomeLevel", that.state.income);
+		data.append("education", that.state.education);
+		data.append("income", that.state.income);
+		data.append("religion", that.state.religion);
+		data.append("comprehension", that.state.comprehension);
+		data.append("comprehensionLevel", that.state.comprehensionLevel);
 		
 		console.log(data.get("userName"));
 
@@ -92,50 +146,85 @@ export default class Survey extends Component {
 		return(
 			<Grommet theme={grommet}>
 		
-				<Box background="light-1" align="center" justify="center" pad="large">
+				<Box background="light-1" align="center" justify="center" pad="medium">
 
-					<Box width="medium">
+					<Box width="large">
 
 						<Text weight="bold">Background Survey</Text>
 
 						<Form onSubmit={({value}) => {this.onSubmit(value)}}>
 
-							<FormField label="Age" name="age" required>
+							<FormField label="1. What is your age?*" name="age" required>
 
 								<Select name="age" options={this.state.ageOptions} />
 
 							</FormField>
 
-							<FormField label="Gender" name="gender" required>
+							<FormField label="2. How would you describe your gender?*" name="gender" required>
 
-								<Select name="gender" options={['male', 'female', 'N/A']} />
-
-							</FormField>
-
-							<FormField label="Ethnicity" name="ethnicity" required>
-
-								<Select name="ethnicity" options={['white', 'black', 'asian']} />
+								<Select name="gender" options={this.state.genderOptions} />
 
 							</FormField>
 
-							<FormField label="Nationality" name="nationality" required>
+							<FormField label="3. If you select 'Other' in question 2, please specify it here." name="genderOther" >
 
-								<Select name="nationality" options={['Japan', 'China', 'United States']} />
-
-							</FormField>
-
-							<FormField label="Education Level" name="education" required>
-
-								<Select name="education" options={['graduate', 'undergraduate', 'middle school']} />
+								<TextInput name="genderOther" />
 
 							</FormField>
 
-							<FormField label="Income Level" name="income" required>
+							<FormField label="4. Please specify your ethnicity.*" name="ethnicity" required>
 
-								<Select name="income" options={['low', 'middle', 'high']} />
+								<Select name="ethnicity" options={this.state.ethnicityOptions} />
 
 							</FormField>
 
+							<FormField label="5. If you select 'Other' in question 4, please specify it here." name="ethnicityOther">
+
+								<TextInput name="ethnicityOther" />
+
+							</FormField>
+
+							<FormField label="6. What is your nationality?*" name="nationality" required>
+
+								<TextInput name="nationality" />
+
+							</FormField>
+
+							<FormField label="7. What is the highest degree or level of education you have completed?*" name="education" required>
+
+								<Select name="education" options={this.state.educationOptions} />
+
+							</FormField>
+
+							<FormField label="8. What is your annual household income?*" name="income" required>
+
+								<Select name="income" options={this.state.incomeOptions} />
+
+							</FormField>
+
+							<FormField label="9. If applicable, please specify your religion.*" name="religion" required>
+
+								<Select name="religion" options={this.state.religionOptions} />
+
+							</FormField>
+
+							<FormField label="10. If you select 'Other' in question 9, please specify it here." name="religionOther">
+
+								<TextInput name="religionOther" />
+
+							</FormField>
+
+							<FormField label="11. Have you ever trained with emotion comprehension?*" name="comprehension" required>
+
+								<Select name="comprehension" options={this.state.comprehensionOptions} />
+
+							</FormField>
+
+							<FormField label="12. If you select 'Yes' in question 11, How would you rate your emotion comprehension skills?" name="comprehensionLevel">
+
+								<Select name="comprehensionLevel" options={this.state.comprehensionLevelOptions} />
+
+							</FormField>
 
 							<Box direction="row" justify="between" margin={{ top: 'medium' }}>
 
@@ -177,6 +266,14 @@ export default class Survey extends Component {
 						<Text>Education Level: <strong>{this.state.education}</strong></Text> 
 
 						<Text>Income Level: <strong>{this.state.income}</strong></Text> 
+
+						<Text>Religion: <strong>{this.state.religion}</strong></Text> 
+
+						<Text>Emotion Comprehension Training: <strong>{this.state.comprehension}</strong></Text> 
+
+						{this.state.comprehension == "Yes" &&
+						<Text>Emotion Comprehension Level: <strong>{this.state.comprehensionLevel}</strong></Text> 
+						}
 							
 						<Box
 							as="footer"

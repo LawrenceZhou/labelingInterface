@@ -150,23 +150,23 @@ export default class Practice extends Component {
 					{index: 1, indexS: 0, x: 100, y: 101, speaker: 'M', end: 135, highlightA:false, highlightP:false, transcript:"Why does that bother you?"},
 					{index: 2, indexS: 1, x: 127, y: 101, speaker: 'F', end: 173, highlightA:true, highlightP:false, transcript:"She's been in New York three and an half years, why all of a sudden?"},
 					{index: 3, indexS: 1, x: 166, y: 101, speaker: 'M', end: 217, highlightA:true, highlightP:true, transcript:"Well maybe...maybe he just wanted to see her."},
-					{index: 4, indexS: 2, x: 212, y: 101, speaker: 'F', end: 265, highlightA:true, highlightP:false, transcript:"Nobody comes seven hundred miles just to see."},
+					{index: 4, indexS: 2, x: 212, y: 101, speaker: 'F', end: 265, highlightA:false/*true*/, highlightP:false, transcript:"Nobody comes seven hundred miles just to see."},
 					{index: 5, indexS: 2, x: 257, y: 101, speaker: 'M', end: 331, highlightA:false, highlightP:false, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
 					{index: 6, indexS: 3, x: 336, y: 101, speaker: 'M', end: 406, highlightA:true, highlightP:false, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
-					{index: 7, indexS: 3, x: 399, y: 101, speaker: 'F', end: 430, highlightA:false, highlightP:true, transcript:"He's not going to marry her."},
+					{index: 7, indexS: 3, x: 399, y: 101, speaker: 'F', end: 430, highlightA:true/*false*/, highlightP:true, transcript:"He's not going to marry her."},
 					{index: 8, indexS: 4, x: 424, y: 101, speaker: 'M', end: 453, highlightA:true, highlightP:true, transcript:"How do you know he's even thinking about it?"},
 					{index: 9, indexS: 4, x: 443, y: 101, speaker: 'F', end: 463, highlightA:false, highlightP:true, transcript:"It's got that about it."},
 					{index: 10, indexS: 5, x: 458, y: 101, speaker: 'M', end: 476, highlightA:true, highlightP:true, transcript:"Oh.  So what."},
-					{index: 11, indexS: 5, x: 471, y: 101, speaker: 'F', end: 509, highlightA:false, highlightP:false, transcript:"What is going on here, Joe?"},
+					{index: 11, indexS: 5, x: 471, y: 101, speaker: 'F', end: 509, highlightA:true/*false*/, highlightP:false, transcript:"What is going on here, Joe?"},
 					{index: 12, indexS: 6, x: 506, y: 101, speaker: 'M', end: 526, highlightA:false, highlightP:true, transcript:"Now listen."},
-					{index: 13, indexS: 6, x: 520, y: 101, speaker: 'F', end: 565, highlightA:true, highlightP:false, transcript:"She is not his girl.  She knows she's not."},
+					{index: 13, indexS: 6, x: 520, y: 101, speaker: 'F', end: 565, highlightA:false/*true*/, highlightP:false, transcript:"She is not his girl.  She knows she's not."},
 					{index: 14, indexS: 7, x: 558, y: 101, speaker: 'M', end: 582, highlightA:false, highlightP:false, transcript:"You can't read her mind."},
-					{index: 15, indexS: 7, x: 577, y: 101, speaker: 'F', end: 667, highlightA:true, highlightP:false, transcript:"Then why is she still single?  New York is full of men, why is she still single?  Probably a hundred people told her she's foolish, but she waited."},
+					{index: 15, indexS: 7, x: 577, y: 101, speaker: 'F', end: 667, highlightA:false/*true*/, highlightP:false, transcript:"Then why is she still single?  New York is full of men, why is she still single?  Probably a hundred people told her she's foolish, but she waited."},
 					{index: 16, indexS: 8, x: 661, y: 101, speaker: 'M', end: 684, highlightA:false, highlightP:true, transcript:"How do you know why she waited?"},
 					{index: 17, indexS: 8, x: 674, y: 101, speaker: 'F', end: 783, highlightA:false, highlightP:false, transcript:"Because she knows what I know, that's why.  She's faithful as a rock.  In my darkest moments, I think of her waiting and I know that I'm right."},
 					{index: 18, indexS: 9, x: 783, y: 101, speaker: 'M', end: 827, highlightA:true, highlightP:true, transcript:"Hey look, it's a nice day, huh?  Why are we arguing?"},
-					{index: 19, indexS: 9, x: 821, y: 101, speaker: 'F', end: 913, highlightA:false, highlightP:false, transcript:"Nobody in this house dares take away her faith, Joe.  You know strangers might, but not his father, not his brother."},
-					{index: 20, indexS: 10, x: 906, y: 101, speaker: 'M', end: 949, highlightA:true, highlightP:false, transcript:"What do you want me to do? What do you want?"},
+					{index: 19, indexS: 9, x: 821, y: 101, speaker: 'F', end: 850, highlightA:true/*false*/, highlightP:false, transcript:"Nobody in this house dares take away her faith, Joe."/*You know strangers might, but not his father, not his brother."*/},
+					/*{index: 20, indexS: 10, x: 906, y: 101, speaker: 'M', end: 949, highlightA:true, highlightP:false, transcript:"What do you want me to do? What do you want?"},
 					{index: 21, indexS: 10, x: 923, y: 101, speaker: 'F', end: 1022, highlightA:false, highlightP:false, transcript:"I want you to-- I want you to act like he is coming back, both of you.  Don't think I haven't noticed you since Chris invited her here."},
 					{index: 22, indexS: 11, x: 1022, y: 101, speaker: 'F', end: 1058, highlightA:false, highlightP:false, transcript:"I won't stand for any nonsense."},
 					{index: 23, indexS: 11, x: 1066, y: 101, speaker: 'M', end: 1082, highlightA:true, highlightP:false, transcript:"Kate."},
@@ -178,7 +178,7 @@ export default class Practice extends Component {
 					{index: 29, indexS: 15, x: 1265, y: 101, speaker: 'M', end: 1338, highlightA:false, highlightP:true, transcript:"I know. All right, all right. All right. Okay.  Calm yourself. What does that mean, me above all?"},
 					{index: 30, indexS: 16, x: 1346, y: 101, speaker: 'M', end: 1381, highlightA:true, highlightP:false, transcript:"Look at you, you're shaking."},
 					{index: 31, indexS: 14, x: 1379, y: 101, speaker: 'F', end: 1407, highlightA:false, highlightP:false, transcript:"I can't help it."},
-					{index: 32, indexS: 17, x: 1409, y: 101, speaker: 'M', end: 1476, highlightA:true, highlightP:false, transcript:"What have I got to hide?  What the hell is the matter with you, Kate?"},
+					{index: 32, indexS: 17, x: 1409, y: 101, speaker: 'M', end: 1476, highlightA:true, highlightP:false, transcript:"What have I got to hide?  What the hell is the matter with you, Kate?"},*/
 		];
 
 		var length_ = Math.ceil(boxes_[boxes_.length - 1].end / 100) * 100;
@@ -255,6 +255,7 @@ export default class Practice extends Component {
 			if(this.readyState === 4 ) {
 				if(this.status == 200){
 					console.log("Practice finished!", this.responseText);
+					that.props.finish();
 				}else {
 					alert('There is a problem with saving the labeling result. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
 				}
@@ -263,7 +264,6 @@ export default class Practice extends Component {
 
 		http.open('POST', url, true);
 		http.send(data);
-		that.props.finish();
 	}
 
 
@@ -730,7 +730,7 @@ export default class Practice extends Component {
 
 									<Text size="small">current sentence </Text>
 
-									{this.state.speakerToLabel == "Female" && 
+									{(this.state.condition != "slider" && this.state.speakerToLabel == "Female") && 
 										<Box background={this.state.femaleColor} width="20px" height="20px" round="xsmall" align="center">
 
 											<Text size="small" color="light-1">{this.state.currentIndexF== -1? "" : this.state.boxes[this.state.currentIndexF].indexS + 1}</Text>
@@ -750,7 +750,7 @@ export default class Practice extends Component {
 
 									<Text size="small">current sentence </Text>
 
-									{this.state.speakerToLabel == "Male" && 
+									{(this.state.condition != "slider" && this.state.speakerToLabel == "Male") && 
 										<Box background={this.state.maleColor} width="20px" height="20px" round="xsmall" align="center">
 
 											<Text size="small" color="light-1">{this.state.currentIndexM == -1? "" : this.state.boxes[this.state.currentIndexM].indexS + 1}</Text>
