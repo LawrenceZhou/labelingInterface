@@ -9,7 +9,7 @@ import (
 
 var db *gorm.DB
 var assignmentNumber int
-var dialogue_id_list = [4]int{1,3,4,5}
+var dialogue_id_list = [2]int{1,2}
 var condition_list = [3]string{"withHighlight", "withoutHighlight", "slider"}
 var dialogue_index = 0
 var condition_index = 0

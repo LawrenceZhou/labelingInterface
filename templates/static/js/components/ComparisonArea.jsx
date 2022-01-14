@@ -208,7 +208,7 @@ export default class ComparisonArea extends Component{
                         }else{
                             that.props.updateScrollPosition(boxes_[i].y - 50);
                             for (var j = 0; j < boxes_.length; j++) {
-                                if (that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
+                                if (that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker && boxes_[j].y >= 50) {
                                     boxes_[j].y -= 50;
                                 }
                             }
@@ -251,7 +251,7 @@ export default class ComparisonArea extends Component{
                         }else{
                             that.props.updateScrollPosition(boxes_[i].y + 50);
                             for (var j = 0; j < boxes_.length; j++) {
-                                if (that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker) {
+                                if (that.state.currentTime * 10 < boxes_[j].end && that.state.speaker[0] == boxes_[j].speaker && boxes_[j].y <= 200) {
                                     boxes_[j].y += 50;
                                 }
                             }

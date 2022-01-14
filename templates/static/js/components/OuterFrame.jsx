@@ -116,7 +116,7 @@ export default class OuterFrame extends Component {
 
 					</Box>
 
-					{this.state.status == 3 && 
+					{this.state.status == 4 && 
 					<Layer
 						id="finishConfirmation"
 						position="center">
