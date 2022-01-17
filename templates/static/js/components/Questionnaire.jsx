@@ -7,24 +7,28 @@ export default class Questionnaire extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			userName: this.props.userName,
 			open: false,
 			easiness: 5,
+			easinessReason: "",
+			learning: 5,
+			learningReason: "",
+			intuitiveness: 5,
+			intuitivenessReason: "",
 			helpness: 5,
-			satisfaction: 5,
+			helpnessReason: "",
 			advantage: "",
 			disadvantage: "",
 			other: "",
+			condition: "withHighlight",
 			numberOptions: [{ label: '1', value: 1 }, 
 							{ label: '2', value: 2 }, 
 							{ label: '3', value: 3 },
 							{ label: '4', value: 4 }, 
-							{ label: '5', value: 5 }, 
-							{ label: '6', value: 6 }, 
-							{ label: '7', value: 7 },
-							{ label: '8', value: 8 },
-							{ label: '9', value: 9 },],
+							{ label: '5', value: 5 },],
 		};
 
+		this.getCondition=this.getCondition.bind(this);
 		this.onClose=this.onClose.bind(this);
 		this.onSubmit = this.onSubmit.bind(this); 
 		this.onSubmitConfirmed = this.onSubmitConfirmed.bind(this);
@@ -32,15 +36,38 @@ export default class Questionnaire extends Component {
 
 
 	componentDidMount(){
-		var ageOptions_ = ["under 12"];
+		this.getCondition();
+	}
 
-		for(var i = 12; i < 76;i++){
-			ageOptions_.push(i.toString());
-		}
-		
-		ageOptions_.push("over 75");
 
-		this.setState({ageOptions: ageOptions_});
+	getCondition(){
+		//to change to task
+		var that = this;
+
+		var http = new XMLHttpRequest();
+		var url = 'http://localhost:8080/api/v1/get_condition';
+		var data = new FormData();
+
+		data.append("userName", that.state.userName);
+		console.log(data.get("userName"));
+
+		http.addEventListener("readystatechange", function() {
+			if(this.readyState === 4 ) {
+				if(this.status == 200) {
+					console.log("Condition received!", this.responseText);
+					var obj = JSON.parse(http.responseText);
+					console.log(obj);
+					var condition_ = obj.condition;					
+					that.setState({ condition : condition_});
+				}else {
+					alert('There is a problem with retrieving the condition. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
+					that.props.finish();
+				}
+			}
+		});
+
+		http.open('POST', url, true);
+		http.send(data);
 	}
 
 
@@ -53,7 +80,9 @@ export default class Questionnaire extends Component {
 	onSubmit(value) {
 		var that = this;
 		console.log(value);
-		that.setState({open:true, easiness:value.easiness, satisfaction: value.satisfaction, helpness: value.helpness, advantage:value.advantage, disadvantage:value.disadvantage, other:value.other});
+		that.setState({open:true, easiness:value.easiness, easinessReason: value.easinessReason, learning: value.learning, 
+						learningReason:value.learningReason, intuitiveness: value.intuitiveness, intuitivenessReason: value.intuitivenessReason, 
+						helpness: value.helpness, helpnessReason: value.helpnessReason, advantage:value.advantage, disadvantage:value.disadvantage, other:value.other});
 	}
 
 
@@ -67,8 +96,13 @@ export default class Questionnaire extends Component {
 
 		data.append("userName", that.props.userName);
 		data.append("easiness", that.state.easiness);
-		data.append("satisfaction", that.state.satisfaction);
+		data.append("easinessReason", that.state.easiness);
+		data.append("learning", that.state.learning);
+		data.append("learningReason", that.state.learningReason);
+		data.append("intuitiveness", that.state.intuitiveness);
+		data.append("intuitivenessReason", that.state.intuitivenessReason);
 		data.append("helpness", that.state.helpness);
+		data.append("helpnessReason", that.state.helpnessReason);
 		data.append("advantageComment", that.state.advantage);
 		data.append("disadvantageComment", that.state.disadvantage);
 		data.append("otherComment", that.state.other);
@@ -99,71 +133,129 @@ export default class Questionnaire extends Component {
 			return(
 				<Grommet theme={grommet}>
 
-					<Box background="light-1" align="center" justify="center" pad="large">
+					<Box background="light-1" align="center" justify="center" pad="medium">
 
-						<Box width="medium">
+						<Box width="large">
 
 							<Text weight="bold">Questionnaire on labeling experience</Text>
 
 							<Form onSubmit={({value}) => {this.onSubmit(value)}}>
 
-								<FormField label="Easiness" name="easiness" required>
+								<FormField label="1. Do you think this interface is easy to use?*" name="easiness" required>
 
-							 		<Box align="center" pad={{top:"medium", bottom: "medium"}}>
+							 		<Box direction="row" align="center" justify="center" gap="small" pad={{top:"medium", bottom: "medium"}}>
+
+										<Text>Strongly Disagree</Text>
 
 										<RadioButtonGroup
+											pad={{top:"small"}}
 											name="easiness"
 											direction="row"
 											gap="xsmall"
 											options={this.state.numberOptions}/>
 
+										<Text>Strongly Agree</Text>
+
 									</Box>
 
 								</FormField>
 
-								<FormField label="Satisfaction" name="satisfaction" required>
+								<FormField label="2. According to question 1, why do you think so?*" name="easinessReason" required>
 
-									<Box align="center" pad={{top:"medium", bottom: "medium"}}>
+									<TextInput name="easinessReason" placeholder="Your Answer" />
+
+								</FormField>
+
+								<FormField label="3. Do you think this interface is easy to get used to?*" name="learning" required>
+
+									<Box direction="row" align="center" justify="center" gap="small" pad={{top:"medium", bottom: "medium"}}>
+
+										<Text>Strongly Disagree</Text>
 
 										<RadioButtonGroup
-											name="easiness"
+											pad={{top:"small"}}
+											name="learning"
 											direction="row"
 											gap="xsmall"
 											options={this.state.numberOptions}/>
 
+										<Text>Strongly Agree</Text>
+
 									</Box>
 
 								</FormField>
 
-								<FormField label="Helpness" name="helpness" required>
+								<FormField label="4. According to question 3, why do you think so?*" name="learningReason" required>
 
-									<Box align="center" pad={{top:"medium", bottom: "medium"}}>
+									<TextInput name="learningReason" placeholder="Your Answer" />
+
+								</FormField>
+
+								<FormField label="5. Do you think this interface is intuitive for you to understand emotion labeling?*" name="intuitiveness" required>
+
+									<Box direction="row" align="center" justify="center" gap="small" pad={{top:"medium", bottom: "medium"}}>
+
+										<Text>Strongly Disagree</Text>
 
 										<RadioButtonGroup
-											name="easiness"
+											pad={{top:"small"}}
+											name="intuitiveness"
 											direction="row"
 											gap="xsmall"
 											options={this.state.numberOptions}/>
 
+										<Text>Strongly Agree</Text>
+
 									</Box>
 
 								</FormField>
 
-								<FormField label="Comments on the advatange" name="advantage" required>
+								<FormField label="6. According to question 5, why do you think so?*" name="intuitivenessReason" required>
 
-									<TextArea name="advantage" placeholder="Tell us about the advantage..." />
-
-								</FormField>
-
-								<FormField label="Comments on the disadvatange" name="disadvantage" required>
-
-									<TextArea name="disadvantage" placeholder="Tell us about the disadvantage..." />
+									<TextInput name="intuitivenessReason" placeholder="Your Answer" />
 
 								</FormField>
 
-								<FormField label="Other Comments" name="other" required>
+								<FormField label={this.state.condition == "withHighlight"?"7. Do you think the highlight help you label the emotion?*":"7. Do you think this interface help you label the emotion?*"} name="helpness" required>
 
-									<TextArea name="other" placeholder="Other comments..." />
+									<Box direction="row" align="center" justify="center" gap="small" pad={{top:"medium", bottom: "medium"}}>
+
+										<Text>Strongly Disagree</Text>
+
+										<RadioButtonGroup
+											pad={{top:"small"}}
+											name="helpness"
+											direction="row"
+											gap="xsmall"
+											options={this.state.numberOptions}/>
+
+										<Text>Strongly Agree</Text>
+
+									</Box>
+
+								</FormField>
+
+								<FormField label="8. According to question 7, why do you think so?*" name="helpnessReason" required>
+
+									<TextInput name="helpnessReason" placeholder="Your Answer" />
+
+								</FormField>
+
+								<FormField label="9. What do you think will be advantages of this interface?*" name="advantage" required>
+
+									<TextInput name="advantage" placeholder="Tell us about the advantage..." />
+
+								</FormField>
+
+								<FormField label="10. What do you think will be disadvantages of this interface?*" name="disadvantage" required>
+
+									<TextInput name="disadvantage" placeholder="Tell us about the disadvantage..." />
+
+								</FormField>
+
+								<FormField label="11. If there are any other comments, please tell us." name="other" >
+
+									<TextInput name="other" placeholder="Other comments..." />
 
 								</FormField>
 
@@ -197,11 +289,21 @@ export default class Questionnaire extends Component {
 
 							<Text>Please double check the questionnaire input.</Text>
 														
-							<Text>Easiness: <strong>{this.state.easiness}</strong></Text> 
+							<Text>Easy to use: <strong>{this.state.easiness}</strong></Text> 
+							
+							<Text>Reason: <strong>{this.state.easinessReason}</strong></Text> 
 														
-							<Text>Satisfaction: <strong>{this.state.satisfaction}</strong></Text> 
+							<Text>Easy to get used to : <strong>{this.state.learning}</strong></Text> 
+
+							<Text>Reason: <strong>{this.state.learningReason}</strong></Text> 
 														
+							<Text>Intuitiveness: <strong>{this.state.intuitiveness}</strong></Text> 
+
+							<Text>Reason: <strong>{this.state.intuitivenessReason}</strong></Text> 
+
 							<Text>Helpness: <strong>{this.state.helpness}</strong></Text> 
+
+							<Text>Reason: <strong>{this.state.helpnessReason}</strong></Text> 
 														
 							<Text>Comments on advantage: <strong>{this.state.advantage}</strong></Text> 
 														

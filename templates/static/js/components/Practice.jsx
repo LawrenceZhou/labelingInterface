@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {grommet, Grommet, Card, RangeInput, CardHeader, CardBody, Text, Box, Button, Grid, Heading, Meter, Layer, Drop, Select } from 'grommet';
+import {grommet, Grommet, Card, RangeInput, CardHeader, CardBody, Text, Box, Button, Grid, Heading, Meter, Layer, Drop, Select, Video } from 'grommet';
 import { Play, Volume, PlayFill, StopFill } from 'grommet-icons';
 import { deepMerge } from 'grommet/utils';
 import { ThemeType } from 'grommet/themes';
@@ -114,6 +114,7 @@ export default class Practice extends Component {
 			sliderValue: 3,
 			sliderResults: {},
 			description: "The female and the male are arguing about why their missing son's ex-girlfriend showed up. Furthermore, their another son wishes to propose to the girl, which irritates the female.",
+			videoUrl: {withHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/Buddhabrot.mp4", withoutHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/EJPlayThrough.mp4", slider:"https://museumpalazzo.s3.us-west-2.amazonaws.com/GNODC.mp4"},
 		};
 
 		this.comparisonAreaRef = React.createRef();
@@ -156,29 +157,29 @@ export default class Practice extends Component {
 					{index: 7, indexS: 3, x: 399, y: 101, speaker: 'F', end: 430, highlightA:true/*false*/, highlightP:true, transcript:"He's not going to marry her."},
 					{index: 8, indexS: 4, x: 424, y: 101, speaker: 'M', end: 453, highlightA:true, highlightP:true, transcript:"How do you know he's even thinking about it?"},
 					{index: 9, indexS: 4, x: 443, y: 101, speaker: 'F', end: 463, highlightA: true/*false*/, highlightP:true, transcript:"It's got that about it."},
-					{index: 10, indexS: 5, x: 458, y: 101, speaker: 'M', end: 476, highlightA:true, highlightP:true, transcript:"Oh.  So what."},
-					{index: 11, indexS: 5, x: 471, y: 101, speaker: 'F', end: 509, highlightA:true/*false*/, highlightP:false, transcript:"What is going on here, Joe?"},
-					{index: 12, indexS: 6, x: 506, y: 101, speaker: 'M', end: 526, highlightA:false, highlightP:true, transcript:"Now listen."},
-					{index: 13, indexS: 6, x: 520, y: 101, speaker: 'F', end: 565, highlightA:false/*true*/, highlightP:false, transcript:"She is not his girl.  She knows she's not."},
-					{index: 14, indexS: 7, x: 558, y: 101, speaker: 'M', end: 582, highlightA:false, highlightP:false, transcript:"You can't read her mind."},
-					{index: 15, indexS: 7, x: 577, y: 101, speaker: 'F', end: 667, highlightA:false/*true*/, highlightP:false, transcript:"Then why is she still single?  New York is full of men, why is she still single?  Probably a hundred people told her she's foolish, but she waited."},
-					{index: 16, indexS: 8, x: 661, y: 101, speaker: 'M', end: 684, highlightA:false, highlightP:true, transcript:"How do you know why she waited?"},
-					{index: 17, indexS: 8, x: 674, y: 101, speaker: 'F', end: 783, highlightA:false, highlightP:false, transcript:"Because she knows what I know, that's why.  She's faithful as a rock.  In my darkest moments, I think of her waiting and I know that I'm right."},
-					{index: 18, indexS: 9, x: 783, y: 101, speaker: 'M', end: 827, highlightA:true, highlightP:true, transcript:"Hey look, it's a nice day, huh?  Why are we arguing?"},
-					{index: 19, indexS: 9, x: 821, y: 101, speaker: 'F', end: 850, highlightA:true/*false*/, highlightP:false, transcript:"Nobody in this house dares take away her faith, Joe."/*You know strangers might, but not his father, not his brother."*/},
-					/*{index: 20, indexS: 10, x: 906, y: 101, speaker: 'M', end: 949, highlightA:true, highlightP:false, transcript:"What do you want me to do? What do you want?"},
-					{index: 21, indexS: 10, x: 923, y: 101, speaker: 'F', end: 1022, highlightA:false, highlightP:false, transcript:"I want you to-- I want you to act like he is coming back, both of you.  Don't think I haven't noticed you since Chris invited her here."},
-					{index: 22, indexS: 11, x: 1022, y: 101, speaker: 'F', end: 1058, highlightA:false, highlightP:false, transcript:"I won't stand for any nonsense."},
-					{index: 23, indexS: 11, x: 1066, y: 101, speaker: 'M', end: 1082, highlightA:true, highlightP:false, transcript:"Kate."},
-					{index: 24, indexS: 12, x: 1082, y: 101, speaker: 'F', end: 1224, highlightA:false, highlightP:false, transcript:"Because if he's not coming back, I'll kill myself.  Oh laugh, laugh all you like but why does this happen the very night he comes back.  She goes to sleep in his room and his memorial breaks in pieces.  Look at it, Joe, look."},
-					{index: 25, indexS: 12, x: 1093, y: 101, speaker: 'M', end: 1117, highlightA:false, highlightP:true, transcript:"[BREATHING]"},
-					{index: 26, indexS: 13, x: 1212, y: 101, speaker: 'M', end: 1233, highlightA:true, highlightP:true, transcript:"Calm yourself."},
-					{index: 27, indexS: 13, x: 1224, y: 101, speaker: 'F', end: 1327, highlightA:false, highlightP:true, transcript:"Just believe with me, Joe. Only last week a man came back in Detroit missing longer than Larry.  Believe with me. You, above all, have got to believe. Just believe."},
-					{index: 28, indexS: 14, x: 1241, y: 101, speaker: 'M', end: 1264, highlightA:true, highlightP:true, transcript:"Okay. Calm yourself."},
-					{index: 29, indexS: 15, x: 1265, y: 101, speaker: 'M', end: 1338, highlightA:false, highlightP:true, transcript:"I know. All right, all right. All right. Okay.  Calm yourself. What does that mean, me above all?"},
-					{index: 30, indexS: 16, x: 1346, y: 101, speaker: 'M', end: 1381, highlightA:true, highlightP:false, transcript:"Look at you, you're shaking."},
-					{index: 31, indexS: 14, x: 1379, y: 101, speaker: 'F', end: 1407, highlightA:false, highlightP:false, transcript:"I can't help it."},
-					{index: 32, indexS: 17, x: 1409, y: 101, speaker: 'M', end: 1476, highlightA:true, highlightP:false, transcript:"What have I got to hide?  What the hell is the matter with you, Kate?"},*/
+					//{index: 10, indexS: 5, x: 458, y: 101, speaker: 'M', end: 476, highlightA:true, highlightP:true, transcript:"Oh.  So what."},
+					//{index: 11, indexS: 5, x: 471, y: 101, speaker: 'F', end: 509, highlightA:true/*false*/, highlightP:false, transcript:"What is going on here, Joe?"},
+					//{index: 12, indexS: 6, x: 506, y: 101, speaker: 'M', end: 526, highlightA:false, highlightP:true, transcript:"Now listen."},
+					//{index: 13, indexS: 6, x: 520, y: 101, speaker: 'F', end: 565, highlightA:false/*true*/, highlightP:false, transcript:"She is not his girl.  She knows she's not."},
+					//{index: 14, indexS: 7, x: 558, y: 101, speaker: 'M', end: 582, highlightA:false, highlightP:false, transcript:"You can't read her mind."},
+					//{index: 15, indexS: 7, x: 577, y: 101, speaker: 'F', end: 667, highlightA:false/*true*/, highlightP:false, transcript:"Then why is she still single?  New York is full of men, why is she still single?  Probably a hundred people told her she's foolish, but she waited."},
+					//{index: 16, indexS: 8, x: 661, y: 101, speaker: 'M', end: 684, highlightA:false, highlightP:true, transcript:"How do you know why she waited?"},
+					//{index: 17, indexS: 8, x: 674, y: 101, speaker: 'F', end: 783, highlightA:false, highlightP:false, transcript:"Because she knows what I know, that's why.  She's faithful as a rock.  In my darkest moments, I think of her waiting and I know that I'm right."},
+					//{index: 18, indexS: 9, x: 783, y: 101, speaker: 'M', end: 827, highlightA:true, highlightP:true, transcript:"Hey look, it's a nice day, huh?  Why are we arguing?"},
+					//{index: 19, indexS: 9, x: 821, y: 101, speaker: 'F', end: 850, highlightA:true/*false*/, highlightP:false, transcript:"Nobody in this house dares take away her faith, Joe."/*You know strangers might, but not his father, not his brother."*/},
+					//{index: 20, indexS: 10, x: 906, y: 101, speaker: 'M', end: 949, highlightA:true, highlightP:false, transcript:"What do you want me to do? What do you want?"},
+					//{index: 21, indexS: 10, x: 923, y: 101, speaker: 'F', end: 1022, highlightA:false, highlightP:false, transcript:"I want you to-- I want you to act like he is coming back, both of you.  Don't think I haven't noticed you since Chris invited her here."},
+					//{index: 22, indexS: 11, x: 1022, y: 101, speaker: 'F', end: 1058, highlightA:false, highlightP:false, transcript:"I won't stand for any nonsense."},
+					//{index: 23, indexS: 11, x: 1066, y: 101, speaker: 'M', end: 1082, highlightA:true, highlightP:false, transcript:"Kate."},
+					//{index: 24, indexS: 12, x: 1082, y: 101, speaker: 'F', end: 1224, highlightA:false, highlightP:false, transcript:"Because if he's not coming back, I'll kill myself.  Oh laugh, laugh all you like but why does this happen the very night he comes back.  She goes to sleep in his room and his memorial breaks in pieces.  Look at it, Joe, look."},
+					//{index: 25, indexS: 12, x: 1093, y: 101, speaker: 'M', end: 1117, highlightA:false, highlightP:true, transcript:"[BREATHING]"},
+					//{index: 26, indexS: 13, x: 1212, y: 101, speaker: 'M', end: 1233, highlightA:true, highlightP:true, transcript:"Calm yourself."},
+					//{index: 27, indexS: 13, x: 1224, y: 101, speaker: 'F', end: 1327, highlightA:false, highlightP:true, transcript:"Just believe with me, Joe. Only last week a man came back in Detroit missing longer than Larry.  Believe with me. You, above all, have got to believe. Just believe."},
+					//{index: 28, indexS: 14, x: 1241, y: 101, speaker: 'M', end: 1264, highlightA:true, highlightP:true, transcript:"Okay. Calm yourself."},
+					//{index: 29, indexS: 15, x: 1265, y: 101, speaker: 'M', end: 1338, highlightA:false, highlightP:true, transcript:"I know. All right, all right. All right. Okay.  Calm yourself. What does that mean, me above all?"},
+					//{index: 30, indexS: 16, x: 1346, y: 101, speaker: 'M', end: 1381, highlightA:true, highlightP:false, transcript:"Look at you, you're shaking."},
+					//{index: 31, indexS: 14, x: 1379, y: 101, speaker: 'F', end: 1407, highlightA:false, highlightP:false, transcript:"I can't help it."},
+					//{index: 32, indexS: 17, x: 1409, y: 101, speaker: 'M', end: 1476, highlightA:true, highlightP:false, transcript:"What have I got to hide?  What the hell is the matter with you, Kate?"},
 		];
 
 		var length_ = Math.ceil(boxes_[boxes_.length - 1].end / 100) * 100;
@@ -272,7 +273,7 @@ export default class Practice extends Component {
 		var that = this;
 
 		var http = new XMLHttpRequest();
-		var url = 'http://localhost:8080/api/v1/get_tasks';
+		var url = 'http://localhost:8080/api/v1/get_condition';
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);
@@ -281,33 +282,19 @@ export default class Practice extends Component {
 		http.addEventListener("readystatechange", function() {
 			if(this.readyState === 4 ) {
 				if(this.status == 200) {
-					console.log("Task received!", this.responseText);
+					console.log("Condition received!", this.responseText);
 					var obj = JSON.parse(http.responseText);
 					console.log(obj);
-					//add front-end key-value: selectedP, selectedA, selectedD, clickCountP, clickCountA, clickCountD, timeUsage, timeStamp, isLabeled, isInconsistent
 					var condition_ = obj.condition;
 					if(condition_ == "slider") {
 						document.addEventListener("keydown", that.handleKeyPressedForSlider, false);
 					}
-					var assigmentID_ = obj.assignment_id;
-					var audioPath_ = obj.dialogue_path;
-					var sentences = obj.sentences;
-					var boxes_ = [];
-					for (var i = 0; i < sentences.length; i++) {
-						boxes_.push({sentenceID: sentences[i].ID, index: sentences[i].Index, indexS: sentences[i].IndexS, x: sentences[i].StartTime, y: 101, speaker: sentences[i].Speaker, end: sentences[i].EndTime, highlightA: sentences[i].HighlightA == 1, highlightP: sentences[i].HighlightP == 1, transcript: sentences[i].Transcript});
-					}
-					var length_ = Math.ceil(boxes_[boxes_.length - 1].end / 100) * 100;
-
-					var minutes = Math.floor(boxes_[boxes_.length - 1].end / 600);
-  					var seconds = Math.floor(boxes_[boxes_.length - 1].end / 10 - minutes * 60);
-
-  					var totalTime = that.strPadLeft(minutes, '0', 2) + ':' + that.strPadLeft(seconds, '0', 2);
-
+					
   					that.setRefs(condition_);
 					
 					that.setState({ condition : condition_});
 				}else {
-					alert('There is a problem with retrieving the speech. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
+					alert('There is a problem with retrieving the condition. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
 					that.props.finish();
 				}
 			}
@@ -533,14 +520,30 @@ export default class Practice extends Component {
 	render() {
 		return(
 			<Box pad="xsmall" direction="column" background="#EEEEEE" gap="xsmall">
+
+				<Card pad="xsmall" gap="xsmall" background="light-1" >
+						
+					<CardHeader pad="xxsmall" justify="start">Video Tutorial</CardHeader>
+									
+					<CardBody pad="xxsmall">
+						
+						<Video controls="below" fit="cover">
+							
+							<source key="video" src={this.state.videoUrl[this.state.condition]} type="video/mp4" />
+							
+						</Video>
+					
+					</CardBody>
+								
+				</Card>
 				
 				<Box  direction="row" justify="center" align="center">
 
-					<Box pad="xsmall">
+					{/*<Box pad="xsmall">
 					
 						<Button color="dark-3" label="Watch Tips" onClick={() => {this.watchTutorial()}} />
 					
-					</Box>
+					</Box>*/}
 
 					<Box pad="xsmall">
 

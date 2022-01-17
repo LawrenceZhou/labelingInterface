@@ -628,11 +628,11 @@ export default class LabelTask extends Component {
 				
 				<Box  direction="row" justify="center" align="center">
 
-					<Box pad="xsmall">
+					{/*<Box pad="xsmall">
 					
 						<Button color="dark-3" label="Watch Tips" onClick={() => {this.watchTutorial()}} />
 					
-					</Box>
+					</Box>*/}
 
 					<Box pad="xsmall">
 

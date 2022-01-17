@@ -8,7 +8,7 @@ export default class ComparisonArea extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            length: 1600,  
+            length: 800,  
             horizontalLines: [50, 100, 150, 200],
             verticalLines: [{x:0, time:"00:00"},
                             {x:150, time:"00:15"},
@@ -83,7 +83,7 @@ export default class ComparisonArea extends Component{
                 var seconds = Math.floor(x_ / 10 - minutes * 60);
                 verticalLines_.push({x: x_, time: this.strPadLeft(minutes, '0', 2) + ':' + this.strPadLeft(seconds, '0', 2)})
             }
-            this.setState({length: nextProps.length, verticalLines: verticalLines_});
+            this.setState({length: Math.max(800, nextProps.length), verticalLines: verticalLines_});
         }
 
         if(nextProps.boxesPassed !== this.props.boxesPassed){

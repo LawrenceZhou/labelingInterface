@@ -62,9 +62,14 @@ type (
     Questionnaires struct {
         ID     int `gorm:"AUTO_INCREMENT"` //`json:"id"`
         UserID int                         //`json:"user_id"`
-        Easiness int                       //`json:"age"`
-        Satisfaction int                   //`json:"satisfaction"`
+        Easiness int                       //`json:"easiness"`
+        Learning int                   //`json:"learning"`
+        Intuitiveness int                       //`json:"intuitiveness"`
         Helpness int                       //`json:"helpness"`
+        EasinessReason string         `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`              //`json:"easiness_reason"`
+        LearningReason string         `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`              //`json:"learning_reason"`
+        IntuitivenessReason string         `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`              //`json:"intuitiveness_reason"`
+        HelpnessReason string         `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`              //`json:"helpness_reason"`
         AdvantageComment string       `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`     //`json:"advantage_comment"`
         DisadvantageComment string    `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`     //`json:"disadvantage_comment"`
         OtherComment string           `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`     //`json:"other_comment"`

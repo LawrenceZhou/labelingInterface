@@ -25,6 +25,7 @@ export default class MainMenu extends Component {
 			alert('You already finished this part.');
 		}
 	}
+	
 
 	clickPractice() {
 		var that = this;
@@ -97,7 +98,7 @@ export default class MainMenu extends Component {
 							key="practice"
 							clickModule={this.clickPractice}
 							title="Part 2"
-							subTitle="Practice"
+							subTitle="Tutorial & Practice"
 							footer={this.props.status >= 2 ? "Finished" : "Not Finished" }
 						>
 									

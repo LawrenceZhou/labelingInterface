@@ -168,7 +168,7 @@ export default class Survey extends Component {
 
 							<FormField label="3. If you select 'Other' in question 2, please specify it here." name="genderOther" >
 
-								<TextInput name="genderOther" />
+								<TextInput name="genderOther" placeholder="Your Answer" />
 
 							</FormField>
 
@@ -180,13 +180,13 @@ export default class Survey extends Component {
 
 							<FormField label="5. If you select 'Other' in question 4, please specify it here." name="ethnicityOther">
 
-								<TextInput name="ethnicityOther" />
+								<TextInput name="ethnicityOther" placeholder="Your Answer" />
 
 							</FormField>
 
 							<FormField label="6. What is your nationality?*" name="nationality" required>
 
-								<TextInput name="nationality" />
+								<TextInput name="nationality" placeholder="Your Answer" />
 
 							</FormField>
 
@@ -210,7 +210,7 @@ export default class Survey extends Component {
 
 							<FormField label="10. If you select 'Other' in question 9, please specify it here." name="religionOther">
 
-								<TextInput name="religionOther" />
+								<TextInput name="religionOther" placeholder="Your Answer" />
 
 							</FormField>
 

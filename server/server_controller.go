@@ -382,10 +382,20 @@ func saveQuestionnaireHandler(c *gin.Context) {
 	fmt.Printf("userName: %s \n", userName)
 	easiness , _ := strconv.Atoi(c.PostForm("easiness"))
 	fmt.Printf("easiness: %d \n", easiness)
-	satisfaction, _ := strconv.Atoi(c.PostForm("satisfaction"))
-	fmt.Printf("satisfaction: %d \n", satisfaction)
+	learning, _ := strconv.Atoi(c.PostForm("learning"))
+	fmt.Printf("learning: %d \n", learning)
+	intuitiveness, _ := strconv.Atoi(c.PostForm("intuitiveness"))
+	fmt.Printf("intuitiveness: %d \n", intuitiveness)
 	helpness, _ := strconv.Atoi(c.PostForm("helpness"))
 	fmt.Printf("helpness: %d \n", helpness)
+	easinessReason := c.PostForm("easinessReason")
+	fmt.Printf("easinessReason: %s \n", easinessReason)
+	learningReason := c.PostForm("learningReason")
+	fmt.Printf("learningReason: %s \n", learningReason)
+	intuitivenessReason := c.PostForm("intuitivenessReason")
+	fmt.Printf("intuitivenessReason: %s \n", intuitivenessReason)
+	helpnessReason := c.PostForm("helpnessReason")
+	fmt.Printf("helpnessReason: %s \n", helpnessReason)
 	advantageComment := c.PostForm("advantageComment")
 	fmt.Printf("advantageComment: %s \n", advantageComment)
 	disadvantageComment := c.PostForm("disadvantageComment")
@@ -419,7 +429,7 @@ func saveQuestionnaireHandler(c *gin.Context) {
 	fmt.Printf("user: %#v\n", user)
 	fmt.Printf("userID: %d\n", user.ID)
 
-	questionnaire := Questionnaires{UserID: user.ID, Easiness: easiness, Satisfaction: satisfaction, Helpness:helpness, AdvantageComment: advantageComment, DisadvantageComment: disadvantageComment, OtherComment: otherComment}
+	questionnaire := Questionnaires{UserID: user.ID, Easiness: easiness, Learning: learning, Intuitiveness: intuitiveness, Helpness: helpness,  EasinessReason: easinessReason, LearningReason: learningReason, IntuitivenessReason: intuitivenessReason, HelpnessReason: helpnessReason, AdvantageComment: advantageComment, DisadvantageComment: disadvantageComment, OtherComment: otherComment}
 
 	success = insertQuestionnaire(questionnaire)
 
