@@ -536,50 +536,51 @@ export default class Practice extends Component {
 					</CardBody>
 								
 				</Card>
-				
-				<Box  direction="row" justify="center" align="center">
-
-					{/*<Box pad="xsmall">
-					
-						<Button color="dark-3" label="Watch Tips" onClick={() => {this.watchTutorial()}} />
-					
-					</Box>*/}
-
-					<Box pad="xsmall">
-
-						<Button label="Reset" color="status-critical" ref={this.state.refs['resetRef']} onClick={() => {this.onReset()}} />
-
-					</Box>
-
-					<Box pad="xsmall">
-
-						<Button label="Start" ref={this.state.refs['startButtonRef']} icon={<Play color="status-ok" />} disabled={this.state.isStarted} 
-							color={!this.state.isStarted? 'status-ok' : 'status-disabled'} onClick={() => {this.startTask()}} />
-
-					</Box>
-
-					<Box pad="xsmall">
-
-						<Button label="Finish" disabled={!this.state.atLeastOneRun} ref={this.state.refs['finishRef']}
-							color={this.state.atLeastOneRun? "brand" : "status-disabled"}  onClick={() => {this.finishPractice()}} />
-					
-					</Box>
-
-
-				
-				</Box> 
 
 				<Card pad="xsmall" gap="xsmall" background="light-1">
 						
 					<CardHeader pad="xxsmall" justify="start">
+
+						<Box  direction="column" justify="center" align="center">
 						
-						<Box ref={this.state.refs['descriptionRef']}>
-							
-							<Text>In this practice, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
-							
-							<Text>Description: {this.state.description} </Text>
-							
+							<Box  direction="row" justify="center" align="center">
+
+								{/*<Box pad="xsmall">
+					
+									<Button color="dark-3" label="Watch Tips" onClick={() => {this.watchTutorial()}} />
+					
+								</Box>*/}
+
+								<Box pad="xsmall">
+
+									<Button label="Reset" color="status-critical" ref={this.state.refs['resetRef']} onClick={() => {this.onReset()}} />
+
+								</Box>
+
+								<Box pad="xsmall">
+
+									<Button label="Start" ref={this.state.refs['startButtonRef']} icon={<Play color="status-ok" />} disabled={this.state.isStarted} 
+										color={!this.state.isStarted? 'status-ok' : 'status-disabled'} onClick={() => {this.startTask()}} />
+
+								</Box>
+
+								<Box pad="xsmall">
+
+									<Button label="Finish" disabled={!this.state.atLeastOneRun} ref={this.state.refs['finishRef']}
+										color={this.state.atLeastOneRun? "brand" : "status-disabled"}  onClick={() => {this.finishPractice()}} />
+					
+								</Box>
+				
+							</Box> 
 						
+							<Box ref={this.state.refs['descriptionRef']}>
+							
+								<Text>Task: In this practice, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong style={{color: this.state.speakerToLabel == "Female"? this.state.femaleColor:this.state.maleColor}}>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
+							
+								<Text>Dialogue Description: {this.state.description} </Text>
+							
+							</Box>
+					
 						</Box>
 					
 					</CardHeader>

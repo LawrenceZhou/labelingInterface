@@ -285,7 +285,7 @@ func saveLabelComparisonHandler(c *gin.Context) {
 		completed = true
 		}
 
-		user.IsFinished = 3
+		user.IsFinished = 2
 
 		success = updateUser(user)
 		
@@ -342,7 +342,7 @@ func saveSurveyHandler(c *gin.Context) {
 		completed = true
 	}
 
-	user.IsFinished = 1
+	user.IsFinished = 4
 
 	success := updateUser(user)
 		
@@ -415,7 +415,7 @@ func saveQuestionnaireHandler(c *gin.Context) {
 		completed = true
 	}
 
-	user.IsFinished = 4
+	user.IsFinished = 3
 
 	success:= updateUser(user)
 
@@ -467,7 +467,7 @@ func finishPracticeHandler(c *gin.Context) {
 		completed = true
 	}
 
-	user.IsFinished = 2
+	user.IsFinished = 1
 
 	success := updateUser(user)
 		

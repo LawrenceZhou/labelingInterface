@@ -624,57 +624,61 @@ export default class LabelTask extends Component {
 
 	render() {
 		return(
-			<Box pad="xsmall" direction="column" background="#EEEEEE" gap="xsmall">
-				
-				<Box  direction="row" justify="center" align="center">
-
-					{/*<Box pad="xsmall">
-					
-						<Button color="dark-3" label="Watch Tips" onClick={() => {this.watchTutorial()}} />
-					
-					</Box>*/}
-
-					<Box pad="xsmall">
-
-						<Button label="Reset" color="status-critical" ref={this.state.refs['resetRef']} onClick={() => {this.onReset()}} />
-
-					</Box>
-
-					<Box pad="xsmall">
-
-						<Button label="Start" ref={this.state.refs['startButtonRef']} icon={<Play color="status-ok" />} disabled={this.state.isStarted} 
-							color={!this.state.isStarted? 'status-ok' : 'status-disabled'} onClick={() => {this.startTask()}} />
-
-					</Box>
-
-					<Box pad="xsmall">
-
-						<Button label={this.state.currentTaskIndex != this.state.taskList.length - 1? "Next" : "Submit"} disabled={!this.state.atLeastOneRun}
-							color={this.state.atLeastOneRun? "brand" : "status-disabled"}  onClick={() => {this.state.currentTaskIndex != this.state.taskList.length - 1? this.onNext() : this.onOpen()}} />
-					
-					</Box>
-
-					<Box pad="xsmall" justify="center" align="center" direction="row" gap="small" ref={this.state.refs['progressNextRef']}>
-        				
-        				<Meter type="bar" color="brand" background="status-disabled" value={(this.state.currentTaskIndex + 1) / this.state.taskList.length * 100} size="small" thickness="small" />
-        				
-        				<Text>{this.state.currentTaskIndex + 1} / {this.state.taskList.length}</Text>				
-					
-					</Box>
-				
-				</Box> 
+			<Box pad="xsmall" direction="column" background="#EEEEEE" gap="xsmall">	
 
 				<Card pad="xsmall" gap="xsmall" background="light-1">
 						
 					<CardHeader pad="xxsmall" justify="start">
-						
-						<Box ref={this.state.refs['descriptionRef']}>
-							
-							<Text>In this task, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
-						
-							<Text>Description: {this.state.description} </Text>
 
-						</Box>
+						<Box  direction="column" justify="center" align="center">
+					
+							<Box  direction="row" justify="center" align="center">
+
+								{/*<Box pad="xsmall">
+					
+									<Button color="dark-3" label="Watch Tips" onClick={() => {this.watchTutorial()}} />
+					
+								</Box>*/}
+
+								<Box pad="xsmall">
+
+									<Button label="Reset" color="status-critical" ref={this.state.refs['resetRef']} onClick={() => {this.onReset()}} />
+
+								</Box>
+
+								<Box pad="xsmall">
+
+									<Button label="Start" ref={this.state.refs['startButtonRef']} icon={<Play color="status-ok" />} disabled={this.state.isStarted} 
+										color={!this.state.isStarted? 'status-ok' : 'status-disabled'} onClick={() => {this.startTask()}} />
+
+								</Box>
+
+								<Box pad="xsmall">
+
+									<Button label={this.state.currentTaskIndex != this.state.taskList.length - 1? "Next" : "Submit"} disabled={!this.state.atLeastOneRun}
+										color={this.state.atLeastOneRun? "brand" : "status-disabled"}  onClick={() => {this.state.currentTaskIndex != this.state.taskList.length - 1? this.onNext() : this.onOpen()}} />
+					
+								</Box>
+
+								<Box pad="xsmall" justify="center" align="center" direction="row" gap="small" ref={this.state.refs['progressNextRef']}>
+        				
+        							<Meter type="bar" color="brand" background="status-disabled" value={(this.state.currentTaskIndex + 1) / this.state.taskList.length * 100} size="small" thickness="small" />
+        				
+        							<Text>{this.state.currentTaskIndex + 1} / {this.state.taskList.length}</Text>				
+					
+								</Box>
+				
+							</Box> 
+						
+							<Box ref={this.state.refs['descriptionRef']}>
+							
+								<Text>Task: In this task, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong  style={{color: this.state.speakerToLabel == "Female"? this.state.femaleColor:this.state.maleColor}}>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
+						
+								<Text>Dialogue Description: {this.state.description} </Text>
+
+							</Box>
+						
+						</Box>					
 					
 					</CardHeader>
 									
