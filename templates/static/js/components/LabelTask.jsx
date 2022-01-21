@@ -92,8 +92,9 @@ export default class LabelTask extends Component {
 			currentTaskIndex: 0,
 			taskList:[{speaker:'Female', dimension:'Arousal'},
 						{speaker:'Female', dimension:'Pleasure'},
-						{speaker:'Male', dimension:'Arousal'},
-						{speaker:'Male', dimension:'Pleasure'}],
+						//{speaker:'Male', dimension:'Arousal'},//for pilot study
+						//{speaker:'Male', dimension:'Pleasure'}],//for pilot study
+						], //for pilot study 
 			conditionList: ['withHighlight','withoutHighlight','slider'],
 			condition: 'withHighlight',
 			currentIndex: -1,
@@ -246,7 +247,10 @@ export default class LabelTask extends Component {
 		if(!that.state.next) {
 			that.setState({nextConfirmOn: false});
 		}else{
-			that.setState({nextConfirmOn: false, next: false, isStarted:false, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false, currentTaskIndex: that.state.currentTaskIndex + 1, speakerToLabel:that.state.taskList[that.state.currentTaskIndex + 1].speaker, dimensionToLabel: that.state.taskList[that.state.currentTaskIndex + 1].dimension});
+			//for pilot study
+			//that.setState({nextConfirmOn: false, next: false, isStarted:false, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false, currentTaskIndex: that.state.currentTaskIndex + 1, speakerToLabel:that.state.taskList[that.state.currentTaskIndex + 1].speaker, dimensionToLabel: that.state.taskList[that.state.currentTaskIndex + 1].dimension});
+			//for pilot study
+			that.setState({condition: "slider", nextConfirmOn: false, next: false, isStarted:false, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false, currentTaskIndex: that.state.currentTaskIndex + 1, speakerToLabel:that.state.taskList[that.state.currentTaskIndex + 1].speaker, dimensionToLabel: that.state.taskList[that.state.currentTaskIndex + 1].dimension});
 		}
 	}
 
