@@ -114,7 +114,7 @@ export default class Practice extends Component {
 			sliderValue: 3,
 			sliderResults: {},
 			description: "The female and the male are arguing about why their missing son's ex-girlfriend showed up. Furthermore, their another son wishes to propose to the girl, which irritates the female.",
-			videoUrl: {withHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/Buddhabrot.mp4", withoutHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/EJPlayThrough.mp4", slider:"https://museumpalazzo.s3.us-west-2.amazonaws.com/GNODC.mp4"},
+			videoUrl: {withHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/withHighlightTutorial.mp4", withoutHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/withoutHighlightTutorial.mp4", slider:"https://museumpalazzo.s3.us-west-2.amazonaws.com/GNODC.mp4"},
 		};
 
 		this.comparisonAreaRef = React.createRef();
