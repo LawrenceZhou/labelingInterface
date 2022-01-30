@@ -363,8 +363,8 @@ export default class ComparisonArea extends Component{
                         <Rect x={this.state.currentTime * 10} y={0} width={2} height={this.state.canvasHeight} fill={'#9A0680'} />
 
                         {this.state.isPlaying? 
-                            <RegularPolygon x={this.state.currentTime * 10 + 10} y={this.props.scrollTop + 250 - 10} sides={3} radius={10} scaleY={1.0} fill={'green'}rotation={90} />:
-                            <Rect x={this.state.currentTime * 10 + 5} y={this.props.scrollTop + 250 - 17} width={15} height={15} fill={'red'} />
+                            <RegularPolygon x={this.state.currentTime * 10 + 10} y={this.props.scrollTop + this.state.canvasHeight - 10} sides={3} radius={10} scaleY={1.0} fill={'green'}rotation={90} />:
+                            <Rect x={this.state.currentTime * 10 + 5} y={this.props.scrollTop + this.state.canvasHeight - 17} width={15} height={15} fill={'red'} />
                         }
 
                     </Layer>

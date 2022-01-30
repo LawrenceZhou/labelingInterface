@@ -6,9 +6,10 @@ import { ThemeType } from 'grommet/themes';
 import Scrollbars from "react-custom-scrollbars";
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import AudioProgress from './AudioProgress';
-import ComparisonArea from './ComparisonArea';
-import LeftCoordinate from './LeftCoordinate';
+//import AudioProgress from './AudioProgress';
+//import ComparisonArea from './ComparisonArea';
+//import LeftCoordinate from './LeftCoordinate';
+import RelativeArea from './RelativeArea';
 
 
 const customFocus = deepMerge(grommet, {
@@ -92,9 +93,9 @@ export default class LabelTask extends Component {
 			currentTaskIndex: 0,
 			taskList:[{speaker:'Female', dimension:'Arousal'},
 						{speaker:'Female', dimension:'Pleasure'},
-						//{speaker:'Male', dimension:'Arousal'},//for pilot study
-						//{speaker:'Male', dimension:'Pleasure'}],//for pilot study
-						], //for pilot study 
+						//{speaker:'Male', dimension:'Arousal'},//for user study
+						//{speaker:'Male', dimension:'Pleasure'}],//for user study
+						],
 			conditionList: ['withHighlight','withoutHighlight','slider'],
 			condition: 'withHighlight',
 			currentIndex: -1,
@@ -157,39 +158,16 @@ export default class LabelTask extends Component {
 		this.setState({timeStamp: timeStamp, timeStart: timeStart },function(){ console.log("timestamp: ", this.state.timeStamp, "time start: ", this.state.timeStart)});
 		this.getTasks();
 
-		var boxes_ = [{index: 0, indexS: 0, x: 67, y: 101, speaker: 'F', end: 106, highlightA:false, highlightP:false, transcript:"Why did he invite her here?"}, 
-					{index: 1, indexS: 0, x: 100, y: 101, speaker: 'M', end: 135, highlightA:false, highlightP:false, transcript:"Why does that bother you?"},
-					{index: 2, indexS: 1, x: 127, y: 101, speaker: 'F', end: 173, highlightA:true, highlightP:false, transcript:"She's been in New York three and an half years, why all of a sudden?"},
-					{index: 3, indexS: 1, x: 166, y: 101, speaker: 'M', end: 217, highlightA:true, highlightP:true, transcript:"Well maybe...maybe he just wanted to see her."},
-					{index: 4, indexS: 2, x: 212, y: 101, speaker: 'F', end: 265, highlightA:true, highlightP:false, transcript:"Nobody comes seven hundred miles just to see."},
-					{index: 5, indexS: 2, x: 257, y: 101, speaker: 'M', end: 331, highlightA:false, highlightP:false, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
-					{index: 6, indexS: 3, x: 336, y: 101, speaker: 'M', end: 406, highlightA:true, highlightP:false, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
-					{index: 7, indexS: 3, x: 399, y: 101, speaker: 'F', end: 430, highlightA:false, highlightP:true, transcript:"He's not going to marry her."},
-					{index: 8, indexS: 4, x: 424, y: 101, speaker: 'M', end: 453, highlightA:true, highlightP:true, transcript:"How do you know he's even thinking about it?"},
-					{index: 9, indexS: 4, x: 443, y: 101, speaker: 'F', end: 463, highlightA:false, highlightP:true, transcript:"It's got that about it."},
-					{index: 10, indexS: 5, x: 458, y: 101, speaker: 'M', end: 476, highlightA:true, highlightP:true, transcript:"Oh.  So what."},
-					{index: 11, indexS: 5, x: 471, y: 101, speaker: 'F', end: 509, highlightA:false, highlightP:false, transcript:"What is going on here, Joe?"},
-					{index: 12, indexS: 6, x: 506, y: 101, speaker: 'M', end: 526, highlightA:false, highlightP:true, transcript:"Now listen."},
-					{index: 13, indexS: 6, x: 520, y: 101, speaker: 'F', end: 565, highlightA:true, highlightP:false, transcript:"She is not his girl.  She knows she's not."},
-					{index: 14, indexS: 7, x: 558, y: 101, speaker: 'M', end: 582, highlightA:false, highlightP:false, transcript:"You can't read her mind."},
-					{index: 15, indexS: 7, x: 577, y: 101, speaker: 'F', end: 667, highlightA:true, highlightP:false, transcript:"Then why is she still single?  New York is full of men, why is she still single?  Probably a hundred people told her she's foolish, but she waited."},
-					{index: 16, indexS: 8, x: 661, y: 101, speaker: 'M', end: 684, highlightA:false, highlightP:true, transcript:"How do you know why she waited?"},
-					{index: 17, indexS: 8, x: 674, y: 101, speaker: 'F', end: 783, highlightA:false, highlightP:false, transcript:"Because she knows what I know, that's why.  She's faithful as a rock.  In my darkest moments, I think of her waiting and I know that I'm right."},
-					{index: 18, indexS: 9, x: 783, y: 101, speaker: 'M', end: 827, highlightA:true, highlightP:true, transcript:"Hey look, it's a nice day, huh?  Why are we arguing?"},
-					{index: 19, indexS: 9, x: 821, y: 101, speaker: 'F', end: 913, highlightA:false, highlightP:false, transcript:"Nobody in this house dares take away her faith, Joe.  You know strangers might, but not his father, not his brother."},
-					{index: 20, indexS: 10, x: 906, y: 101, speaker: 'M', end: 949, highlightA:true, highlightP:false, transcript:"What do you want me to do? What do you want?"},
-					{index: 21, indexS: 10, x: 923, y: 101, speaker: 'F', end: 1022, highlightA:false, highlightP:false, transcript:"I want you to-- I want you to act like he is coming back, both of you.  Don't think I haven't noticed you since Chris invited her here."},
-					{index: 22, indexS: 11, x: 1022, y: 101, speaker: 'F', end: 1058, highlightA:false, highlightP:false, transcript:"I won't stand for any nonsense."},
-					{index: 23, indexS: 11, x: 1066, y: 101, speaker: 'M', end: 1082, highlightA:true, highlightP:false, transcript:"Kate."},
-					{index: 24, indexS: 12, x: 1082, y: 101, speaker: 'F', end: 1224, highlightA:false, highlightP:false, transcript:"Because if he's not coming back, I'll kill myself.  Oh laugh, laugh all you like but why does this happen the very night he comes back.  She goes to sleep in his room and his memorial breaks in pieces.  Look at it, Joe, look."},
-					{index: 25, indexS: 12, x: 1093, y: 101, speaker: 'M', end: 1117, highlightA:false, highlightP:true, transcript:"[BREATHING]"},
-					{index: 26, indexS: 13, x: 1212, y: 101, speaker: 'M', end: 1233, highlightA:true, highlightP:true, transcript:"Calm yourself."},
-					{index: 27, indexS: 13, x: 1224, y: 101, speaker: 'F', end: 1327, highlightA:false, highlightP:true, transcript:"Just believe with me, Joe. Only last week a man came back in Detroit missing longer than Larry.  Believe with me. You, above all, have got to believe. Just believe."},
-					{index: 28, indexS: 14, x: 1241, y: 101, speaker: 'M', end: 1264, highlightA:true, highlightP:true, transcript:"Okay. Calm yourself."},
-					{index: 29, indexS: 15, x: 1265, y: 101, speaker: 'M', end: 1338, highlightA:false, highlightP:true, transcript:"I know. All right, all right. All right. Okay.  Calm yourself. What does that mean, me above all?"},
-					{index: 30, indexS: 16, x: 1346, y: 101, speaker: 'M', end: 1381, highlightA:true, highlightP:false, transcript:"Look at you, you're shaking."},
-					{index: 31, indexS: 14, x: 1379, y: 101, speaker: 'F', end: 1407, highlightA:false, highlightP:false, transcript:"I can't help it."},
-					{index: 32, indexS: 17, x: 1409, y: 101, speaker: 'M', end: 1476, highlightA:true, highlightP:false, transcript:"What have I got to hide?  What the hell is the matter with you, Kate?"},
+		var boxes_ = [{index: 0, indexS: 0, x: 67, y: 16, speaker: 'F', end: 106, highlightA:false, highlightP:false, relative: 0, transcript:"Why did he invite her here?"}, 
+					{index: 1, indexS: 0, x: 100, y: 16, speaker: 'M', end: 135, highlightA:false, highlightP:false, relative: 0, transcript:"Why does that bother you?"},
+					{index: 2, indexS: 1, x: 127, y: 16, speaker: 'F', end: 173, highlightA:true, highlightP:false, relative: 0, transcript:"She's been in New York three and an half years, why all of a sudden?"},
+					{index: 3, indexS: 1, x: 166, y: 16, speaker: 'M', end: 217, highlightA:true, highlightP:true, relative: 0, transcript:"Well maybe...maybe he just wanted to see her."},
+					{index: 4, indexS: 2, x: 212, y: 16, speaker: 'F', end: 265, highlightA:false/*true*/, highlightP:false, relative: 0, transcript:"Nobody comes seven hundred miles just to see."},
+					{index: 5, indexS: 2, x: 257, y: 16, speaker: 'M', end: 331, highlightA:false, highlightP:false, relative: 0, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
+					{index: 6, indexS: 3, x: 336, y: 16, speaker: 'M', end: 406, highlightA:true, highlightP:false, relative: 0, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
+					{index: 7, indexS: 3, x: 399, y: 16, speaker: 'F', end: 430, highlightA:true/*false*/, highlightP:true, relative: 0, transcript:"He's not going to marry her."},
+					{index: 8, indexS: 4, x: 424, y: 16, speaker: 'M', end: 453, highlightA:true, highlightP:true, relative: 0, transcript:"How do you know he's even thinking about it?"},
+					{index: 9, indexS: 4, x: 443, y: 16, speaker: 'F', end: 463, highlightA: true/*false*/, highlightP:true, relative: 0, transcript:"It's got that about it."},
 		];
 
 		var minutes = Math.floor(boxes_[boxes_.length - 1].end / 600);
@@ -247,7 +225,7 @@ export default class LabelTask extends Component {
 		if(!that.state.next) {
 			that.setState({nextConfirmOn: false});
 		}else{
-			//for pilot study
+			//for user study
 			//that.setState({nextConfirmOn: false, next: false, isStarted:false, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false, currentTaskIndex: that.state.currentTaskIndex + 1, speakerToLabel:that.state.taskList[that.state.currentTaskIndex + 1].speaker, dimensionToLabel: that.state.taskList[that.state.currentTaskIndex + 1].dimension});
 			//for pilot study
 			that.setState({condition: "slider", nextConfirmOn: false, next: false, isStarted:false, lastTranscriptM:"", lastTranscriptF:"", currentTranscriptM:"", currentTranscriptF:"", currentIndexM:-1, currentIndexF:-1, atLeastOneRun:false, currentTaskIndex: that.state.currentTaskIndex + 1, speakerToLabel:that.state.taskList[that.state.currentTaskIndex + 1].speaker, dimensionToLabel: that.state.taskList[that.state.currentTaskIndex + 1].dimension});
@@ -321,8 +299,8 @@ export default class LabelTask extends Component {
 		var results = [];
 		if (that.state.condition != "slider"){
 			for(var i = 0; i < childElement.state.boxes.length; i++) {
-				console.log("sentence id: ", childElement.state.boxes[i].sentenceID, " result: ", childElement.state.boxes[i].y - 1);
-				results.push(childElement.state.boxes[i].y - 1);
+				console.log("sentence id: ", childElement.state.boxes[i].sentenceID, " result: ", childElement.state.boxes[i].relative);
+				results.push(childElement.state.boxes[i].relative);
 				sentenceIDs.push(childElement.state.boxes[i].sentenceID);
 			}
 		}else{
@@ -390,7 +368,7 @@ export default class LabelTask extends Component {
 					var sentences = obj.sentences;
 					var boxes_ = [];
 					for (var i = 0; i < sentences.length; i++) {
-						boxes_.push({sentenceID: sentences[i].ID, index: sentences[i].Index, indexS: sentences[i].IndexS, x: sentences[i].StartTime, y: 101, speaker: sentences[i].Speaker, end: sentences[i].EndTime, highlightA: sentences[i].HighlightA == 1, highlightP: sentences[i].HighlightP == 1, transcript: sentences[i].Transcript});
+						boxes_.push({sentenceID: sentences[i].ID, index: sentences[i].Index, indexS: sentences[i].IndexS, x: sentences[i].StartTime, y: 16, speaker: sentences[i].Speaker, end: sentences[i].EndTime, highlightA: sentences[i].HighlightA == 1, highlightP: sentences[i].HighlightP == 1, relative: 0, transcript: sentences[i].Transcript});
 					}
 					var length_ = Math.ceil(boxes_[boxes_.length - 1].end / 100) * 100;
 
@@ -456,15 +434,12 @@ export default class LabelTask extends Component {
   			that.stopPlay();
   		}
 
-  		if (that.state.condition != "slider") {
-  			if (time * 10 >= 400) {
-  				that.refs.scrollbars.scrollLeft(time*10 - 400);
-  			}else {
-  				that.refs.scrollbars.scrollLeft(0);
-  			}
+  		if (time * 10 >= 400) {
+  			that.refs.scrollbars.scrollLeft(time*10 - 400);
+  		}else {
+  			that.refs.scrollbars.scrollLeft(0);
   		}
   		
-
   		if (time * 10 >= that.state.boxes[that.state.boxes.length - 1].end && !that.state.atLeastOneRun){
   			console.log("over", time);
   			that.setState({atLeastOneRun: true});
@@ -688,32 +663,19 @@ export default class LabelTask extends Component {
 									
 					<CardBody pad="xxsmall">
 
-						
-						{this.state.condition != 'slider' && <Box justify="center" align="center" direction="row" ref={this.state.refs['labelRef']}>
-
-								<LeftCoordinate style={{ width: "5%", height: "250px", display: "inline-block"}} dimension={this.state.dimensionToLabel} />
+						<Box justify="center" align="center" direction="row" ref={this.state.refs['labelRef']}>
 							
-						
-							<Box ref={this.state.refs['highlightRef']} style={{ width: "95%", height: "250px", display: "inline-block"}} >
+							<Box ref={this.state.refs['highlightRef']} style={{ width: "95%", height: "80px", display: "inline-block"}} >
 							
 								<Scrollbars ref="scrollbars" renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>} renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
 						
-									<ComparisonArea isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} />
+									<RelativeArea isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} />
 						
 								</Scrollbars>
 
 							</Box>
 
-						</Box>}
-
-						{this.state.condition == 'slider' && <Box justify="center" pad="medium" gap="medium" direction="row">
-
-							{this.state.isPlaying? <PlayFill color="status-ok" /> : <StopFill color="status-critical" />}
-
-							<AudioProgress length={this.state.boxes[this.state.boxes.length - 1].end / 10} isStarted={this.state.isStarted} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} isPlaying={this.state.isPlaying} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} />
-
-						</Box>}
-
+						</Box>
 					
 						<Box justify="center" align="center" pad="small">
 						

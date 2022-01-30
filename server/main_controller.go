@@ -10,7 +10,7 @@ import (
 var db *gorm.DB
 var assignmentNumber int
 var dialogue_id_list = [2]int{1,2}
-//var condition_list = [3]string{"withHighlight", "withoutHighlight", "slider"} //for pilot study
+//var condition_list = [3]string{"withHighlight", "withoutHighlight", "slider"} //for user study
 var condition_list = [3]string{"withHighlight", "withoutHighlight"} //for pilot study
 var dialogue_index = 0
 var condition_index = 0
@@ -33,8 +33,6 @@ func main (){
     assignmentNumber = *numPtr
 
     if *modePtr == "server" {
-    	//dialogue_id_list = [9, 10, 35]
-    	//condition_list = ["withHighlight", "withoutHighlight", "slider"]
     	fmt.Println("Starting the web server...")
     	webServer(*databaseIPPtr, *databaseNamePtr, *databaseUserPtr, *databasePasswordPtr)
     }

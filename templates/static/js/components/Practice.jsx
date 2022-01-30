@@ -6,9 +6,10 @@ import { ThemeType } from 'grommet/themes';
 import Scrollbars from "react-custom-scrollbars";
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import AudioProgress from './AudioProgress';
-import ComparisonArea from './ComparisonArea';
-import LeftCoordinate from './LeftCoordinate';
+//import AudioProgress from './AudioProgress';
+//import ComparisonArea from './ComparisonArea';
+//import LeftCoordinate from './LeftCoordinate';
+import RelativeArea from './RelativeArea';
 
 
 const customFocus = deepMerge(grommet, {
@@ -147,16 +148,16 @@ export default class Practice extends Component {
 		this.setState({timeStamp: timeStamp, timeStart: timeStart },function(){ console.log("timestamp: ", this.state.timeStamp, "time start: ", this.state.timeStart)});
 		this.getCondition();
 
-		var boxes_ = [{index: 0, indexS: 0, x: 67, y: 101, speaker: 'F', end: 106, highlightA:false, highlightP:false, transcript:"Why did he invite her here?"}, 
-					{index: 1, indexS: 0, x: 100, y: 101, speaker: 'M', end: 135, highlightA:false, highlightP:false, transcript:"Why does that bother you?"},
-					{index: 2, indexS: 1, x: 127, y: 101, speaker: 'F', end: 173, highlightA:true, highlightP:false, transcript:"She's been in New York three and an half years, why all of a sudden?"},
-					{index: 3, indexS: 1, x: 166, y: 101, speaker: 'M', end: 217, highlightA:true, highlightP:true, transcript:"Well maybe...maybe he just wanted to see her."},
-					{index: 4, indexS: 2, x: 212, y: 101, speaker: 'F', end: 265, highlightA:false/*true*/, highlightP:false, transcript:"Nobody comes seven hundred miles just to see."},
-					{index: 5, indexS: 2, x: 257, y: 101, speaker: 'M', end: 331, highlightA:false, highlightP:false, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
-					{index: 6, indexS: 3, x: 336, y: 101, speaker: 'M', end: 406, highlightA:true, highlightP:false, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
-					{index: 7, indexS: 3, x: 399, y: 101, speaker: 'F', end: 430, highlightA:true/*false*/, highlightP:true, transcript:"He's not going to marry her."},
-					{index: 8, indexS: 4, x: 424, y: 101, speaker: 'M', end: 453, highlightA:true, highlightP:true, transcript:"How do you know he's even thinking about it?"},
-					{index: 9, indexS: 4, x: 443, y: 101, speaker: 'F', end: 463, highlightA: true/*false*/, highlightP:true, transcript:"It's got that about it."},
+		var boxes_ = [{index: 0, indexS: 0, x: 67, y: 16, speaker: 'F', end: 106, highlightA:false, highlightP:false, relative: 0, transcript:"Why did he invite her here?"}, 
+					{index: 1, indexS: 0, x: 100, y: 16, speaker: 'M', end: 135, highlightA:false, highlightP:false, relative: 0, transcript:"Why does that bother you?"},
+					{index: 2, indexS: 1, x: 127, y: 16, speaker: 'F', end: 173, highlightA:true, highlightP:false, relative: 0, transcript:"She's been in New York three and an half years, why all of a sudden?"},
+					{index: 3, indexS: 1, x: 166, y: 16, speaker: 'M', end: 217, highlightA:true, highlightP:true, relative: 0, transcript:"Well maybe...maybe he just wanted to see her."},
+					{index: 4, indexS: 2, x: 212, y: 16, speaker: 'F', end: 265, highlightA:false/*true*/, highlightP:false, relative: 0, transcript:"Nobody comes seven hundred miles just to see."},
+					{index: 5, indexS: 2, x: 257, y: 16, speaker: 'M', end: 331, highlightA:false, highlightP:false, relative: 0, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
+					{index: 6, indexS: 3, x: 336, y: 16, speaker: 'M', end: 406, highlightA:true, highlightP:false, relative: 0, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
+					{index: 7, indexS: 3, x: 399, y: 16, speaker: 'F', end: 430, highlightA:true/*false*/, highlightP:true, relative: 0, transcript:"He's not going to marry her."},
+					{index: 8, indexS: 4, x: 424, y: 16, speaker: 'M', end: 453, highlightA:true, highlightP:true, relative: 0, transcript:"How do you know he's even thinking about it?"},
+					{index: 9, indexS: 4, x: 443, y: 16, speaker: 'F', end: 463, highlightA: true/*false*/, highlightP:true, relative: 0, transcript:"It's got that about it."},
 					//{index: 10, indexS: 5, x: 458, y: 101, speaker: 'M', end: 476, highlightA:true, highlightP:true, transcript:"Oh.  So what."},
 					//{index: 11, indexS: 5, x: 471, y: 101, speaker: 'F', end: 509, highlightA:true/*false*/, highlightP:false, transcript:"What is going on here, Joe?"},
 					//{index: 12, indexS: 6, x: 506, y: 101, speaker: 'M', end: 526, highlightA:false, highlightP:true, transcript:"Now listen."},
@@ -347,14 +348,11 @@ export default class Practice extends Component {
   			that.stopPlay();
   		}
 
-  		if (that.state.condition != "slider") {
-  			if (time * 10 >= 400) {
-  				that.refs.scrollbars.scrollLeft(time*10 - 400);
-  			}else {
-  				that.refs.scrollbars.scrollLeft(0);
-  			}
+  		if (time * 10 >= 400) {
+  			that.refs.scrollbars.scrollLeft(time*10 - 400);
+  		}else {
+  			that.refs.scrollbars.scrollLeft(0);
   		}
-  		
 
   		if (time * 10 >= that.state.boxes[that.state.boxes.length - 1].end && !that.state.atLeastOneRun){
   			console.log("over", time);
@@ -587,33 +585,20 @@ export default class Practice extends Component {
 									
 					<CardBody pad="xxsmall">
 
-						
-						{this.state.condition != 'slider' && <Box justify="center" align="center" direction="row" ref={this.state.refs['labelRef']}>
-
-								<LeftCoordinate style={{ width: "5%", height: "250px", display: "inline-block"}} dimension={this.state.dimensionToLabel} />
+						<Box justify="center" align="center" direction="row" ref={this.state.refs['labelRef']}>
 							
-						
-							<Box ref={this.state.refs['highlightRef']} style={{ width: "95%", height: "250px", display: "inline-block"}} >
+							<Box ref={this.state.refs['highlightRef']} style={{ width: "95%", height: "80px", display: "inline-block"}} >
 							
 								<Scrollbars ref="scrollbars" renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>} renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
 						
-									<ComparisonArea isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} />
+									<RelativeArea isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} />
 						
 								</Scrollbars>
 
 							</Box>
 
-						</Box>}
-
-						{this.state.condition == 'slider' && <Box justify="center" pad="medium" gap="medium" direction="row">
-
-							{this.state.isPlaying? <PlayFill color="status-ok" /> : <StopFill color="status-critical" />}
-
-							<AudioProgress length={this.state.boxes[this.state.boxes.length - 1].end / 10} isStarted={this.state.isStarted} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} isPlaying={this.state.isPlaying} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} />
-
-						</Box>}
-
-					
+						</Box>
+				
 						<Box justify="center" align="center" pad="small">
 						
 							<Text>{this.state.currentTimeText}</Text>
