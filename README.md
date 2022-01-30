@@ -128,18 +128,18 @@ Create new VirtualHost configuration file.
 
 Add the content to it.
 
-`Listen 99
-<VirtualHost *:99>
-    ServerName localhost
-    <Directory /usr/share/phpmyadmin>
-    	AllowOverride None
-        Require all granted
-    </Directory>
-    DocumentRoot /usr/share/phpmyadmin
-    Include /etc/phpmyadmin/apache.conf
-    ErrorLog ${APACHE_LOG_DIR}/phpmyadmin.error.log
-    CustomLog ${APACHE_LOG_DIR}/phpmyadmin.access.log combined
-</VirtualHost>`
+`Listen 99`
+`<VirtualHost *:99>`
+`    ServerName localhost`
+`    <Directory /usr/share/phpmyadmin>`
+`    	AllowOverride None`
+`       Require all granted`
+`    </Directory>`
+`    DocumentRoot /usr/share/phpmyadmin`
+`    Include /etc/phpmyadmin/apache.conf`
+`    ErrorLog ${APACHE_LOG_DIR}/phpmyadmin.error.log`
+`    CustomLog ${APACHE_LOG_DIR}/phpmyadmin.access.log combined`
+`</VirtualHost>`
 
 Switch Apache's configuration and restart it.
 
@@ -193,20 +193,20 @@ Edit the config file.
 
 Append this code below inside `<VirtualHost *:80>`.
 
-`<VirtualHost *:80>
-#many code
-#some comments
-        #for golang
-        ProxyPreserveHost On
-        ServerName label.yijunzhou.xyz
-        ServerAlias label
-        ProxyPass / http://127.0.0.1:8080/
-        ProxyPassReverse / http://127.0.0.1:8080/
-        <Proxy *>
-        	Order deny,allow
-        	Allow from all
-    	</Proxy>
-</VirtualHost>`
+`<VirtualHost *:80>`
+`#many code`
+`#some comments`
+`        #for golang`
+`        ProxyPreserveHost On`
+`        ServerName label.yijunzhou.xyz`
+`        ServerAlias label`
+`        ProxyPass / http://127.0.0.1:8080/`
+`        ProxyPassReverse / http://127.0.0.1:8080/`
+`        <Proxy *>`
+`        	Order deny,allow`
+`        	Allow from all`
+`    	</Proxy>`
+`</VirtualHost>`
 
 Save it and restart the apache2 by 
 
