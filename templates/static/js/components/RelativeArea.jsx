@@ -151,6 +151,7 @@ export default class RelativeArea extends Component{
         if(event.keyCode === 27 && that.state.isStarted) {
         //Do whatever when esc is pressed
 
+        }
 
         if(event.keyCode === 32 && that.state.isStarted) {
         //Do whatever when space is pressed
