@@ -180,7 +180,7 @@ export default class LabelTask extends Component {
 
 	componentWillUnmount() {
 		if (this.condition == "slider") {
-        	document.current.removeEventListener("keydown", this.handleKeyPressedForSlider, false);
+        	document.current.removeEventListener("keyup", this.handleKeyPressedForSlider, false);
     	}
 	}
 
@@ -360,7 +360,7 @@ export default class LabelTask extends Component {
 					//add front-end key-value: selectedP, selectedA, selectedD, clickCountP, clickCountA, clickCountD, timeUsage, timeStamp, isLabeled, isInconsistent
 					var condition_ = obj.condition;
 					if(condition_ == "slider") {
-						document.addEventListener("keydown", that.handleKeyPressedForSlider, false);
+						document.addEventListener("keyup", that.handleKeyPressedForSlider, false);
 					}
 					var assigmentID_ = obj.assignment_id;
 					var audioPath_ = obj.dialogue_path;

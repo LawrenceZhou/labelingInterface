@@ -195,7 +195,7 @@ export default class Practice extends Component {
 
 	componentWillUnmount() {
 		if (this.condition == "slider") {
-        	document.current.removeEventListener("keydown", this.handleKeyPressedForSlider, false);
+        	document.current.removeEventListener("keyup", this.handleKeyPressedForSlider, false);
     	}
 	}
 
@@ -288,7 +288,7 @@ export default class Practice extends Component {
 					console.log(obj);
 					var condition_ = obj.condition;
 					if(condition_ == "slider") {
-						document.addEventListener("keydown", that.handleKeyPressedForSlider, false);
+						document.addEventListener("keyup", that.handleKeyPressedForSlider, false);
 					}
 					
   					that.setRefs(condition_);

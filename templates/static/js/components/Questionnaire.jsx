@@ -90,7 +90,7 @@ export default class Questionnaire extends Component {
 		var that = this;
 		that.onClose();
 		var http = new XMLHttpRequest();
-		var url = 'http://52.36.121.191:8080/api/v1/save_questionnaire';    
+		var url = 'http://52.38.121.191:8080/api/v1/save_questionnaire';    
 		var data = new FormData();
 
 
