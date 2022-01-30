@@ -48,7 +48,7 @@ export default class Login extends Component {
 		var timeStamp = d.toString();
 
 		var http = new XMLHttpRequest();
-		var url = 'http://localhost:8080/api/v1/log_in';    
+		var url = 'http://label.yijunzhou.xyz/api/v1/log_in';    
 		var data = new FormData();
 
 

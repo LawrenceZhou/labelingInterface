@@ -310,7 +310,7 @@ export default class LabelTask extends Component {
 		}
 
 		var http = new XMLHttpRequest();
-		var url = 'http://localhost:8080/api/v1/save_label_comparison';
+		var url = 'http://label.yijunzhou.xyz/api/v1/save_label_comparison';
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);
@@ -343,7 +343,7 @@ export default class LabelTask extends Component {
 		var that = this;
 
 		var http = new XMLHttpRequest();
-		var url = 'http://localhost:8080/api/v1/get_tasks';
+		var url = 'http://label.yijunzhou.xyz/api/v1/get_tasks';
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);

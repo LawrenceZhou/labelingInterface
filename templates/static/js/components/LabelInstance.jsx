@@ -315,7 +315,7 @@ export default class LabelInstance extends Component {
 		var that = this;
 
 		var http = new XMLHttpRequest();
-		var url = 'http://localhost:8080/api/v1/get_list';    
+		var url = 'http://label.yijunzhou.xyz/api/v1/get_list';    
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);

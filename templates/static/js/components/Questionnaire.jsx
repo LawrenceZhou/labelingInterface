@@ -45,7 +45,7 @@ export default class Questionnaire extends Component {
 		var that = this;
 
 		var http = new XMLHttpRequest();
-		var url = 'http://localhost:8080/api/v1/get_condition';
+		var url = 'http://label.yijunzhou.xyz/api/v1/get_condition';
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);
@@ -90,7 +90,7 @@ export default class Questionnaire extends Component {
 		var that = this;
 		that.onClose();
 		var http = new XMLHttpRequest();
-		var url = 'http://localhost:8080/api/v1/save_questionnaire';    
+		var url = 'http://label.yijunzhou.xyz/api/v1/save_questionnaire';    
 		var data = new FormData();
 
 

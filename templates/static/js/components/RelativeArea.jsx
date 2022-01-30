@@ -25,7 +25,7 @@ export default class RelativeArea extends Component{
             boxes: props.boxesPassed,
             boxesTimeOrder: props.boxesPassed,
             currentTime: 0,
-            audioPath: "http:/localhost:8080/" + props.audioPath,
+            audioPath: "http://label.yijunzhou.xyz/" + props.audioPath,
             isPlaying: false,
             isStarted: false,
             speaker: "Male",
