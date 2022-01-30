@@ -312,7 +312,7 @@ export default class LabelTask extends Component {
 		}
 
 		var http = new XMLHttpRequest();
-		var url = 'http://52.36.121.191:8080/api/v1/save_label_comparison';
+		var url = 'http://52.38.121.191:8080/api/v1/save_label_comparison';
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);
@@ -345,7 +345,7 @@ export default class LabelTask extends Component {
 		var that = this;
 
 		var http = new XMLHttpRequest();
-		var url = 'http://52.36.121.191:8080/api/v1/get_tasks';
+		var url = 'http://52.38.121.191:8080/api/v1/get_tasks';
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);

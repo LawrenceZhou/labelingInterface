@@ -45,7 +45,7 @@ export default class Questionnaire extends Component {
 		var that = this;
 
 		var http = new XMLHttpRequest();
-		var url = 'http://52.36.121.191:8080/api/v1/get_condition';
+		var url = 'http://52.38.121.191:8080/api/v1/get_condition';
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);

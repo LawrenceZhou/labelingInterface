@@ -248,7 +248,7 @@ export default class Practice extends Component {
 	finishPractice(){
 		var that = this;
 		var http = new XMLHttpRequest();
-		var url = 'http://52.36.121.191:8080/api/v1/finish_practice';    
+		var url = 'http://52.38.121.191:8080/api/v1/finish_practice';    
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);
@@ -274,7 +274,7 @@ export default class Practice extends Component {
 		var that = this;
 
 		var http = new XMLHttpRequest();
-		var url = 'http://52.36.121.191:8080/api/v1/get_condition';
+		var url = 'http://52.38.121.191:8080/api/v1/get_condition';
 		var data = new FormData();
 
 		data.append("userName", that.state.userName);
