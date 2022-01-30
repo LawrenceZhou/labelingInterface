@@ -180,6 +180,9 @@ export default class RelativeArea extends Component{
 
                 that.setState({boxes: boxes_});
             }
+            else{
+                that.props.handleKeyPressedForSlider(event);
+            }
         }
 
         if(event.keyCode === 40 && that.state.isStarted) {
@@ -203,6 +206,9 @@ export default class RelativeArea extends Component{
                 }
 
                 that.setState({boxes: boxes_});
+            }
+            else{
+                that.props.handleKeyPressedForSlider(event);
             }
         }
 

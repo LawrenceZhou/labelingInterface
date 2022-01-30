@@ -179,9 +179,7 @@ export default class LabelTask extends Component {
 
 
 	componentWillUnmount() {
-		if (this.condition == "slider") {
-        	document.current.removeEventListener("keyup", this.handleKeyPressedForSlider, false);
-    	}
+
 	}
 
 	watchTutorial() {
@@ -359,9 +357,7 @@ export default class LabelTask extends Component {
 					console.log(obj);
 					//add front-end key-value: selectedP, selectedA, selectedD, clickCountP, clickCountA, clickCountD, timeUsage, timeStamp, isLabeled, isInconsistent
 					var condition_ = obj.condition;
-					if(condition_ == "slider") {
-						document.addEventListener("keyup", that.handleKeyPressedForSlider, false);
-					}
+
 					var assigmentID_ = obj.assignment_id;
 					var audioPath_ = obj.dialogue_path;
 					var description_ = obj.dialogue_description;
@@ -669,7 +665,7 @@ export default class LabelTask extends Component {
 							
 								<Scrollbars ref="scrollbars" renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>} renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
 						
-									<RelativeArea isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} />
+									<RelativeArea isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} handleKeyPressedForSlider={this.handleKeyPressedForSlider} />
 						
 								</Scrollbars>
 
