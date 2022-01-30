@@ -150,31 +150,11 @@ export default class RelativeArea extends Component{
         var that = this;
         if(event.keyCode === 27 && that.state.isStarted) {
         //Do whatever when esc is pressed
-        /*
-            if(that.props.condition != 'slider'){
-                var boxesHistory_  = that.state.boxesHistory;
-                var operationBoxHistory_  = that.state.operationBoxHistory;
 
-                if(boxesHistory_.length == 1){
-                    that.setState({boxes: JSON.parse(JSON.stringify(boxesHistory_[0]))});
-                }else{
-                    that.props.stopPlay();
-                    var boxesState = boxesHistory_.pop();
-                    var lastIndex = operationBoxHistory_.pop();
-
-                    console.log(boxesState, lastIndex);
-                    that.setState({boxes: boxesState, boxesHistory: boxesHistory_, operationBoxHistory: operationBoxHistory_});
-                    that.audio.currentTime = boxesState[lastIndex].x / 10;
-                }
-            }
-        */
-        }
 
         if(event.keyCode === 32 && that.state.isStarted) {
         //Do whatever when space is pressed
-        /*
-            that.props.togglePlay();
-        */
+
         }
 
         if(event.keyCode === 38 && that.state.isStarted) {
@@ -228,47 +208,43 @@ export default class RelativeArea extends Component{
         if(event.keyCode === 37 && that.state.isStarted) {
         //Do whatever when left is pressed
             console.log("left pressed.");
-            //if(that.props.condition != 'slider'){
-                boxes_ = that.state.boxes;
+            boxes_ = that.state.boxes;
 
-                for (var i = boxes_.length - 1; i > boxes_.length - that.state.currentSpeakerSentenceNumber; i--) {
-                    if (that.state.currentTime * 10 >= boxes_[i].x) {
-                        if (that.audio.currentTime * 10 - boxes_[i].x < 5) {
-                            that.props.updateScrollPosition(boxes_[i - 1].y );
-                            that.audio.currentTime = boxes_[i - 1].x / 10;
-                        }else {
-                            that.props.updateScrollPosition(boxes_[i].y );
-                            that.audio.currentTime = boxes_[i].x / 10;
-                        }
-        
-                        break;
+            for (var i = boxes_.length - 1; i > boxes_.length - that.state.currentSpeakerSentenceNumber; i--) {
+                if (that.state.currentTime * 10 >= boxes_[i].x) {
+                    if (that.audio.currentTime * 10 - boxes_[i].x < 5) {
+                        that.props.updateScrollPosition(boxes_[i - 1].y );
+                        that.audio.currentTime = boxes_[i - 1].x / 10;
+                    }else {
+                        that.props.updateScrollPosition(boxes_[i].y );
+                        that.audio.currentTime = boxes_[i].x / 10;
                     }
+        
+                    break;
                 }
-            //}
+            }
         }
 
         if(event.keyCode === 39 && that.state.isStarted) {
         //Do whatever when right is pressed
             console.log("right pressed.");
-            //if(that.props.condition != 'slider'){
-                var boxes_ = that.state.boxes;
+            var boxes_ = that.state.boxes;
 
-                if (that.audio.currentTime * 10 < that.state.boxesTimeOrder[0].x) {
-                    that.audio.currentTime = that.state.boxesTimeOrder[0].x / 10;
-                    return;
-                }else if (that.audio.currentTime * 10 < boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x) {
-                    that.audio.currentTime = boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x / 10;
-                    return;
-                }
+            if (that.audio.currentTime * 10 < that.state.boxesTimeOrder[0].x) {
+                that.audio.currentTime = that.state.boxesTimeOrder[0].x / 10;
+                return;
+            }else if (that.audio.currentTime * 10 < boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x) {
+                that.audio.currentTime = boxes_[boxes_.length - that.state.currentSpeakerSentenceNumber].x / 10;
+                return;
+            }
 
-                for (var i = boxes_.length - 2; i >= boxes_.length - that.state.currentSpeakerSentenceNumber; i--) {
-                    if (that.state.currentTime * 10 >= boxes_[i].x) {
-                        that.audio.currentTime = boxes_[i + 1].x / 10;
-                        that.props.updateScrollPosition(boxes_[i + 1].y );
-                        break;
-                    }
+            for (var i = boxes_.length - 2; i >= boxes_.length - that.state.currentSpeakerSentenceNumber; i--) {
+                if (that.state.currentTime * 10 >= boxes_[i].x) {
+                    that.audio.currentTime = boxes_[i + 1].x / 10;
+                    that.props.updateScrollPosition(boxes_[i + 1].y );
+                    break;
                 }
-            //}
+            }
         }
     }
 
