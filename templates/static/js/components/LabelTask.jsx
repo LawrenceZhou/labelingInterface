@@ -450,15 +450,17 @@ export default class LabelTask extends Component {
   							var sliderResults_ = that.state.sliderResults;
   							sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
   						}
-  						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
+  						that.setState({sliderResults: sliderResults_, currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
   					}
   					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript != that.state.currentTranscriptF) {
   						if(that.state.condition == "slider" && that.state.speakerToLabel == "Female"){
   							var sliderResults_ = that.state.sliderResults;
   							sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
   						}
-  						that.setState({currentIndex: i,  currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
+  						that.setState({sliderResults: sliderResults_, currentIndex: i, currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
   					}
+  				
+  					console.log("slider results: ", that.state.sliderResults);
   				}
   			}
   		}
@@ -665,7 +667,7 @@ export default class LabelTask extends Component {
 							
 								<Scrollbars ref="scrollbars" renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>} renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
 						
-									<RelativeArea isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} handleKeyPressedForSlider={this.handleKeyPressedForSlider} />
+									<RelativeArea sliderResults={this.state.sliderResults} isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} handleKeyPressedForSlider={this.handleKeyPressedForSlider} />
 						
 								</Scrollbars>
 
@@ -837,34 +839,11 @@ export default class LabelTask extends Component {
   						
 							<Box gridArea="left" border={{color: 'dark-3', size: 'xsmall'}} pad="xsmall">
 
-								<Box direction="row" gap="xsmall">
-
-									{(this.state.speakerToLabel == "Female") && 
-										<Box background={this.state.femaleColor} width="20px" height="20px" round="xsmall" align="center">
-
-											<Text size="small" color="light-1">{this.state.currentIndexF== -1? "" : this.state.boxes[this.state.currentIndexF].indexS + 1}</Text>
-
-										</Box>
-									}
-
-								</Box>
-
 								<Text>{this.state.currentTranscriptF}</Text>
 
 							</Box>
 
 							<Box gridArea="right" border={{color: 'dark-3', size: 'xsmall'}} pad="xsmall">
-
-								<Box direction="row" gap="xsmall">
-
-									{(this.state.speakerToLabel == "Male") && 
-										<Box background={this.state.maleColor} width="20px" height="20px" round="xsmall" align="center">
-
-											<Text size="small" color="light-1">{this.state.currentIndexM == -1? "" : this.state.boxes[this.state.currentIndexM].indexS + 1}</Text>
-
-										</Box>
-									}
-								</Box>
 
 								<Text>{this.state.currentTranscriptM}</Text>
 
