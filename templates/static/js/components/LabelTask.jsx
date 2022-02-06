@@ -449,15 +449,17 @@ export default class LabelTask extends Component {
   						if(that.state.condition == "slider" && that.state.speakerToLabel == "Male"){
   							var sliderResults_ = that.state.sliderResults;
   							sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
+  							that.setState({sliderResults: sliderResults_});
   						}
-  						that.setState({sliderResults: sliderResults_, currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
+  						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
   					}
   					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript != that.state.currentTranscriptF) {
   						if(that.state.condition == "slider" && that.state.speakerToLabel == "Female"){
   							var sliderResults_ = that.state.sliderResults;
   							sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
+  							that.setState({sliderResults: sliderResults_});
   						}
-  						that.setState({sliderResults: sliderResults_, currentIndex: i, currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
+  						that.setState({currentIndex: i, currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
   					}
   				
   					console.log("slider results: ", that.state.sliderResults);
