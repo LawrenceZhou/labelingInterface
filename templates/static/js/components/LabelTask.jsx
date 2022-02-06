@@ -277,7 +277,7 @@ export default class LabelTask extends Component {
 		var timeStart = Date.now();
 		that.setState({timeStamp: timeStamp, timeStart: timeStart},function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
 		that.stopPlay();
-		that.setState({isStarted: false, reset: true, lastTranscriptM: "", lastTranscriptF: "", currentTranscriptM: "", currentTranscriptF: "", currentIndexM: -1, currentIndexF: -1, atLeastOneRun: false});
+		that.setState({isStarted: false, reset: true, lastTranscriptM: "", lastTranscriptF: "", currentTranscriptM: "", currentTranscriptF: "", currentIndexM: -1, currentIndexF: -1, atLeastOneRun: false, sliderResults: {}});
 		if(that.state.condition == "slider") {
 			that.setState({sliderValue: 3});
 		}
@@ -448,22 +448,14 @@ export default class LabelTask extends Component {
 
   					if (that.state.boxes[i].speaker == 'M' && that.state.boxes[i].transcript != that.state.currentTranscriptM) {
   						if(that.state.condition == "slider" && that.state.speakerToLabel == "Male"){
-  							//var sliderResults_ = that.state.sliderResults;
-  							//sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
-  							//that.setState({sliderResults: sliderResults_});
-  						}
+
   						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
   					}
   					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript != that.state.currentTranscriptF) {
-  						if(that.state.condition == "slider" && that.state.speakerToLabel == "Female"){
-  							//var sliderResults_ = that.state.sliderResults;
-  							//sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
-  							//that.setState({sliderResults: sliderResults_});
-  						}
+
   						that.setState({currentIndex: i, currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
   					}
-  				
-  					console.log("slider results: ", that.state.sliderResults);
+
   				}
   			}
   		}
@@ -520,27 +512,15 @@ export default class LabelTask extends Component {
   		var that = this;
   		console.log("slider function");
   		
-  			for (var i = 0; i < that.state.boxes.length; i++){
-  				if ( that.state.currentTime * 10 > that.state.boxes[i].x && that.state.currentTime * 10 <= that.state.boxes[i].end) {
-  					console.log("slider!");
-  					if(that.state.condition == "slider" && that.state.speakerToLabel == "Male"){
-  						console.log("slider!");
-  						var sliderResults_ = that.state.sliderResults;
-  						sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
-  						that.setState({sliderResults: sliderResults_});
-  					}
-
-  					if(that.state.condition == "slider" && that.state.speakerToLabel == "Female"){
-  						console.log("slider!");
-  						var sliderResults_ = that.state.sliderResults;
-  						sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
-  						that.setState({sliderResults: sliderResults_});
-  					}
-
-  				}
-  				
-  				console.log("slider results: ", that.state.sliderResults);
+  		for (var i = 0; i < that.state.boxes.length; i++){
+  			if ( that.state.condition == "slider" && that.state.speakerToLabel[0] == that.state.boxes[i].speaker && that.state.currentTime * 10 > that.state.boxes[i].x && that.state.currentTime * 10 <= that.state.boxes[i].end) {
+  				var sliderResults_ = that.state.sliderResults;
+  				sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
+  				that.setState({sliderResults: sliderResults_});
   			}
+  				
+  			console.log("slider results: ", that.state.sliderResults);
+  		}
   
   	}
 
