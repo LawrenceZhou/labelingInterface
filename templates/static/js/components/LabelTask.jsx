@@ -148,6 +148,7 @@ export default class LabelTask extends Component {
         this.handleKeyPressedForSlider = this.handleKeyPressedForSlider.bind(this);
 		this.setVolume = this.setVolume.bind(this);	
 		this.setRefs = this.setRefs.bind(this);	
+		this.updateSlider = this.updateSlider.bind(this);	
 	}
 
 
@@ -447,17 +448,17 @@ export default class LabelTask extends Component {
 
   					if (that.state.boxes[i].speaker == 'M' && that.state.boxes[i].transcript != that.state.currentTranscriptM) {
   						if(that.state.condition == "slider" && that.state.speakerToLabel == "Male"){
-  							var sliderResults_ = that.state.sliderResults;
-  							sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
-  							that.setState({sliderResults: sliderResults_});
+  							//var sliderResults_ = that.state.sliderResults;
+  							//sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
+  							//that.setState({sliderResults: sliderResults_});
   						}
   						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
   					}
   					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript != that.state.currentTranscriptF) {
   						if(that.state.condition == "slider" && that.state.speakerToLabel == "Female"){
-  							var sliderResults_ = that.state.sliderResults;
-  							sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
-  							that.setState({sliderResults: sliderResults_});
+  							//var sliderResults_ = that.state.sliderResults;
+  							//sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
+  							//that.setState({sliderResults: sliderResults_});
   						}
   						that.setState({currentIndex: i, currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
   					}
@@ -515,6 +516,31 @@ export default class LabelTask extends Component {
   	}
 
 
+  	updateSlider() {
+  		var that = this;
+  		if(that.state.currentIndex == -1 || time * 10 < that.state.boxes[that.state.currentIndex].x || (that.state.currentIndex < that.state.boxes.length - 1 && that.state.currentTime * 10 >= that.state.boxes[that.state.currentIndex + 1].x)) {
+  			for (var i = 0; i < that.state.boxes.length; i++){
+  				if ( that.state.currentTime * 10 > that.state.boxes[i].x && time * 10 <= that.state.boxes[i].end) {
+  					if(that.state.condition == "slider" && that.state.speakerToLabel == "Male"){
+  						var sliderResults_ = that.state.sliderResults;
+  						sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
+  						that.setState({sliderResults: sliderResults_});
+  					}
+
+  					if(that.state.condition == "slider" && that.state.speakerToLabel == "Female"){
+  						var sliderResults_ = that.state.sliderResults;
+  						sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
+  						that.setState({sliderResults: sliderResults_});
+  					}
+
+  				}
+  				
+  				console.log("slider results: ", that.state.sliderResults);
+  			}
+  		}
+  	}
+
+
   	handleKeyPressedForSlider(event) {
         var that = this;
         if(event.keyCode === 37 && that.state.isStarted) {
@@ -532,14 +558,14 @@ export default class LabelTask extends Component {
         //Do whatever when up is pressed
             console.log("up pressed.");
             if (that.state.sliderValue < 5) {
-				that.setState({sliderValue: that.state.sliderValue + 1}, function(){console.log(that.state.currentIndex, that.state.currentTime, "slider: ", that.state.sliderValue);});
+				that.setState({sliderValue: that.state.sliderValue + 1}, function(){that.updateSlider(); console.log(that.state.currentIndex, that.state.currentTime, "slider: ", that.state.sliderValue);});
 			}
         }
         if(event.keyCode === 40 && that.state.isStarted) {
         //Do whatever when down is pressed
             console.log("down pressed.");
             if (that.state.sliderValue > 1) {
-				that.setState({sliderValue: that.state.sliderValue - 1}, function(){console.log(that.state.currentIndex, that.state.currentTime, "slider: ", that.state.sliderValue);});
+				that.setState({sliderValue: that.state.sliderValue - 1}, function(){that.updateSlider(); console.log(that.state.currentIndex, that.state.currentTime, "slider: ", that.state.sliderValue);});
   				
 			}
         }
