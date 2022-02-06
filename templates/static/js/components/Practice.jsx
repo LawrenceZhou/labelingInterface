@@ -149,16 +149,16 @@ export default class Practice extends Component {
 		this.setState({timeStamp: timeStamp, timeStart: timeStart },function(){ console.log("timestamp: ", this.state.timeStamp, "time start: ", this.state.timeStart)});
 		this.getCondition();
 
-		var boxes_ = [{index: 0, indexS: 0, x: 67, y: 16, speaker: 'F', end: 106, highlightA:false, highlightP:false, relative: 0, transcript:"Why did he invite her here?"}, 
-					{index: 1, indexS: 0, x: 100, y: 16, speaker: 'M', end: 135, highlightA:false, highlightP:false, relative: 0, transcript:"Why does that bother you?"},
-					{index: 2, indexS: 1, x: 127, y: 16, speaker: 'F', end: 173, highlightA:true, highlightP:false, relative: 0, transcript:"She's been in New York three and an half years, why all of a sudden?"},
-					{index: 3, indexS: 1, x: 166, y: 16, speaker: 'M', end: 217, highlightA:true, highlightP:true, relative: 0, transcript:"Well maybe...maybe he just wanted to see her."},
-					{index: 4, indexS: 2, x: 212, y: 16, speaker: 'F', end: 265, highlightA:false/*true*/, highlightP:false, relative: 0, transcript:"Nobody comes seven hundred miles just to see."},
-					{index: 5, indexS: 2, x: 257, y: 16, speaker: 'M', end: 331, highlightA:false, highlightP:false, relative: 0, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
-					{index: 6, indexS: 3, x: 336, y: 16, speaker: 'M', end: 406, highlightA:true, highlightP:false, relative: 0, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
-					{index: 7, indexS: 3, x: 399, y: 16, speaker: 'F', end: 430, highlightA:true/*false*/, highlightP:true, relative: 0, transcript:"He's not going to marry her."},
-					{index: 8, indexS: 4, x: 424, y: 16, speaker: 'M', end: 453, highlightA:true, highlightP:true, relative: 0, transcript:"How do you know he's even thinking about it?"},
-					{index: 9, indexS: 4, x: 443, y: 16, speaker: 'F', end: 463, highlightA: true/*false*/, highlightP:true, relative: 0, transcript:"It's got that about it."},
+		var boxes_ = [{sentenceID: 0, index: 0, indexS: 0, x: 67, y: 16, speaker: 'F', end: 106, highlightA:false, highlightP:false, relative: 0, transcript:"Why did he invite her here?"}, 
+					{sentenceID: 1, index: 1, indexS: 0, x: 100, y: 16, speaker: 'M', end: 135, highlightA:false, highlightP:false, relative: 0, transcript:"Why does that bother you?"},
+					{sentenceID: 2, index: 2, indexS: 1, x: 127, y: 16, speaker: 'F', end: 173, highlightA:true, highlightP:false, relative: 0, transcript:"She's been in New York three and an half years, why all of a sudden?"},
+					{sentenceID: 3, index: 3, indexS: 1, x: 166, y: 16, speaker: 'M', end: 217, highlightA:true, highlightP:true, relative: 0, transcript:"Well maybe...maybe he just wanted to see her."},
+					{sentenceID: 4, index: 4, indexS: 2, x: 212, y: 16, speaker: 'F', end: 265, highlightA:false/*true*/, highlightP:false, relative: 0, transcript:"Nobody comes seven hundred miles just to see."},
+					{sentenceID: 5, index: 5, indexS: 2, x: 257, y: 16, speaker: 'M', end: 331, highlightA:false, highlightP:false, relative: 0, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
+					{sentenceID: 6, index: 6, indexS: 3, x: 336, y: 16, speaker: 'M', end: 406, highlightA:true, highlightP:false, relative: 0, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
+					{sentenceID: 7, index: 7, indexS: 3, x: 399, y: 16, speaker: 'F', end: 430, highlightA:true/*false*/, highlightP:true, relative: 0, transcript:"He's not going to marry her."},
+					{sentenceID: 8, index: 8, indexS: 4, x: 424, y: 16, speaker: 'M', end: 453, highlightA:true, highlightP:true, relative: 0, transcript:"How do you know he's even thinking about it?"},
+					{sentenceID: 9, index: 9, indexS: 4, x: 443, y: 16, speaker: 'F', end: 463, highlightA: true/*false*/, highlightP:true, relative: 0, transcript:"It's got that about it."},
 					//{index: 10, indexS: 5, x: 458, y: 101, speaker: 'M', end: 476, highlightA:true, highlightP:true, transcript:"Oh.  So what."},
 					//{index: 11, indexS: 5, x: 471, y: 101, speaker: 'F', end: 509, highlightA:true/*false*/, highlightP:false, transcript:"What is going on here, Joe?"},
 					//{index: 12, indexS: 6, x: 506, y: 101, speaker: 'M', end: 526, highlightA:false, highlightP:true, transcript:"Now listen."},
@@ -453,14 +453,14 @@ export default class Practice extends Component {
         //Do whatever when up is pressed
             console.log("up pressed.");
             if (that.state.sliderValue < 5) {
-				that.setState({sliderValue: that.state.sliderValue + 1}, function(){console.log(that.state.currentIndex, that.state.currentTime, "slider: ", that.state.sliderValue);});
+				that.setState({sliderValue: that.state.sliderValue + 1}, function(){that.updateSlider(); console.log(that.state.currentIndex, that.state.currentTime, "slider: ", that.state.sliderValue);});
 			}
         }
         if(event.keyCode === 40 && that.state.isStarted) {
         //Do whatever when down is pressed
             console.log("down pressed.");
             if (that.state.sliderValue > 1) {
-				that.setState({sliderValue: that.state.sliderValue - 1}, function(){console.log(that.state.currentIndex, that.state.currentTime, "slider: ", that.state.sliderValue);});
+				that.setState({sliderValue: that.state.sliderValue - 1}, function(){that.updateSlider(); console.log(that.state.currentIndex, that.state.currentTime, "slider: ", that.state.sliderValue);});
   				
 			}
         }
