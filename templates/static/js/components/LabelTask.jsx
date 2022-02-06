@@ -520,7 +520,7 @@ export default class LabelTask extends Component {
   		var that = this;
   		if(that.state.currentIndex == -1 || time * 10 < that.state.boxes[that.state.currentIndex].x || (that.state.currentIndex < that.state.boxes.length - 1 && that.state.currentTime * 10 >= that.state.boxes[that.state.currentIndex + 1].x)) {
   			for (var i = 0; i < that.state.boxes.length; i++){
-  				if ( that.state.currentTime * 10 > that.state.boxes[i].x && time * 10 <= that.state.boxes[i].end) {
+  				if ( that.state.currentTime * 10 > that.state.boxes[i].x && that.state.currentTime * 10 <= that.state.boxes[i].end) {
   					if(that.state.condition == "slider" && that.state.speakerToLabel == "Male"){
   						var sliderResults_ = that.state.sliderResults;
   						sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
