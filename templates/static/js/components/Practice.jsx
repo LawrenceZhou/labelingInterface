@@ -568,7 +568,7 @@ export default class Practice extends Component {
 						
 							<Box ref={this.state.refs['descriptionRef']}>
 							
-								<Text>Task: In this practice, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong style={{color: this.state.speakerToLabel == "Female"? this.state.femaleColor:this.state.maleColor}}>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
+								<Text>Task: In this practice, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong style={{color: this.state.speakerToLabel == "Female"? this.state.femaleColor:this.state.maleColor}}>{this.state.taskList[this.state.currentTaskIndex].speaker} Speaker</strong>. </Text>
 							
 								<Text>Dialogue Description: {this.state.description} </Text>
 							
@@ -823,7 +823,7 @@ export default class Practice extends Component {
 								{!this.state.reset && <Button label="Cancel" onClick={() => {this.onCloseReset()}} color="dark-3" />}
 							
 								<Button
-									label={<Text color="white"><strong>{this.state.reset ? "Close" : "Reset"}</strong></Text>}
+									label={<Text color="white"><strong>{this.state.reset ? "Back" : "Reset"}</strong></Text>}
 									onClick={() => {this.state.reset ? this.onCloseReset():this.reset()}}
 									primary
 									color="status-critical"

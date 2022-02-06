@@ -647,7 +647,7 @@ export default class LabelTask extends Component {
 						
 							<Box ref={this.state.refs['descriptionRef']}>
 							
-								<Text>Task: In this task, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong  style={{color: this.state.speakerToLabel == "Female"? this.state.femaleColor:this.state.maleColor}}>{this.state.taskList[this.state.currentTaskIndex].speaker} speaker</strong>. </Text>
+								<Text>Task: In this task, please label the <strong>{this.state.taskList[this.state.currentTaskIndex].dimension}</strong> of the <strong  style={{color: this.state.speakerToLabel == "Female"? this.state.femaleColor:this.state.maleColor}}>{this.state.taskList[this.state.currentTaskIndex].speaker} Speaker</strong>. </Text>
 						
 								<Text>Dialogue Description: {this.state.description} </Text>
 
@@ -902,7 +902,7 @@ export default class LabelTask extends Component {
 								{!this.state.reset && <Button label="Cancel" onClick={() => {this.onCloseReset()}} color="dark-3" />}
 							
 								<Button
-									label={<Text color="white"><strong>{this.state.reset ? "Close" : "Reset"}</strong></Text>}
+									label={<Text color="white"><strong>{this.state.reset ? "Back" : "Reset"}</strong></Text>}
 									onClick={() => {this.state.reset ? this.onCloseReset():this.reset()}}
 									primary
 									color="status-critical"
@@ -932,7 +932,7 @@ export default class LabelTask extends Component {
 
 								{!this.state.next && <Button label="Cancel" onClick={() => {this.onCloseNext()}} color="dark-3" />}
 							
-								<Button label={<Text color="white"><strong>{this.state.next? "Close" : "Next"}</strong></Text>}
+								<Button label={<Text color="white"><strong>Next</strong></Text>}
 										onClick={() => {this.state.next? this.onCloseNext():this.next()}} primary color="status-ok" />
 
 							</Box>

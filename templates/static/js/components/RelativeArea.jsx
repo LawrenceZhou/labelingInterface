@@ -117,11 +117,7 @@ export default class RelativeArea extends Component{
 
         if(nextProps.isPlaying !== this.state.isPlaying){
             if(nextProps.isPlaying){
-                if(this.audio.readyState >= 2){
-                    this.audio.play();
-                 }else{
-                    alert("audio file not loaded completely. Please wait.");
-                }
+                this.audio.play();
             }else{
                 this.audio.pause();
             }
