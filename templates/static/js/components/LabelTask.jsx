@@ -94,8 +94,8 @@ export default class LabelTask extends Component {
 			taskList:[{speaker:'Female', dimension:'Arousal'},
 						{speaker:'Female', dimension:'Pleasure'},
 						{speaker:'Male', dimension:'Arousal'},//for user study
-						{speaker:'Male', dimension:'Pleasure'}],//for user study
-						],
+						{speaker:'Male', dimension:'Pleasure'},//for user study
+					],
 			conditionList: ['withHighlight','withoutHighlight','slider'],
 			condition: 'withHighlight',
 			currentIndex: -1,
