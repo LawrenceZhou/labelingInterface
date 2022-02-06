@@ -296,8 +296,14 @@ export default class RelativeArea extends Component{
               
                                 <Text x={1} y={18} width={29} height={this.state.offsetY} fontSize={14} text={box.indexS + 1} fill='white' strokeWidth={1} align="start" visible={box.speaker == this.state.speaker[0]} />
                                 
-                                {[...Array(Math.abs(box.relative))].map((e, r_i) => { return <Arrow x= {7 * r_i + (box.indexS < 9 ? 14 : 22)} y= {31} points={[0, (box.relative < 0 ? -1 : 0) * 14, 0, (box.relative > 0 ? -1 : 0) * 14]}
+                                {this.props.condition != 'slider' && [...Array(Math.abs(box.relative))].map((e, r_i) => { return <Arrow x= {7 * r_i + (box.indexS < 9 ? 14 : 22)} y= {31} points={[0, (box.relative < 0 ? -1 : 0) * 14, 0, (box.relative > 0 ? -1 : 0) * 14]}
                                     pointerLength ={4} pointerWidth={4} fill={'white'} stroke={'white'} strokeWidth={2} /> })}
+
+                                {this.props.condition == 'slider' && <Group x={14} y={31}>
+
+                                    <Rect x={0} y={0} width={16} height={16} fill={'white'} cornerRadius={[1, 1, 1, 1]} />
+
+                                </Group>}
 
                             </Group>
                         ))}
