@@ -522,12 +522,14 @@ export default class LabelTask extends Component {
   			for (var i = 0; i < that.state.boxes.length; i++){
   				if ( that.state.currentTime * 10 > that.state.boxes[i].x && that.state.currentTime * 10 <= that.state.boxes[i].end) {
   					if(that.state.condition == "slider" && that.state.speakerToLabel == "Male"){
+  						console.log("slider!");
   						var sliderResults_ = that.state.sliderResults;
   						sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
   						that.setState({sliderResults: sliderResults_});
   					}
 
   					if(that.state.condition == "slider" && that.state.speakerToLabel == "Female"){
+  						console.log("slider!");
   						var sliderResults_ = that.state.sliderResults;
   						sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
   						that.setState({sliderResults: sliderResults_});
