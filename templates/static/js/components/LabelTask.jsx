@@ -449,12 +449,16 @@ export default class LabelTask extends Component {
   					if (that.state.boxes[i].speaker == 'M' && that.state.boxes[i].transcript != that.state.currentTranscriptM) {
 
   						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
-  						that.updateSlider();
+  						if (that.state.condition == "slider"){
+  							that.updateSlider();
+  						}
   					}
   					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript != that.state.currentTranscriptF) {
 
   						that.setState({currentIndex: i, currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
-  						that.updateSlider();
+  						if (that.state.condition == "slider"){
+  							that.updateSlider();
+  						}
   					}
 
   				}
@@ -465,7 +469,7 @@ export default class LabelTask extends Component {
 
   	updateScrollPosition(positionY) {
   		var that = this;
-  		console.log(that.refs.scrollbars.getScrollTop(), positionY);
+
   		if (that.refs.scrollbars.getScrollTop() - positionY + 1 >= 0) {
   			that.refs.scrollbars.scrollTop(positionY - 1);
   			that.setState({scrollTop: that.refs.scrollbars.getScrollTop()});
@@ -511,7 +515,6 @@ export default class LabelTask extends Component {
 
   	updateSlider() {
   		var that = this;
-  		console.log("slider function");
   		
   		for (var i = 0; i < that.state.boxes.length; i++){
   			if ( that.state.condition == "slider" && that.state.speakerToLabel[0] == that.state.boxes[i].speaker && that.state.currentTime * 10 > that.state.boxes[i].x && that.state.currentTime * 10 <= that.state.boxes[i].end) {
@@ -520,7 +523,6 @@ export default class LabelTask extends Component {
   				that.setState({sliderResults: sliderResults_});
   			}
   				
-  			console.log("slider results: ", that.state.sliderResults);
   		}
   
   	}

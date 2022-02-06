@@ -85,7 +85,7 @@ export default class Practice extends Component {
 			currentTranscriptF: "",
 			lastTranscriptF: "",
 			speakerToLabel: 'Female',
-			dimensionToLabel: 'Arousal',
+			dimensionToLabel: 'Pleasure',
 			speakers: ['Male', 'Female'],
 			dimensions:['Arousal', 'Pleasure'],
 			currentTaskIndex: 0,
@@ -109,12 +109,12 @@ export default class Practice extends Component {
 			scrollTop: 0,
 			isStarted: false,
 			volume: 0.7,
-			audioPath: "assets/wavs/Ses01F_script01_2.wav",
+			audioPath: "assets/wavs/Ses01M_impro01.wav",
 			assigmentID: 0,
 			length: 0,
 			sliderValue: 3,
 			sliderResults: {},
-			description: "The female and the male are arguing about why their missing son's ex-girlfriend showed up. Furthermore, their another son wishes to propose to the girl, which irritates the female.",
+			description: "The male is at the Department of Motor Vehicles (DMV) and he is being sent back after standing in line for an hour for not having the right form of IDs. The female works at DMV and she rejects the application.",
 			videoUrl: {withHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/withHighlightTutorial.mp4", withoutHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/withoutHighlightTutorial.mp4", slider:"https://museumpalazzo.s3.us-west-2.amazonaws.com/GNODC.mp4"},
 		};
 
@@ -149,16 +149,27 @@ export default class Practice extends Component {
 		this.setState({timeStamp: timeStamp, timeStart: timeStart },function(){ console.log("timestamp: ", this.state.timeStamp, "time start: ", this.state.timeStart)});
 		this.getCondition();
 
-		var boxes_ = [{sentenceID: 0, index: 0, indexS: 0, x: 67, y: 16, speaker: 'F', end: 106, highlightA:false, highlightP:false, relative: 0, transcript:"Why did he invite her here?"}, 
-					{sentenceID: 1, index: 1, indexS: 0, x: 100, y: 16, speaker: 'M', end: 135, highlightA:false, highlightP:false, relative: 0, transcript:"Why does that bother you?"},
-					{sentenceID: 2, index: 2, indexS: 1, x: 127, y: 16, speaker: 'F', end: 173, highlightA:true, highlightP:false, relative: 0, transcript:"She's been in New York three and an half years, why all of a sudden?"},
-					{sentenceID: 3, index: 3, indexS: 1, x: 166, y: 16, speaker: 'M', end: 217, highlightA:true, highlightP:true, relative: 0, transcript:"Well maybe...maybe he just wanted to see her."},
-					{sentenceID: 4, index: 4, indexS: 2, x: 212, y: 16, speaker: 'F', end: 265, highlightA:false/*true*/, highlightP:false, relative: 0, transcript:"Nobody comes seven hundred miles just to see."},
-					{sentenceID: 5, index: 5, indexS: 2, x: 257, y: 16, speaker: 'M', end: 331, highlightA:false, highlightP:false, relative: 0, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
-					{sentenceID: 6, index: 6, indexS: 3, x: 336, y: 16, speaker: 'M', end: 406, highlightA:true, highlightP:false, relative: 0, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
-					{sentenceID: 7, index: 7, indexS: 3, x: 399, y: 16, speaker: 'F', end: 430, highlightA:true/*false*/, highlightP:true, relative: 0, transcript:"He's not going to marry her."},
-					{sentenceID: 8, index: 8, indexS: 4, x: 424, y: 16, speaker: 'M', end: 453, highlightA:true, highlightP:true, relative: 0, transcript:"How do you know he's even thinking about it?"},
-					{sentenceID: 9, index: 9, indexS: 4, x: 443, y: 16, speaker: 'F', end: 463, highlightA: true/*false*/, highlightP:true, relative: 0, transcript:"It's got that about it."},
+		var boxes_ = [
+					{sentenceID: 0, index: 0, indexS: 0, x: 67, y: 16, speaker: 'F', end: 106, highlightA:false, highlightP:false, relative: 0, transcript:"Next. My window is open."}, 
+					{sentenceID: 1, index: 1, indexS: 0, x: 82, y: 16, speaker: 'M', end: 168, highlightA:false, highlightP:false, relative: 0, transcript:"Yes, me. Okay, okay here we go. Okay, so filled out all these forms - and I have this form of ID here so..."},
+					{sentenceID: 2, index: 2, indexS: 1, x: 144, y: 16, speaker: 'F', end: 182, highlightA:false, highlightP:false, relative: 0, transcript:"This is... Your last - Your first name is Jones?"},
+					{sentenceID: 3, index: 3, indexS: 1, x: 176, y: 16, speaker: 'M', end: 201, highlightA:false, highlightP:false, relative: 0, transcript:"Yes, Jones."},
+					{sentenceID: 4, index: 4, indexS: 2, x: 194, y: 16, speaker: 'F', end: 264, highlightA:false, highlightP:true, relative: 0, transcript:"That's just strange. I figured you filled in wrong sections. What are you... what's... What are you applying for?"},
+					{sentenceID: 5, index: 5, indexS: 2, x: 259, y: 16, speaker: 'M', end: 290, highlightA:false, highlightP:false, relative: 0, transcript:"I'm just applying for another ID."},
+					{sentenceID: 6, index: 6, indexS: 3, x: 284, y: 16, speaker: 'F', end: 309, highlightA:false, highlightP:true, relative: 0, transcript:"Another ID?"},
+					{sentenceID: 7, index: 7, indexS: 3, x: 293, y: 16, speaker: 'M', end: 402, highlightA:true, highlightP:true, relative: 0, transcript:"Yes. I'm supposed to have three forms of ID for this. It's a long story, I'm supposed to have three forms of ID for this other job I really don't get into but I need another... I have it right here, yes."},
+					{sentenceID: 8, index: 8, indexS: 4, x: 361, y: 16, speaker: 'F', end: 386, highlightA:false, highlightP:true, relative: 0, transcript:"Fine. So I need ID."},
+					{sentenceID: 9, index: 9, indexS: 5, x: 398, y: 16, speaker: 'F', end: 433, highlightA: true, highlightP:false, relative: 0, transcript:"No, I need your ID to give you a second ID."},
+					//{sentenceID: 0, index: 0, indexS: 0, x: 67, y: 16, speaker: 'F', end: 106, highlightA:false, highlightP:false, relative: 0, transcript:"Why did he invite her here?"}, 
+					//{sentenceID: 1, index: 1, indexS: 0, x: 100, y: 16, speaker: 'M', end: 135, highlightA:false, highlightP:false, relative: 0, transcript:"Why does that bother you?"},
+					//{sentenceID: 2, index: 2, indexS: 1, x: 127, y: 16, speaker: 'F', end: 173, highlightA:true, highlightP:false, relative: 0, transcript:"She's been in New York three and an half years, why all of a sudden?"},
+					//{sentenceID: 3, index: 3, indexS: 1, x: 166, y: 16, speaker: 'M', end: 217, highlightA:true, highlightP:true, relative: 0, transcript:"Well maybe...maybe he just wanted to see her."},
+					//{sentenceID: 4, index: 4, indexS: 2, x: 212, y: 16, speaker: 'F', end: 265, highlightA:false/*true*/, highlightP:false, relative: 0, transcript:"Nobody comes seven hundred miles just to see."},
+					//{sentenceID: 5, index: 5, indexS: 2, x: 257, y: 16, speaker: 'M', end: 331, highlightA:false, highlightP:false, relative: 0, transcript:"What do you mean?  You know he lived next door to the girl his whole life, why wouldn't he want to see her?"},
+					//{sentenceID: 6, index: 6, indexS: 3, x: 336, y: 16, speaker: 'M', end: 406, highlightA:true, highlightP:false, relative: 0, transcript:"[BREATHING] You don't look at me like that.  He didn't tell me anything more than he told you."},
+					//{sentenceID: 7, index: 7, indexS: 3, x: 399, y: 16, speaker: 'F', end: 430, highlightA:true/*false*/, highlightP:true, relative: 0, transcript:"He's not going to marry her."},
+					//{sentenceID: 8, index: 8, indexS: 4, x: 424, y: 16, speaker: 'M', end: 453, highlightA:true, highlightP:true, relative: 0, transcript:"How do you know he's even thinking about it?"},
+					//{sentenceID: 9, index: 9, indexS: 4, x: 443, y: 16, speaker: 'F', end: 463, highlightA: true/*false*/, highlightP:true, relative: 0, transcript:"It's got that about it."},
 					//{index: 10, indexS: 5, x: 458, y: 101, speaker: 'M', end: 476, highlightA:true, highlightP:true, transcript:"Oh.  So what."},
 					//{index: 11, indexS: 5, x: 471, y: 101, speaker: 'F', end: 509, highlightA:true/*false*/, highlightP:false, transcript:"What is going on here, Joe?"},
 					//{index: 12, indexS: 6, x: 506, y: 101, speaker: 'M', end: 526, highlightA:false, highlightP:true, transcript:"Now listen."},
@@ -361,11 +372,15 @@ export default class Practice extends Component {
 
   					if (that.state.boxes[i].speaker == 'M' && that.state.boxes[i].transcript != that.state.currentTranscriptM) {
   						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
-  						that.updateSlider();
+  						if (that.state.condition == "slider"){
+  							that.updateSlider();
+  						}
   					}
   					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript != that.state.currentTranscriptF) {
   						that.setState({currentIndex: i,  currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
-  						that.updateSlider();
+  						if (that.state.condition == "slider"){
+  							that.updateSlider();
+  						}
   					}
   				}
   			}
@@ -375,7 +390,7 @@ export default class Practice extends Component {
 
   	updateScrollPosition(positionY) {
   		var that = this;
-  		console.log(that.refs.scrollbars.getScrollTop(), positionY);
+
   		if (that.refs.scrollbars.getScrollTop() - positionY + 1 >= 0) {
   			that.refs.scrollbars.scrollTop(positionY - 1);
   			that.setState({scrollTop: that.refs.scrollbars.getScrollTop()});
@@ -421,8 +436,7 @@ export default class Practice extends Component {
 
   	updateSlider() {
   		var that = this;
-  		console.log("slider function");
-  		
+
   		for (var i = 0; i < that.state.boxes.length; i++){
   			if ( that.state.condition == "slider" && that.state.speakerToLabel[0] == that.state.boxes[i].speaker && that.state.currentTime * 10 > that.state.boxes[i].x && that.state.currentTime * 10 <= that.state.boxes[i].end) {
   				var sliderResults_ = that.state.sliderResults;
