@@ -447,7 +447,6 @@ export default class LabelTask extends Component {
   				if ( time * 10 > that.state.boxes[i].x && time * 10 <= that.state.boxes[i].end) {
 
   					if (that.state.boxes[i].speaker == 'M' && that.state.boxes[i].transcript != that.state.currentTranscriptM) {
-  						if(that.state.condition == "slider" && that.state.speakerToLabel == "Male"){
 
   						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
   					}
