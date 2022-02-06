@@ -762,7 +762,7 @@ export default class LabelTask extends Component {
 
 						</Grid>
 						
-						<Grid rows={['auto','auto']} columns={['1/2', '1/2']} gap="none"
+						{(this.state.condition != "slider") && <Grid rows={['auto','auto']} columns={['1/2', '1/2']} gap="none"
   							areas={[
     							{ name: 'left-up', start: [0, 0], end: [0, 0] },
     							{ name: 'right-up', start: [1, 0], end: [1, 0] },
@@ -793,7 +793,7 @@ export default class LabelTask extends Component {
 
 									<Text size="small">current sentence </Text>
 
-									{(this.state.condition != "slider" && this.state.speakerToLabel == "Female") && 
+									{(this.state.speakerToLabel == "Female") && 
 										<Box background={this.state.femaleColor} width="20px" height="20px" round="xsmall" align="center">
 
 											<Text size="small" color="light-1">{this.state.currentIndexF== -1? "" : this.state.boxes[this.state.currentIndexF].indexS + 1}</Text>
@@ -813,7 +813,7 @@ export default class LabelTask extends Component {
 
 									<Text size="small">current sentence </Text>
 
-									{(this.state.condition != "slider" && this.state.speakerToLabel == "Male") && 
+									{(this.state.speakerToLabel == "Male") && 
 										<Box background={this.state.maleColor} width="20px" height="20px" round="xsmall" align="center">
 
 											<Text size="small" color="light-1">{this.state.currentIndexM == -1? "" : this.state.boxes[this.state.currentIndexM].indexS + 1}</Text>
@@ -826,7 +826,51 @@ export default class LabelTask extends Component {
 
 							</Box>
 						
-						</Grid>
+						</Grid>}
+
+						{(this.state.condition == "slider") && <Grid rows={['auto']} columns={['1/2', '1/2']} gap="none"
+  							areas={[
+    							{ name: 'left', start: [0, 0], end: [0, 0] },
+    							{ name: 'right', start: [1, 0], end: [1, 0] },
+  							]}
+						>
+  						
+							<Box gridArea="left" border={{color: 'dark-3', size: 'xsmall'}} pad="xsmall">
+
+								<Box direction="row" gap="xsmall">
+
+									{(this.state.speakerToLabel == "Female") && 
+										<Box background={this.state.femaleColor} width="20px" height="20px" round="xsmall" align="center">
+
+											<Text size="small" color="light-1">{this.state.currentIndexF== -1? "" : this.state.boxes[this.state.currentIndexF].indexS + 1}</Text>
+
+										</Box>
+									}
+
+								</Box>
+
+								<Text>{this.state.currentTranscriptF}</Text>
+
+							</Box>
+
+							<Box gridArea="right" border={{color: 'dark-3', size: 'xsmall'}} pad="xsmall">
+
+								<Box direction="row" gap="xsmall">
+
+									{(this.state.speakerToLabel == "Male") && 
+										<Box background={this.state.maleColor} width="20px" height="20px" round="xsmall" align="center">
+
+											<Text size="small" color="light-1">{this.state.currentIndexM == -1? "" : this.state.boxes[this.state.currentIndexM].indexS + 1}</Text>
+
+										</Box>
+									}
+								</Box>
+
+								<Text>{this.state.currentTranscriptM}</Text>
+
+							</Box>
+						
+						</Grid>}
 					
 					</CardBody>
 								

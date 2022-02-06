@@ -602,7 +602,7 @@ export default class Practice extends Component {
 				
 						<Box direction="row" justify="center" align="center" >
 					
-							{this.state.condition != 'slider' && <Box direction="row" gap="small" >
+							<Box direction="row" gap="small" >
 							
 								<Box direction="row" gap="xsmall" >
 									
@@ -620,7 +620,7 @@ export default class Practice extends Component {
 
 								</Box>
 						
-							</Box>}
+							</Box>
 						
 							<Box  margin={{left:'auto'}} pad={{right: "medium"}}>
 						
