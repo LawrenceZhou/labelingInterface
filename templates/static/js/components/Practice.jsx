@@ -138,6 +138,7 @@ export default class Practice extends Component {
 		this.setRefs = this.setRefs.bind(this);	
 		this.finishPractice = this.finishPractice.bind(this);	
 		this.getCondition = this.getCondition.bind(this);	
+		this.updateSlider = this.updateSlider.bind(this);	
 	}
 
 
@@ -230,7 +231,7 @@ export default class Practice extends Component {
 		var timeStart = Date.now();
 		that.setState({timeStamp: timeStamp, timeStart: timeStart},function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
 		that.stopPlay();
-		that.setState({isStarted: false, reset: true, lastTranscriptM: "", lastTranscriptF: "", currentTranscriptM: "", currentTranscriptF: "", currentIndexM: -1, currentIndexF: -1, atLeastOneRun: false});
+		that.setState({sliderResults:{}, isStarted: false, reset: true, lastTranscriptM: "", lastTranscriptF: "", currentTranscriptM: "", currentTranscriptF: "", currentIndexM: -1, currentIndexF: -1, atLeastOneRun: false});
 		if(that.state.condition == "slider") {
 			that.setState({sliderValue: 3});
 		}
@@ -359,18 +360,12 @@ export default class Practice extends Component {
   				if ( time * 10 > that.state.boxes[i].x && time * 10 <= that.state.boxes[i].end) {
 
   					if (that.state.boxes[i].speaker == 'M' && that.state.boxes[i].transcript != that.state.currentTranscriptM) {
-  						if(that.state.condition == "slider" && that.state.speakerToLabel == "Male"){
-  							var sliderResults_ = that.state.sliderResults;
-  							sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
-  						}
   						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
+  						that.updateSlider();
   					}
   					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript != that.state.currentTranscriptF) {
-  						if(that.state.condition == "slider" && that.state.speakerToLabel == "Female"){
-  							var sliderResults_ = that.state.sliderResults;
-  							sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
-  						}
   						that.setState({currentIndex: i,  currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
+  						that.updateSlider();
   					}
   				}
   			}
@@ -421,6 +416,23 @@ export default class Practice extends Component {
   		var that = this;
   		that.setState({volume: Math.max(value, 0.2)});
   		console.log("volume: ", value);
+  	}
+
+
+  	updateSlider() {
+  		var that = this;
+  		console.log("slider function");
+  		
+  		for (var i = 0; i < that.state.boxes.length; i++){
+  			if ( that.state.condition == "slider" && that.state.speakerToLabel[0] == that.state.boxes[i].speaker && that.state.currentTime * 10 > that.state.boxes[i].x && that.state.currentTime * 10 <= that.state.boxes[i].end) {
+  				var sliderResults_ = that.state.sliderResults;
+  				sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
+  				that.setState({sliderResults: sliderResults_});
+  			}
+  				
+  			console.log("slider results: ", that.state.sliderResults);
+  		}
+  
   	}
 
 
@@ -586,7 +598,7 @@ export default class Practice extends Component {
 							
 								<Scrollbars ref="scrollbars" renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>} renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
 						
-									<RelativeArea isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} handleKeyPressedForSlider={this.handleKeyPressedForSlider} />
+									<RelativeArea sliderResults={this.state.sliderResults} isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} handleKeyPressedForSlider={this.handleKeyPressedForSlider} />
 						
 								</Scrollbars>
 
