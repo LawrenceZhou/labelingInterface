@@ -166,7 +166,7 @@ export default class Questionnaire extends Component {
 
 								</FormField>
 
-								<FormField label="3. Do you think this interface is easy to get used to?*" name="learning" required>
+								<FormField label="3. Do you think this interface is easy to learn to use?*" name="learning" required>
 
 									<Box direction="row" align="center" justify="center" gap="small" pad={{top:"medium", bottom: "medium"}}>
 
@@ -191,7 +191,7 @@ export default class Questionnaire extends Component {
 
 								</FormField>
 
-								<FormField label="5. Do you think this interface is intuitive for you to understand emotion labeling?*" name="intuitiveness" required>
+								<FormField label="5. Do you think this interface is intuitive for the emotion labeling task?*" name="intuitiveness" required>
 
 									<Box direction="row" align="center" justify="center" gap="small" pad={{top:"medium", bottom: "medium"}}>
 
