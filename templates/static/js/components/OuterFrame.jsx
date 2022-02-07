@@ -94,7 +94,7 @@ export default class OuterFrame extends Component {
 
 					<Box background="#EEEEEE" pad="small">
 
-						<Text color="status-critical" textAlign="center"><strong>Please DO NOT click the Back or Refesh button of the browser.</strong></Text>
+						<Text color="status-critical" textAlign="center"><strong>Please DO NOT click Back or Refresh button of the browser.</strong></Text>
 					
 					</Box>
 
