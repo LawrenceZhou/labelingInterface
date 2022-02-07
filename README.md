@@ -242,7 +242,7 @@ DONOT FORGET TO CHANGE AWS EC2 CONFIG!!!!
 
 1. Go to the `server/` directory create database and tables: ` go run *.go -mode=init_database -database_name=label_task_schema` 
 
-2. Start the server with `go run *.go -mode=server -database_name=label_task_schema`
+2. For debugging, start the server with `go run *.go -mode=server -database_name=label_task_schema`
 	
    There can be an error: `MySQL Error: : 'Access denied for user 'root'@'localhost'`,
 
@@ -252,4 +252,13 @@ DONOT FORGET TO CHANGE AWS EC2 CONFIG!!!!
 
    `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'test';`
 
-3. If all is working correctly, check the address http://label.yijunzhou.xyz/ which you can open in your  browser and see the application running.
+3. For deployment, build the executive file:
+   `go build -o server`
+
+   Forever run it:
+   `nohup ./server &`
+
+   Kill it by:
+   `killall ./server`
+
+4. If all is working correctly, check the address http://label.yijunzhou.xyz/ which you can open in your  browser and see the application running.
