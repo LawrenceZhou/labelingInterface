@@ -115,6 +115,7 @@ export default class Practice extends Component {
 			length: 0,
 			sliderValue: 3,
 			sliderResults: {},
+			seenSentences: new Set(),
 			description: "The male is at the Department of Motor Vehicles (DMV) and he is being sent back after standing in line for an hour for not having the right form of IDs. The female works at DMV and she rejects the application.",
 			videoUrl: {withHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/withHighlightTutorial.mp4", withoutHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/withoutHighlightTutorial.mp4", slider:"https://museumpalazzo.s3.us-west-2.amazonaws.com/GNODC.mp4"},
 		};
@@ -376,7 +377,7 @@ export default class Practice extends Component {
   						if (that.state.condition == "slider"){
   							that.updateSlider();
   						}else{
-  							seenSentences_ = that.state.seenSentences;
+  							var seenSentences_ = that.state.seenSentences;
   							seenSentences_.add(that.state.boxes[i].sentenceID);
   							that.setState({seenSentences: seenSentences_});
   						}
@@ -386,7 +387,7 @@ export default class Practice extends Component {
   						if (that.state.condition == "slider"){
   							that.updateSlider();
   						}else{
-  							seenSentences_ = that.state.seenSentences;
+  							var seenSentences_ = that.state.seenSentences;
   							seenSentences_.add(that.state.boxes[i].sentenceID);
   							that.setState({seenSentences: seenSentences_});
   						}

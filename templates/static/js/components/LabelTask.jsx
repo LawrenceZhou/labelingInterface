@@ -453,7 +453,7 @@ export default class LabelTask extends Component {
   						if (that.state.condition == "slider"){
   							that.updateSlider();
   						}else{
-  							seenSentences_ = that.state.seenSentences;
+  							var seenSentences_ = that.state.seenSentences;
   							seenSentences_.add(that.state.boxes[i].sentenceID);
   							that.setState({seenSentences: seenSentences_});
   						}
@@ -464,7 +464,7 @@ export default class LabelTask extends Component {
   						if (that.state.condition == "slider"){
   							that.updateSlider();
   						}else{
-  							seenSentences_ = that.state.seenSentences;
+  							var seenSentences_ = that.state.seenSentences;
   							seenSentences_.add(that.state.boxes[i].sentenceID);
   							that.setState({seenSentences: seenSentences_});
   						}
