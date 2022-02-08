@@ -294,9 +294,9 @@ export default class RelativeArea extends Component{
                                 <Rect x={0} y={0} width={box.end - box.x} height={48} shadowBlur={box.speaker == this.state.speaker[0]? 1 : 0} cornerRadius={[3, 3, 3, 3]}
                                     fill={box.speaker == 'M'? (this.state.speaker == "Male"? this.props.maleColor : '#CCCCCC') : (this.state.speaker == "Female"? this.props.femaleColor : '#CCCCCC')} />
               
-                                {this.props.condition == 'slider' && <Text x={1} y={18} width={29} height={this.state.offsetY} fontSize={14} text={this.props.sliderResults[box.sentenceID]} fill='white' strokeWidth={1} align="start" visible={box.sentenceID in this.props.sliderResults} />}
+                                {false && <Text x={1} y={18} width={29} height={this.state.offsetY} fontSize={14} text={this.props.sliderResults[box.sentenceID]} fill='white' strokeWidth={1} align="start" visible={box.sentenceID in this.props.sliderResults} />}
 
-                                {this.props.condition != 'slider' && <Text x={1} y={18} width={29} height={this.state.offsetY} fontSize={14} text={box.indexS + 1} fill='white' strokeWidth={1} align="start" visible={box.speaker == this.state.speaker[0]} />}
+                                {false != 'slider' && <Text x={1} y={18} width={29} height={this.state.offsetY} fontSize={14} text={box.indexS + 1} fill='white' strokeWidth={1} align="start" visible={box.speaker == this.state.speaker[0]} />}
                                 
                                 {this.props.condition != 'slider' && [...Array(Math.abs(box.relative))].map((e, r_i) => { return <Arrow x= {7 * r_i + (box.indexS < 9 ? 14 : 22)} y= {31} points={[0, (box.relative < 0 ? -1 : 0) * 14, 0, (box.relative > 0 ? -1 : 0) * 14]}
                                     pointerLength ={4} pointerWidth={4} fill={'white'} stroke={'white'} strokeWidth={2} /> })}
