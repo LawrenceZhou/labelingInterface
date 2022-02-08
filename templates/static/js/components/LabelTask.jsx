@@ -119,6 +119,7 @@ export default class LabelTask extends Component {
 			length: 0,
 			sliderValue: 3,
 			sliderResults: {},
+			seenSentences: new Set(),
 			description: "",
 		};
 
@@ -451,6 +452,10 @@ export default class LabelTask extends Component {
   						that.setState({currentIndex: i, currentIndexM: i, currentTranscriptM: that.state.boxes[i].transcript, lastTranscriptM: that.state.currentTranscriptM});
   						if (that.state.condition == "slider"){
   							that.updateSlider();
+  						}else{
+  							seenSentences_ = that.state.seenSentences;
+  							seenSentences_.add(that.state.boxes[i].sentenceID);
+  							that.setState({seenSentences: seenSentences_});
   						}
   					}
   					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript != that.state.currentTranscriptF) {
@@ -458,6 +463,10 @@ export default class LabelTask extends Component {
   						that.setState({currentIndex: i, currentIndexF: i, currentTranscriptF: that.state.boxes[i].transcript, lastTranscriptF: that.state.currentTranscriptF});
   						if (that.state.condition == "slider"){
   							that.updateSlider();
+  						}else{
+  							seenSentences_ = that.state.seenSentences;
+  							seenSentences_.add(that.state.boxes[i].sentenceID);
+  							that.setState({seenSentences: seenSentences_});
   						}
   					}
 
@@ -682,7 +691,7 @@ export default class LabelTask extends Component {
 							
 								<Scrollbars ref="scrollbars" renderTrackHorizontal={props => <div {...props} style={{display:"none"}}/>} renderThumbHorizontal={props => <div {...props} style={{display:"none"}}/>}>
 						
-									<RelativeArea sliderResults={this.state.sliderResults} isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} handleKeyPressedForSlider={this.handleKeyPressedForSlider} />
+									<RelativeArea seenSetences={this.state.seenSentences} sliderResults={this.state.sliderResults} isStarted={this.state.isStarted} ref={this.comparisonAreaRef} length={this.state.length} audioPath={this.state.audioPath} condition={this.state.condition} volume={this.state.volume} condition={this.state.condition} boxesPassed={this.state.boxes} scrollTop={this.state.scrollTop} femaleColor={this.state.femaleColor} maleColor={this.state.maleColor} isPlaying={this.state.isPlaying} togglePlay={this.togglePlay} stopPlay={this.stopPlay} reset={this.state.reset} getCurrentTime={this.updateCurrentTime} speaker={this.state.speakerToLabel} dimension={this.state.dimensionToLabel} updateScrollPosition={this.updateScrollPosition} handleKeyPressedForSlider={this.handleKeyPressedForSlider} />
 						
 								</Scrollbars>
 
