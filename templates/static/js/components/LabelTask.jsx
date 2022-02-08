@@ -278,7 +278,7 @@ export default class LabelTask extends Component {
 		var timeStart = Date.now();
 		that.setState({timeStamp: timeStamp, timeStart: timeStart},function(){ console.log("timestamp: ", that.state.timeStamp, "time usage: ", that.state.timeUsage)});
 		that.stopPlay();
-		that.setState({isStarted: false, reset: true, lastTranscriptM: "", lastTranscriptF: "", currentTranscriptM: "", currentTranscriptF: "", currentIndexM: -1, currentIndexF: -1, atLeastOneRun: false, sliderResults: {}});
+		that.setState({isStarted: false, reset: true, lastTranscriptM: "", lastTranscriptF: "", currentTranscriptM: "", currentTranscriptF: "", currentIndexM: -1, currentIndexF: -1, atLeastOneRun: false, sliderResults: {}, seenSentences: new Set()});
 		if(that.state.condition == "slider") {
 			that.setState({sliderValue: 3});
 		}
