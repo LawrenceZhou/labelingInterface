@@ -301,7 +301,7 @@ export default class RelativeArea extends Component{
                                 {this.props.condition != 'slider' && [...Array(Math.abs(box.relative))].map((e, r_i) => { return <Arrow x= {7 * r_i + 4/*(box.indexS < 9 ? 14 : 22)*/} y= {31} points={[0, (box.relative < 0 ? -1 : 0) * 14, 0, (box.relative > 0 ? -1 : 0) * 14]}
                                     pointerLength ={4} pointerWidth={4} fill={'white'} stroke={'white'} strokeWidth={2} /> })}
 
-                                {(this.props.condition != 'slider'&& this.props.seenSentences.has(box.sentenceID))  && <Line points={4, 25, 10, 25} stroke={'white'} strokeWidth={2} />}
+                                {(this.props.condition != 'slider'&& this.props.seenSentences.has(box.sentenceID))  && <Line points={[4, 25, 10, 25]} stroke={'white'} strokeWidth={2} />}
 
                             </Group>
                         ))}
