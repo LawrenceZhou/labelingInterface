@@ -377,9 +377,11 @@ export default class Practice extends Component {
   						if (that.state.condition == "slider"){
   							that.updateSlider();
   						}else{
-  							var seenSentences_ = that.state.seenSentences;
-  							seenSentences_.add(that.state.boxes[i].sentenceID);
-  							that.setState({seenSentences: seenSentences_});
+  							if(that.state.speakerToLabel[0] == that.state.boxes[i].speaker){
+  								var seenSentences_ = that.state.seenSentences;
+  								seenSentences_.add(that.state.boxes[i].sentenceID);
+  								that.setState({seenSentences: seenSentences_});
+  							}
   						}
   					}
   					if (that.state.boxes[i].speaker == 'F' && that.state.boxes[i].transcript != that.state.currentTranscriptF) {
@@ -387,9 +389,11 @@ export default class Practice extends Component {
   						if (that.state.condition == "slider"){
   							that.updateSlider();
   						}else{
-  							var seenSentences_ = that.state.seenSentences;
-  							seenSentences_.add(that.state.boxes[i].sentenceID);
-  							that.setState({seenSentences: seenSentences_});
+  							if(that.state.speakerToLabel[0] == that.state.boxes[i].speaker){
+  								var seenSentences_ = that.state.seenSentences;
+  								seenSentences_.add(that.state.boxes[i].sentenceID);
+  								that.setState({seenSentences: seenSentences_});
+  							}
   						}
   					}
   				}
