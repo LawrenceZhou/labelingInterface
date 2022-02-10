@@ -168,8 +168,9 @@ export default class RelativeArea extends Component{
                         var operationBoxHistory_ = that.state.operationBoxHistory;
                         operationBoxHistory_.push(i);
                         that.setState({boxesHistory: boxesHistory_, operationBoxHistory: operationBoxHistory_});
-
-                        boxes_[i].relative++;
+                        if (boxes_[i].relative < 2){
+                            boxes_[i].relative++;
+                        }
                         break;
                     }
                 }
@@ -195,8 +196,9 @@ export default class RelativeArea extends Component{
                         var operationBoxHistory_ = that.state.operationBoxHistory;
                         operationBoxHistory_.push(i);
                         that.setState({boxesHistory: boxesHistory_, operationBoxHistory: operationBoxHistory_});
-
-                        boxes_[i].relative--;
+                        if (boxes_[i].relative > -2){
+                            boxes_[i].relative--;
+                        }
                         break;
                     }
                 }
