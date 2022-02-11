@@ -124,7 +124,7 @@ export default class Practice extends Component {
   					5: <strong>5</strong>,
 			},
 			description: "The male is at the Department of Motor Vehicles (DMV) and he is being sent back after standing in line for an hour for not having the right form of IDs. The female works at DMV and she rejects the application.",
-			videoUrl: {withHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/withHighlightTutorial.mp4", withoutHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/withoutHighlightTutorial.mp4", slider:"https://museumpalazzo.s3.us-west-2.amazonaws.com/GNODC.mp4"},
+			videoUrl: {withHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/FinalHighlightTutorial.mp4", withoutHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/FinalWithoutHighlightTutorial.mp4", slider:"https://museumpalazzo.s3.us-west-2.amazonaws.com/FinalSliderTutorial.mp4"},
 		};
 
 		this.comparisonAreaRef = React.createRef();
