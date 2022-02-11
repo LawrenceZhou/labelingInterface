@@ -157,7 +157,7 @@ export default class Practice extends Component {
 		var timeStamp = d.toString();
 		var timeStart = Date.now();
 		this.setState({timeStamp: timeStamp, timeStart: timeStart },function(){ console.log("timestamp: ", this.state.timeStamp, "time start: ", this.state.timeStart)});
-		that.setState({videoUrl: that.state.videoUrls[that.props.condition]});
+		this.setState({videoUrl: this.state.videoUrls[this.props.condition]});
 		this.getCondition();
 
 		var boxes_ = [
