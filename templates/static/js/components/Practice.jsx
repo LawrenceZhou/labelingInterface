@@ -116,6 +116,13 @@ export default class Practice extends Component {
 			sliderValue: 3,
 			sliderResults: {},
 			seenSentences: new Set(),
+			marks = {
+  					1: <strong>1</strong>,
+  					2: <strong>2</strong>,
+  					3: <strong>3</strong>,
+  					4: <strong>4</strong>,
+  					5: <strong>5</strong>,
+			};
 			description: "The male is at the Department of Motor Vehicles (DMV) and he is being sent back after standing in line for an hour for not having the right form of IDs. The female works at DMV and she rejects the application.",
 			videoUrl: {withHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/withHighlightTutorial.mp4", withoutHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/withoutHighlightTutorial.mp4", slider:"https://museumpalazzo.s3.us-west-2.amazonaws.com/GNODC.mp4"},
 		};
@@ -691,7 +698,7 @@ export default class Practice extends Component {
 
 									<Box><Text>Low {this.state.dimensionToLabel}</Text></Box>
 									
-        							<Box align="center" width="medium"><Slider disabled={!this.state.isStarted} dots step={1} defaultValue={3} min = {1} max = {5} value={this.state.sliderValue} railStyle={{ backgroundColor: '#DADADA'}} trackStyle={{ backgroundColor: '#DADADA'}} handleStyle={{borderColor: '#7D4CDB'}} /></Box>
+        							<Box align="center" width="medium"><Slider disabled={!this.state.isStarted} marks={this.state.marks} dots step={1} defaultValue={3} min = {1} max = {5} value={this.state.sliderValue} railStyle={{ backgroundColor: '#DADADA'}} trackStyle={{ backgroundColor: '#DADADA'}} handleStyle={{borderColor: '#7D4CDB'}} /></Box>
 								
 									<Box><Text>High {this.state.dimensionToLabel}</Text></Box>
 				

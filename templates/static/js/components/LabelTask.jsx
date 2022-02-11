@@ -121,6 +121,13 @@ export default class LabelTask extends Component {
 			sliderResults: {},
 			seenSentences: new Set(),
 			description: "",
+			marks = {
+  					1: <strong>1</strong>,
+  					2: <strong>2</strong>,
+  					3: <strong>3</strong>,
+  					4: <strong>4</strong>,
+  					5: <strong>5</strong>,
+			};
 		};
 
 		this.comparisonAreaRef = React.createRef();
@@ -760,7 +767,7 @@ export default class LabelTask extends Component {
 
 									<Box><Text>Low {this.state.dimensionToLabel}</Text></Box>
 									
-        							<Box align="center" width="medium"><Slider disabled={!this.state.isStarted} dots step={1} defaultValue={3} min = {1} max = {5} value={this.state.sliderValue} railStyle={{ backgroundColor: '#DADADA'}} trackStyle={{ backgroundColor: '#DADADA'}} handleStyle={{borderColor: '#7D4CDB'}} /></Box>
+        							<Box align="center" width="medium"><Slider marks={this.state.marks} disabled={!this.state.isStarted} dots step={1} defaultValue={3} min = {1} max = {5} value={this.state.sliderValue} railStyle={{ backgroundColor: '#DADADA'}} trackStyle={{ backgroundColor: '#DADADA'}} handleStyle={{borderColor: '#7D4CDB'}} /></Box>
 								
 									<Box><Text>High {this.state.dimensionToLabel}</Text></Box>
 				
