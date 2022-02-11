@@ -570,7 +570,7 @@ export default class Practice extends Component {
 									
 					<CardBody pad="xxsmall">
 						
-						<Video controls="below" fit="cover">
+						<Video key="tutorial" controls="below" fit="cover">
 							
 							<source key="video" src={this.state.videoUrl} type="video/mp4" />
 							
