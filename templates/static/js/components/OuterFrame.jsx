@@ -23,6 +23,8 @@ export default class OuterFrame extends Component {
 			status: 0,
 			login: false,
 			condition: "withHighlight",
+			videoUrl:"",
+			videoUrls: {withHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/FinalHighlightTutorial.mp4", withoutHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/FinalWithoutHighlightTutorial.mp4", slider:"https://museumpalazzo.s3.us-west-2.amazonaws.com/FinalSliderTutorial.mp4"},
 		};
 
 		this.loginSuccess = this.loginSuccess.bind(this);
@@ -72,6 +74,7 @@ export default class OuterFrame extends Component {
   					that.setRefs(condition_);
 					
 					that.setState({ condition : condition_});
+					that.setState({ videoUrl: that.state.videoUrls[condition_]});
 				}else {
 					alert('There is a problem with retrieving the condition. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
 				}
@@ -178,7 +181,7 @@ export default class OuterFrame extends Component {
 					}
 
 					{this.state.progress == "practice" && 
-					<Practice finish={this.finish} condition={this.state.condition} back={this.back} userName={this.state.userName} password={this.state.password} />
+					<Practice finish={this.finish} videoUrl={this.state.videoUrl} condition={this.state.condition} back={this.back} userName={this.state.userName} password={this.state.password} />
 					}
 
 					{this.state.progress == "label" && 

@@ -571,7 +571,7 @@ export default class Practice extends Component {
 						
 						<Video controls="below" fit="cover">
 							
-							<source key="video" src={this.state.videoUrl} type="video/mp4" />
+							<source key="video" src={this.props.videoUrl} type="video/mp4" />
 							
 						</Video>
 					
