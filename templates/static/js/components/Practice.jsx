@@ -576,12 +576,7 @@ export default class Practice extends Component {
 							
 						</Video>
 
-						<video width="320" height="240" controls>
-  						
-  							<source src={this.state.videoUrl} type="video/mp4" />
-							Your browser does not support the video tag.
-						
-						</video> 
+						<video width="320" height="240" src={this.state.videoUrl} controls />
 					
 					</CardBody>
 								
