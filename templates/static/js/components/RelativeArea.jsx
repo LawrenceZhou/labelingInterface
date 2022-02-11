@@ -44,9 +44,9 @@ export default class RelativeArea extends Component{
 
 
     componentDidMount(){
-        if(this.props.condition != "slider") {
+        //if(this.props.condition != "slider") {
             document.addEventListener("keydown", this.handleKeyPressed, false);
-        }
+        //}
         this.timerId = setInterval(this.tickingTimer, 30);
         var boxes_ = this.props.boxesPassed;
         var boxes_top = boxes_.filter(box => box.speaker == this.state.speaker[0]);
@@ -58,9 +58,9 @@ export default class RelativeArea extends Component{
 
     
     componentWillUnmount() {
-        if(this.props.condition != "slider") {
+        //if(this.props.condition != "slider") {
             document.removeEventListener("keydown", this.handleKeyPressed, false);
-        }
+        //}
         clearInterval(this.timerId);
         this.audio.pause();
         this.audio.currentTime = 0;

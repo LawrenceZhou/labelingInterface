@@ -467,8 +467,6 @@ export default class Practice extends Component {
   				sliderResults_[that.state.boxes[i].sentenceID] = that.state.sliderValue;
   				that.setState({sliderResults: sliderResults_});
   			}
-  				
-  			console.log("slider results: ", that.state.sliderResults);
   		}
   
   	}
