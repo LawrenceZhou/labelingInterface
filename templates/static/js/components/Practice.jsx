@@ -157,9 +157,7 @@ export default class Practice extends Component {
 		var timeStamp = d.toString();
 		var timeStart = Date.now();
 		this.setState({timeStamp: timeStamp, timeStart: timeStart },function(){ console.log("timestamp: ", this.state.timeStamp, "time start: ", this.state.timeStart)});
-		this.setState({videoUrl: this.state.videoUrls[this.props.condition]});
-		this.getCondition();
-
+		
 		var boxes_ = [
 					{sentenceID: 0, index: 0, indexS: 0, x: 67, y: 16, speaker: 'F', end: 106, highlightA:false, highlightP:false, relative: 0, transcript:"Next. My window is open."}, 
 					{sentenceID: 1, index: 1, indexS: 0, x: 82, y: 16, speaker: 'M', end: 168, highlightA:false, highlightP:false, relative: 0, transcript:"Yes, me. Okay, okay here we go. Okay, so filled out all these forms - and I have this form of ID here so..."},
@@ -215,6 +213,9 @@ export default class Practice extends Component {
 		this.setState({length: length_, boxes: boxes_, totalTimeText: totalTime});
 	}
 
+	componentWillMount() {
+		this.getCondition();
+	}
 
 	componentWillUnmount() {
 
@@ -571,7 +572,7 @@ export default class Practice extends Component {
 						
 						<Video controls="below" fit="cover">
 							
-							<source key="video" src={this.props.videoUrl} type="video/mp4" />
+							<source key="video" src={this.state.videoUrl} type="video/mp4" />
 							
 						</Video>
 					
