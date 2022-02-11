@@ -310,7 +310,7 @@ export default class Practice extends Component {
 
   					that.setRefs(condition_);
 					
-					that.setState({ condition : condition_, videoUrl: that.state.videoUrls[condition_]});
+					that.setState({ condition : condition_, videoUrl: that.state.videoUrls[condition_]},function(){ console.log("video url: ", that.state.videoUrl)});
 				}else {
 					alert('There is a problem with retrieving the condition. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
 					that.props.finish();
