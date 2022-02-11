@@ -35,8 +35,7 @@ export default class OuterFrame extends Component {
 
 	loginSuccess(userName, password, status) {
 		var that = this;
-		that.setState({progress :"main", userName: userName, password: password, status: status, login: true});
-		that.getCondition();
+		that.setState({progress :"main", userName: userName, password: password, status: status, login: true}, function(){that.getCondition();});		
 	}
 
 
