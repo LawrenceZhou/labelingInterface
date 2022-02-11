@@ -125,7 +125,7 @@ export default class Practice extends Component {
 			},
 			description: "The male is at the Department of Motor Vehicles (DMV) and he is being sent back after standing in line for an hour for not having the right form of IDs. The female works at DMV and she rejects the application.",
 			videoUrls: {withHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/FinalHighlightTutorial.mp4", withoutHighlight:"https://museumpalazzo.s3.us-west-2.amazonaws.com/FinalWithoutHighlightTutorial.mp4", slider:"https://museumpalazzo.s3.us-west-2.amazonaws.com/FinalSliderTutorial.mp4"},
-			videoUrl: "https://museumpalazzo.s3.us-west-2.amazonaws.com/FinalHighlightTutorial.mp4",
+			videoUrl: "",
 		};
 
 		this.comparisonAreaRef = React.createRef();
@@ -157,6 +157,7 @@ export default class Practice extends Component {
 		var timeStamp = d.toString();
 		var timeStart = Date.now();
 		this.setState({timeStamp: timeStamp, timeStart: timeStart },function(){ console.log("timestamp: ", this.state.timeStamp, "time start: ", this.state.timeStart)});
+		that.setState({videoUrl: that.state.videoUrls[that.props.condition]});
 		this.getCondition();
 
 		var boxes_ = [
