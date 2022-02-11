@@ -95,7 +95,7 @@ export default class Practice extends Component {
 						{speaker:'Male', dimension:'Arousal'},
 						{speaker:'Male', dimension:'Pleasure'}],
 			conditionList: ['withHighlight','withoutHighlight','slider'],
-			condition: 'withHighlight',
+			condition: this.props.condition,
 			currentIndex: -1,
 			currentIndexM: -1,
 			currentIndexF: -1,

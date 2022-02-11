@@ -22,18 +22,21 @@ export default class OuterFrame extends Component {
 			password: "",
 			status: 0,
 			login: false,
+			condition: "withHighlight",
 		};
 
 		this.loginSuccess = this.loginSuccess.bind(this);
 		this.selectTask = this.selectTask.bind(this);
 		this.finish = this.finish.bind(this);
 		this.back = this.back.bind(this);
+		this.getCondition = this.getCondition.bind(this);
 	}
 
 
 	loginSuccess(userName, password, status) {
 		var that = this;
 		that.setState({progress :"main", userName: userName, password: password, status: status, login: true});
+		that.getCondition();
 	}
 
 
@@ -46,6 +49,38 @@ export default class OuterFrame extends Component {
 	selectTask(taskName) {
 		var that = this;
 		that.setState({progress :taskName});
+	}
+
+	getCondition(){
+		//to change to task
+		var that = this;
+
+		var http = new XMLHttpRequest();
+		var url = 'http://label.yijunzhou.xyz/api/v1/get_condition';
+		var data = new FormData();
+
+		data.append("userName", that.state.userName);
+		console.log(data.get("userName"));
+
+		http.addEventListener("readystatechange", function() {
+			if(this.readyState === 4 ) {
+				if(this.status == 200) {
+					console.log("Condition received!", this.responseText);
+					var obj = JSON.parse(http.responseText);
+					console.log(obj);
+					var condition_ = obj.condition;
+
+  					that.setRefs(condition_);
+					
+					that.setState({ condition : condition_});
+				}else {
+					alert('There is a problem with retrieving the condition. Please contacted the operator: yijun-z@g.ecc.u-tokyo.ac.jp. Thanks.');
+				}
+			}
+		});
+
+		http.open('POST', url, true);
+		http.send(data);
 	}
 
 
@@ -144,7 +179,7 @@ export default class OuterFrame extends Component {
 					}
 
 					{this.state.progress == "practice" && 
-					<Practice finish={this.finish} back={this.back} userName={this.state.userName} password={this.state.password} />
+					<Practice finish={this.finish} condition={this.state.condition} back={this.back} userName={this.state.userName} password={this.state.password} />
 					}
 
 					{this.state.progress == "label" && 
