@@ -121,13 +121,13 @@ export default class LabelTask extends Component {
 			sliderResults: {},
 			seenSentences: new Set(),
 			description: "",
-			marks = {
+			marks: {
   					1: <strong>1</strong>,
   					2: <strong>2</strong>,
   					3: <strong>3</strong>,
   					4: <strong>4</strong>,
   					5: <strong>5</strong>,
-			};
+			},
 		};
 
 		this.comparisonAreaRef = React.createRef();
