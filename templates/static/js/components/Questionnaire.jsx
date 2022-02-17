@@ -96,7 +96,7 @@ export default class Questionnaire extends Component {
 
 		data.append("userName", that.props.userName);
 		data.append("easiness", that.state.easiness);
-		data.append("easinessReason", that.state.easiness);
+		data.append("easinessReason", that.state.easinessReason);
 		data.append("learning", that.state.learning);
 		data.append("learningReason", that.state.learningReason);
 		data.append("intuitiveness", that.state.intuitiveness);
