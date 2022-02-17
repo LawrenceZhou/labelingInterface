@@ -155,7 +155,7 @@ export default class OuterFrame extends Component {
 					
 						<Box background="#EEEEEE27" pad="small">
 
-							<Text textAlign="center">You have finish the whole experiment. Please close this page. Thank you!</Text>
+							<Text textAlign="center">You have finish the whole experiment. The completion code is:<strong>2022SpeechEmotion2021</strong>. Please input it on the Amazon Mechanical Turk. After that, please close this page. Thank you!</Text>
 
 						</Box>
 					</Layer>

@@ -137,7 +137,7 @@ export default class Login extends Component {
 
 						<Text>Are you sure you want to log in as <strong>{this.state.email}</strong>?</Text> 
 					
-						<Text>We will send the <strong>Completion Code</strong> of Amazon Mechanical Turk to this email. If you finds errors in the email address, please input it again.</Text>
+						<Text> If you finds errors in the email address, please input it again.</Text>
 							
 						<Box
 							as="footer"
