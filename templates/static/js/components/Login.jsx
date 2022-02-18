@@ -97,15 +97,15 @@ export default class Login extends Component {
 					
 					<Form onSubmit={({value}) => {this.onLogin(value)}}>
 
-						<FormField label="Email Address*" name="email" htmlFor="email" required>
+						<FormField label="Amazon MTurk Worker ID *" name="email" htmlFor="email" required>
 
-							<TextInput placeholder="your@email.com" name="email" id="email" type="email" />
+							<TextInput placeholder="Your Amazon MTurk ID" name="email" id="email" />
 
 						</FormField>
 
-						<FormField label="Email Address (again)*" name="email_again" htmlFor="email_again" required>
+						<FormField label="Amazon MTurk Worker ID (again)*" name="email_again" htmlFor="email_again" required>
 
-							<TextInput placeholder="your@email.com" name="email_again" id="email_again" type="email" />
+							<TextInput placeholder="Your Amazon MTurk ID" name="email_again" id="email_again" />
 
 						</FormField>
 
@@ -137,7 +137,7 @@ export default class Login extends Component {
 
 						<Text>Are you sure you want to log in as <strong>{this.state.email}</strong>?</Text> 
 					
-						<Text> If you finds errors in the email address, please input it again.</Text>
+						<Text> If you finds errors in your Amazon MTurk Worker ID, please input it again.</Text>
 							
 						<Box
 							as="footer"
