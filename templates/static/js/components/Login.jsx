@@ -28,7 +28,7 @@ export default class Login extends Component {
 		var that = this;
 		console.log(value);
 		if (value.email != value.email_again) {
-			that.setState({messageOn: true, message: "Email address input mismatched. Please check it again.", messageColor: "status-error"});
+			that.setState({messageOn: true, message: "Amazon MTurk worker ID input mismatched. Please check it again.", messageColor: "status-error"});
 		}else {
 			that.setState({email :value.email, emailAgain: value.email_again}, function(){ console.log("state information, email: ", that.state.email, " email again: ", that.state.emailAgain), that.userAuthentication()});
 		}
