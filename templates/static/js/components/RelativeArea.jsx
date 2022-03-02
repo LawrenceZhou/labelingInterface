@@ -34,6 +34,7 @@ export default class RelativeArea extends Component{
             currentSpeakerSentenceNumber: 0,
             boxesHistory: [],
             operationBoxHistory: [],
+            rewindTimes: 0,
         };
 
         this.audio = new Audio(this.state.audioPath);
@@ -92,7 +93,7 @@ export default class RelativeArea extends Component{
             var boxes_top = boxes_.filter(box => box.speaker == nextProps.speaker[0]);
             var boxes_btm = boxes_.filter(box => box.speaker != nextProps.speaker[0]);
             var _boxes = boxes_btm.concat(boxes_top);
-            this.setState({boxes: _boxes, boxesTimeOrder: nextProps.boxesPassed, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
+            this.setState({rewindTimes: 0, boxes: _boxes, boxesTimeOrder: nextProps.boxesPassed, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
         }
 
         if(nextProps.speaker !== this.props.speaker){
@@ -101,7 +102,7 @@ export default class RelativeArea extends Component{
             var boxes_top = boxes_.filter(box => box.speaker == nextProps.speaker[0]);
             var boxes_btm = boxes_.filter(box => box.speaker != nextProps.speaker[0]);
             var _boxes = boxes_btm.concat(boxes_top);
-            this.setState({boxes: _boxes, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
+            this.setState({rewindTimes: 0, boxes: _boxes, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
             this.audio.currentTime = 0;
         }
 
@@ -111,7 +112,7 @@ export default class RelativeArea extends Component{
             var boxes_top = boxes_.filter(box => box.speaker == nextProps.speaker[0]);
             var boxes_btm = boxes_.filter(box => box.speaker != nextProps.speaker[0]);
             var _boxes = boxes_btm.concat(boxes_top);
-            this.setState({boxes: _boxes, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
+            this.setState({rewindTimes: 0, boxes: _boxes, currentSpeakerSentenceNumber: boxes_top.length, boxesHistory: [JSON.parse(JSON.stringify(_boxes))], operationBoxHistory: []});
             this.audio.currentTime = 0;
         }
 
@@ -125,7 +126,7 @@ export default class RelativeArea extends Component{
         }
 
         if(nextProps.reset){
-            this.setState({boxes: JSON.parse(JSON.stringify(this.state.boxesHistory[0])), boxesHistory: [JSON.parse(JSON.stringify(this.state.boxesHistory[0]))], operationBoxHistory: []});
+            this.setState({rewindTimes: 0, boxes: JSON.parse(JSON.stringify(this.state.boxesHistory[0])), boxesHistory: [JSON.parse(JSON.stringify(this.state.boxesHistory[0]))], operationBoxHistory: []});
             this.audio.currentTime = 0;
         }
     
@@ -214,6 +215,8 @@ export default class RelativeArea extends Component{
         //Do whatever when left is pressed
             console.log("left pressed.");
             boxes_ = that.state.boxes;
+            console.log("rewind times: ", that.state.rewindTimes + 1);
+            that.setState({rewindTimes: that.state.rewindTimes + 1});
 
             for (var i = boxes_.length - 1; i > boxes_.length - that.state.currentSpeakerSentenceNumber; i--) {
                 if (that.state.currentTime * 10 >= boxes_[i].x) {

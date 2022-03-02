@@ -112,6 +112,7 @@ type (
         DialogueAssignmentID int                     //`json:"dialogue_assignment_id"`
         Timestamp string            `sql:"type:TEXT CHARACTER SET utf8 COLLATE utf8_general_ci"`       //`json:"timestamp"`
         TimeUsage int                      //`json:"time_usage"`
+        RewindTimes int                      //`json:"rewind_times"`
     }
 
     //SentenceAnnotations schema in mysql

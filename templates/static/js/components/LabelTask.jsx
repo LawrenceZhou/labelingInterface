@@ -331,6 +331,7 @@ export default class LabelTask extends Component {
 		data.append("timeStamp", that.state.timeStamp);
 		data.append("sentenceIDs", sentenceIDs);
 		data.append("results", results);
+		data.append("rewindTimes", childElement.state.rewindTimes);
 
 		http.addEventListener("readystatechange", function() {
 			if(this.readyState === 4 ) {

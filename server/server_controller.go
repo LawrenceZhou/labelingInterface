@@ -240,10 +240,12 @@ func saveLabelComparisonHandler(c *gin.Context) {
 	results_ := c.PostFormArray("results")
 	results := strings.Split(results_[0], ",")
 	fmt.Println("results: ", results, len(results))
+	rewindTimes, _ := strconv.Atoi(c.PostForm("rewindTimes"))
+	fmt.Printf("rewindTimes: %d \n", rewindTimes)
 
 	/////////////////////
     	
-    dialogueAnnotation := DialogueAnnotations{DialogueAssignmentID: dialogueAssignmentID, Speaker: speaker, Dimension: dimension, Timestamp: timeStamp, TimeUsage: timeUsage}
+    dialogueAnnotation := DialogueAnnotations{DialogueAssignmentID: dialogueAssignmentID, Speaker: speaker, Dimension: dimension, Timestamp: timeStamp, TimeUsage: timeUsage, RewindTimes: rewindTimes}
 	success := insertDialogueAnnotation(&dialogueAnnotation)
 
 	if !completed && !success {
