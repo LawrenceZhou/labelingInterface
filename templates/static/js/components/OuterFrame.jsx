@@ -124,12 +124,6 @@ export default class OuterFrame extends Component {
 
 				<Box width="820px">
 
-					<Box background="#EEEEEE" pad="small">
-
-						<Text color="status-critical" textAlign="center"><strong>Please DO NOT click Back or Refresh button of the browser.</strong></Text>
-					
-					</Box>
-
 					<Box background="#EEEEEE" pad="xsmall" direction="row" align="center" justify="center" gap="small">
 
 						<Heading level='2' size='medium' textAlign="center">{this.state.title}</Heading>
