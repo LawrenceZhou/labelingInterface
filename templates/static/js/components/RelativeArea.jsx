@@ -275,7 +275,7 @@ export default class RelativeArea extends Component{
                         {this.props.condition == 'withHighlight' && this.state.boxes.map((box, i) => (
 
                             <Rect x={box.x} y={0} width={box.end - box.x} height={this.state.offsetY}
-                                fill={(box.speaker == this.state.speaker[0] && (this.state.dimension == "Arousal"? box.highlightA : box.highlightP))? '#FFEE00C0' : '#FFEE0000'} />
+                                fill={(box.speaker == this.state.speaker[0] && (this.state.dimension == "Arousal"? box.highlightA : box.highlightP))? '#F8FF9580' : '#F8FF9500'} />
                         ))}
 
                         {this.state.horizontalLines.map((line, i) => (
